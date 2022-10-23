@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang chủ</title>
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link rel="stylesheet" href="../user/lib/owlcarousel/assets/owl.carousel.min.css">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link rel="stylesheet" href="../user/css/style.css">
+</head>
+
+<body>
+    <main>
+        <header class="row">
+            <div class="col">
+                <div th:replace="user/fragments/header::header"></div>
+            </div>
+        </header>
+        <sidebar class="row">
+            <div class="col">
+                <div th:replace="user/fragments/sidebar::sidebar"></div>
+            </div>
+        </sidebar>
+        <section class="row">
+            <div class="col">
+                <div layout:fragment="content"></div>
+            </div>
+        </section>
+        <footer class="row">
+            <div class="col">
+                <div th:replace="user/fragments/footer::footer"></div>
+            </div>
+        </footer>
+
+        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+                class="bi bi-arrow-up-short"></i></a>
+    </main>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="../user/lib/easing/easing.min.js"></script>
+    <script src="../user/lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="../user/js/main.js"></script>
+</body>
+
+</html>
