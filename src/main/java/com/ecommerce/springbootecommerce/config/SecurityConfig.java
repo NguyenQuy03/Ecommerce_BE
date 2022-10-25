@@ -6,7 +6,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+
+import com.ecommerce.springbootecommerce.Security.CustomSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -24,9 +28,14 @@ public class SecurityConfig {
                 .and()
                 .formLogin().loginPage("/login").permitAll()
                 .loginProcessingUrl("/j_spring_security_check")
-                .defaultSuccessUrl("/home")
+                .successHandler(new CustomSuccessHandler())
                 .failureUrl("/login?result=failure")
-                ;
+                .and()
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                .logout(logout -> logout
+                        .deleteCookies("JSESSIONID"));
+        ;
 
         return http.build();
     }
