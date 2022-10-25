@@ -1,28 +1,23 @@
-package com.ecommerce.springbootecommerce.controller.user;
+package com.ecommerce.springbootecommerce.controller.buyer;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Controller(value = "homeControllerOfUser")
+@Controller(value = "homeControllerOfBuyer")
 public class HomeController {
 
 	@GetMapping("home")
 	public String homePage() {
-		return "user/home";
+		return "buyer/home";
 	}
 
 	@GetMapping("login")
 	public String login() {
-		return "user/login";
-	}
-
-	@GetMapping("logout")
-	public String logout() {
-		return "user/login";
+		return "buyer/login";
 	}
 
 	@GetMapping("register")
 	public String register() {
-		return "user/register";
+		return "buyer/register";
 	}
 }

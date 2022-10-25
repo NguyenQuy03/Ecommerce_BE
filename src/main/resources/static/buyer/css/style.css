@@ -68,6 +68,12 @@ body {
   outline: 0 !important;
 }
 
+#header {
+  min-height: 105px;
+  display: flex;
+  align-items: center;
+}
+
 hr {
   box-sizing: content-box;
   height: 0;

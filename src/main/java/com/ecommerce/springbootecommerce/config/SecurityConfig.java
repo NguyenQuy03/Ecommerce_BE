@@ -8,9 +8,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 
-import com.ecommerce.springbootecommerce.Security.CustomSuccessHandler;
+import com.ecommerce.springbootecommerce.security.CustomSuccessHandler;
+import com.ecommerce.springbootecommerce.service.impl.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -19,9 +19,13 @@ public class SecurityConfig {
     @Autowired
     private EncoderConfig encoderConfig;
 
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/register**", "/admin/vendor/**").permitAll()
                 .anyRequest().authenticated()
@@ -42,11 +46,7 @@ public class SecurityConfig {
 
     @Autowired
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .inMemoryAuthentication()
-                .withUser("user1")
-                .password(encoderConfig.passwordEncoder().encode("123"))
-                .authorities("ROLE_USER")
-                ;
+        auth.userDetailsService(customUserDetailsService).passwordEncoder(encoderConfig.passwordEncoder());
+        
     }
 }

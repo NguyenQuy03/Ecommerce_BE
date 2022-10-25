@@ -10,6 +10,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.springframework.context.annotation.Lazy;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,6 +36,7 @@ public class AccountEntity extends BaseEntity{
     private boolean status;
     
     @ManyToMany
+    @Lazy
     @JoinTable(name = "accounts_roles",
             joinColumns = {
                     @JoinColumn(name = "account_id", referencedColumnName = "id",

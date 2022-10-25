@@ -1,4 +1,4 @@
-package com.ecommerce.springbootecommerce.Security;
+package com.ecommerce.springbootecommerce.security;
 
 import java.io.IOException;
 import java.util.List;
@@ -43,7 +43,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler{
             url = "/admin/home";
         } else if (isSeller(roles)) {
             url = "/seller/home";
-        } else if (isUser(roles)) {
+        } else if (isBuyer(roles)) {
             url = "/home";
         }
 
@@ -54,8 +54,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler{
         return roles.contains("ADMIN");
     }
     
-    private boolean isUser(List<String> roles) {
-        return roles.contains("USER");
+    private boolean isBuyer(List<String> roles) {
+        return roles.contains("BUYER");
     }
 
     private boolean isSeller(List<String> roles) {

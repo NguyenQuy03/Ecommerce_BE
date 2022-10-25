@@ -2,12 +2,14 @@ package com.ecommerce.springbootecommerce.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "category")
 @Getter
 @Setter
 @AllArgsConstructor
