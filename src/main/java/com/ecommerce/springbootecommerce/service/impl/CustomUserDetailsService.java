@@ -26,18 +26,17 @@ public class CustomUserDetailsService implements UserDetailsService{
         AccountEntity accountEntiry = accountRepository.findOneByUserNameAndStatus(username, SystemConstant.ACTIVE_STATUS);
 
         if (accountEntiry == null) {
-            throw new UsernameNotFoundException("User not found in the database");
-        }
-
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        accountEntiry.getRoles().forEach(role ->{
-            authorities.add(new SimpleGrantedAuthority(role.getCode()));
-        });
-
-        MyAccount myAccount = new MyAccount(accountEntiry.getUserName(), accountEntiry.getPassword(), true, true, true, true, null);
-        myAccount.setFullName(accountEntiry.getFullName());
-        
-        return myAccount;
+            System.out.print("User not found in the database");
+            return null;
+        } else {
+            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            accountEntiry.getRoles().forEach(role ->{
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getCode()));
+            });    
+            MyAccount myAccount = new MyAccount(accountEntiry.getUserName(), accountEntiry.getPassword(), true, true, true, true, authorities);
+            myAccount.setFullName(accountEntiry.getFullName());
+            return myAccount;
+        }  
     }
     
 }

@@ -18,6 +18,9 @@
         $(window).resize(toggleNavbarMethod);
     });
     
+    $(document).ready(function() {
+        $(".dropdown-toggle").dropdown();
+    });
     
     // Back to top button
     $(window).scroll(function () {

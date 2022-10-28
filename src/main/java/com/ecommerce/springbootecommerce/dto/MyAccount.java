@@ -18,6 +18,5 @@ public class MyAccount extends User {
             boolean credentialsNonExpired, boolean accountNonLocked,
             Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-    }
-    
+    } 
 }

@@ -20,7 +20,7 @@ import lombok.Setter;
 @Component
 @Getter
 @Setter
-public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler{
+public class CustomLoginHandler extends SimpleUrlAuthenticationSuccessHandler{
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     
@@ -51,14 +51,18 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler{
     }
 
     private boolean isAdmin(List<String> roles) {
-        return roles.contains("ADMIN");
+        boolean result = false;
+        if (roles.contains("ROLE_ADMIN") || roles.contains("ROLE_MANAGER")) {
+            return true;
+        }
+        return result;
     }
     
     private boolean isBuyer(List<String> roles) {
-        return roles.contains("BUYER");
+        return roles.contains("ROLE_BUYER");
     }
 
     private boolean isSeller(List<String> roles) {
-        return roles.contains("SELLER");
+        return roles.contains("ROLE_SELLER");
     }
 }

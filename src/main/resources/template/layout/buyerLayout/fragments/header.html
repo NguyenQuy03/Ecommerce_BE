@@ -28,42 +28,53 @@
                     </form>
                 </div>
                 <div class="col-lg-3 col-6 text-right d-flex justify-content-end">
-                    <a href="" class="btn border">
-                        <i class="fas fa-shopping-cart text-primary"></i>
-                        <span class="badge">0</span>
-                    </a>
-                    <a href="" class="nav-item nav-link">Login</a>
-                    <a href="" class="nav-item nav-link">Register</a>
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                        <li class="dropdown-header">
-                            <h6>Kevin Anderson</h6>
-                        </li>
+                    <div sec:authorize="isAuthenticated()" class="d-flex">
+	                    <a href="" class="btn border">
+	                        <i class="fas fa-shopping-cart text-primary"></i>
+	                        <span class="badge">0</span>
+	                    </a>
+                    	<nav class="header-nav ms-auto">
+	                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+	                            
+	    
+	                            <li class="dropdown-item">
+	                                <a class="d-flex align-items-center" href="users-profile.html">
+	                                    <i class="bi bi-person"></i>
+	                                    <span>My Profile</span>
+	                                </a>
+	                            </li>
+	                            <li class="dropdown-item ">
+	                                <a class="d-flex align-items-center" href="">
+	                                    <i class="bi bi-box-arrow-right"></i>
+	                                    <span>Checkout</span>
+	                                </a>
+	                            </li>
+	                            <li class="dropdown-item ">
+	                                <a class="d-flex align-items-center" href="">
+	                                    <i class="bi bi-box-arrow-right"></i>
+	                                    <span>Sign Out</span>
+	                                </a>
+	                            </li>
+	                        </ul>
+                        </nav>
+                        <div class="dropdown show border ml-2">
+                            <button class="d-flex align-items-center btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <h6 class="mb-0" th:text="${#authentication.getPrincipal().getFullName()}"></h6>
+                            </button>
+                          
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                              <a class="dropdown-item" href="#">My Profile</a>
+                              <a class="dropdown-item" href="#">Checkout</a>
+                              <a class="dropdown-item" href="/logout">Sign Out</a>
+                            </div>
+                          </div>
+                    </div>
 
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                                <i class="bi bi-person"></i>
-                                <span>My Profile</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span>Shopping cart</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span>Checkout</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item d-flex align-items-center" href="#">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span>Sign Out</span>
-                            </a>
-                        </li>
-                    </ul>
+                    <div sec:authorize="isAnonymous()">
+                        <a href="" class="nav-item nav-link">Login</a>
+                        <a href="" class="nav-item nav-link">Register</a>
+                    </div>
+                    
                 </div>
             </div>
         </div>

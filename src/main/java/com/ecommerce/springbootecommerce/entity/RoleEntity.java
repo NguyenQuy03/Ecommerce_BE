@@ -10,6 +10,7 @@ import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -17,6 +18,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class RoleEntity extends BaseEntity{
 
     @Column(name = "code")
@@ -27,4 +29,5 @@ public class RoleEntity extends BaseEntity{
     
     @ManyToMany(mappedBy = "roles")
     private Set<AccountEntity> accounts = new HashSet<>();
+
 }
