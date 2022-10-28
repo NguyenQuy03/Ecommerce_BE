@@ -1,4 +1,4 @@
-package com.ecommerce.springbootecommerce.entity;
+package com.ecommerce.springbootecommerce.entity.Account;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,6 +10,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.ecommerce.springbootecommerce.entity.BaseEntity;
+import com.ecommerce.springbootecommerce.entity.RoleEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,11 +36,16 @@ public class AccountEntity extends BaseEntity{
     @Column(name = "password")
     private String password;
 
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @Column(name = "status")
     private boolean status;
     
     @ManyToMany(fetch = FetchType.EAGER)
-    
     @JoinTable(name = "accounts_roles",
             joinColumns = {
                     @JoinColumn(name = "account_id", referencedColumnName = "id",
@@ -46,4 +54,5 @@ public class AccountEntity extends BaseEntity{
                     @JoinColumn(name = "role_id", referencedColumnName = "id",
                             nullable = false, updatable = false)})
     private Set<RoleEntity> roles = new HashSet<>();
+
 }
