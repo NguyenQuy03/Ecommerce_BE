@@ -8,8 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("seller")
 public class HomeController {
 	
-	@GetMapping("home")
-	public String homePage() {
-		return "seller/home";
+	@GetMapping("recentSales")
+	public String recentSalesPage() {
+		return "seller/recentSales";
 	}
+
+	@GetMapping("topSelling")
+	public String topSellingPage() {
+		return "seller/topSelling";
+	}
+
 }

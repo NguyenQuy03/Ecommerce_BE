@@ -10,14 +10,4 @@ public class HomeController {
 	public String homePage() {
 		return "buyer/home";
 	}
-
-	@GetMapping("login")
-	public String login() {
-		return "buyer/login";
-	}
-
-	@GetMapping("register")
-	public String register() {
-		return "buyer/register";
-	}
 }

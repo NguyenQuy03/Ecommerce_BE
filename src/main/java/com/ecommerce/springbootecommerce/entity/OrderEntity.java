@@ -11,14 +11,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.ecommerce.springbootecommerce.entity.Account.BuyerEntity;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -35,10 +33,10 @@ public class OrderEntity extends BaseEntity {
 
     @Column(name = "description")
     private String description;
-
+    
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "buyer_id", nullable = true)
-    private BuyerEntity buyer;
+    @JoinColumn(name = "account_id", nullable = false)
+    private AccountEntity account;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<CartEntity> carts;

@@ -1,18 +1,17 @@
-package com.ecommerce.springbootecommerce.entity.Account;
+package com.ecommerce.springbootecommerce.entity;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import com.ecommerce.springbootecommerce.entity.BaseEntity;
-import com.ecommerce.springbootecommerce.entity.RoleEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,8 +24,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountEntity extends BaseEntity{
-    
+public class AccountEntity extends BaseEntity {
+
     @Column(name = "username")
     private String userName;
 
@@ -42,17 +41,26 @@ public class AccountEntity extends BaseEntity{
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "balance")
+    private Double balance;
+
     @Column(name = "status")
     private boolean status;
-    
+
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "accounts_roles",
-            joinColumns = {
-                    @JoinColumn(name = "account_id", referencedColumnName = "id",
-                            nullable = false, updatable = false)},
-            inverseJoinColumns = {
-                    @JoinColumn(name = "role_id", referencedColumnName = "id",
-                            nullable = false, updatable = false)})
+    @JoinTable(name = "accounts_roles", joinColumns = {
+            @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = false, updatable = false) }, inverseJoinColumns = {
+                    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false, updatable = false) })
     private Set<RoleEntity> roles = new HashSet<>();
 
+    // BUYER
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private Set<OrderEntity> orders;
+
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<DeliveryEntity> deliveries;
+
+    // SELLER
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<ProductEntity> products;
 }

@@ -7,8 +7,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.ecommerce.springbootecommerce.entity.Account.SellerEntity;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +35,6 @@ public class ProductEntity extends BaseEntity{
     private CategoryEntity category;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "seller_id", nullable = false)
-    private SellerEntity seller;
+    @JoinColumn(name = "account_id", nullable = false)
+    private AccountEntity account;
 }

@@ -20,12 +20,13 @@ import lombok.Setter;
 @Component
 @Getter
 @Setter
-public class CustomLoginHandler extends SimpleUrlAuthenticationSuccessHandler{
+public class CustomLoginHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-    
+
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+    public void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+            throws IOException {
         String targetUrl = determineTargetUrl(authentication);
 
         if (response.isCommitted()) {
@@ -39,10 +40,14 @@ public class CustomLoginHandler extends SimpleUrlAuthenticationSuccessHandler{
         String url = "";
         List<String> roles = SecurityUtil.getAuthorities();
 
-        if (isAdmin(roles)) {
-            url = "/admin/home";
+        if (isManager(roles)) {
+            url = "/manager/home";
+        } else if (isAuditAdmin(roles)) {
+            url = "/admin/audit/recentTransaction";
+        } else if (isAccountAdmin(roles)) {
+            url = "/admin/account/buyerAccount";
         } else if (isSeller(roles)) {
-            url = "/seller/home";
+            url = "/seller/recentSales";
         } else if (isBuyer(roles)) {
             url = "/home";
         }
@@ -50,14 +55,18 @@ public class CustomLoginHandler extends SimpleUrlAuthenticationSuccessHandler{
         return url;
     }
 
-    private boolean isAdmin(List<String> roles) {
-        boolean result = false;
-        if (roles.contains("ROLE_ADMIN") || roles.contains("ROLE_MANAGER")) {
-            return true;
-        }
-        return result;
+    private boolean isManager(List<String> roles) {
+        return roles.contains("ROLE_MANAGER");
     }
-    
+
+    private boolean isAuditAdmin(List<String> roles) {
+        return roles.contains("ROLE_AUDITADMIN");
+    }
+
+    private boolean isAccountAdmin(List<String> roles) {
+        return roles.contains("ROLE_ACCOUNTADMIN");
+    }
+
     private boolean isBuyer(List<String> roles) {
         return roles.contains("ROLE_BUYER");
     }

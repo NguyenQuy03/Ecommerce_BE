@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:th="http://www.thymeleaf.org"
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,36 +9,53 @@
     <title>Trang chủ</title>
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
 
     <!-- Vendor CSS Files -->
-    <link rel="stylesheet" href="../admin/vendor/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../admin/vendor/bootstrap-icons/bootstrap-icons.css">
-    <link rel="stylesheet" href="../admin/vendor/boxicons/css/boxicons.min.css">
-    <link rel="stylesheet" href="../admin/vendor/remixicon/remixicon.css">
-    <link rel="stylesheet" href="../admin/vendor/simple-datatables/style.css">
+    <link rel="stylesheet" href="/admin/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/admin/vendor/bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="/admin/vendor/boxicons/css/boxicons.min.css">
+    <link rel="stylesheet" href="/admin/vendor/remixicon/remixicon.css">
+    <link rel="stylesheet" href="/admin/vendor/simple-datatables/style.css">
 
     <!-- Template Main CSS File -->
-    <link rel="stylesheet" href="../admin/css/style.css">
+    <link rel="stylesheet" href="/admin/css/style.css">
 </head>
 
 <body>
     <main>
+        <!-- HEADER -->
         <header class="row">
             <div class="col">
                 <div th:replace="layout/dashboardLayout/fragments/header::header"></div>
             </div>
         </header>
+
+        <!-- SIDEBAR -->
         <sidebar class="row">
             <div class="col">
                 <div th:replace="layout/dashboardLayout/fragments/sidebar::sidebar"></div>
             </div>
         </sidebar>
-        <section class="row">
-            <div class="col">
-                <div layout:fragment="content"></div>
-            </div>
-        </section>
+
+        <!-- CONTENT -->
+        <main id="main" class="main">
+            <section class="section dashboard">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col">
+                                <div layout:fragment="content"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- FOOTER -->
         <footer class="row">
             <div class="col">
                 <div th:replace="layout/dashboardLayout/fragments/footer::footer"></div>
@@ -50,11 +67,11 @@
     </main>
 
     <!-- Vendor JS Files -->
-    <script src="../admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="../admin/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/vendor/simple-datatables/simple-datatables.js"></script>
 
     <!-- Template Main JS File -->
-    <script src="../admin/js/main.js"></script>
+    <script src="/admin/js/main.js"></script>
 </body>
 
 </html>

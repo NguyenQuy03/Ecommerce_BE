@@ -10,20 +10,56 @@
 		<!-- ======= Sidebar ======= -->
 		<aside id="sidebar" class="sidebar">
 
-			<ul class="sidebar-nav" id="sidebar-nav">
+			<!-- SELLER -->
+			<ul th:each="authority : ${#authentication.getAuthorities()}"
+				th:if="${authority.getAuthority().startsWith('ROLE_SELLER')}" class="sidebar-nav" id="sidebar-nav">
 
 				<li class="nav-item">
-					<a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+					<a class="nav-link" th:href="@{/seller/recentSales}">
 						<i class="bi bi-journal-text"></i><span>Recent Sales</span>
 					</a>
 				</li><!-- End Forms Nav -->
 
 				<li class="nav-item">
-					<a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+					<a class="nav-link" th:href="@{/seller/topSelling}">
 						<i class="bi bi-layout-text-window-reverse"></i><span>Top Selling</span>
 					</a>
 				</li><!-- End Tables Nav -->
 
+			</ul>
+
+			<!-- AUDIT ADMIN -->
+			<ul th:each="authority : ${#authentication.getAuthorities()}"
+				th:if="${authority.getAuthority().startsWith('ROLE_AUDITADMIN')}" class="sidebar-nav" id="sidebar-nav">
+
+				<li class="nav-item">
+					<a class="nav-link" th:href="@{/admin/auditAdmin/recentTransaction}">
+						<i class="bi bi-journal-text"></i><span>Recent Transaction</span>
+					</a>
+				</li><!-- End Forms Nav -->
+
+				<li class="nav-item">
+					<a class="nav-link" th:href="@{/admin/auditAdmin/topSelling}">
+						<i class="bi bi-layout-text-window-reverse"></i><span>Top Selling</span>
+					</a>
+				</li><!-- End Tables Nav -->
+			</ul>
+
+			<!-- ACCOUNT ADMIN -->
+			<ul th:each="authority : ${#authentication.getAuthorities()}"
+				th:if="${authority.getAuthority().startsWith('ROLE_ACCOUNTADMIN')}" class="sidebar-nav" id="sidebar-nav">
+
+				<li class="nav-item">
+					<a class="nav-link" th:href="@{/admin/account/buyerAccount}">
+						<i class="bi bi-journal-text"></i><span>Buyer Account</span>
+					</a>
+				</li><!-- End Forms Nav -->
+
+				<li class="nav-item">
+					<a class="nav-link" th:href="@{/admin/account/sellerAccount}">
+						<i class="bi bi-layout-text-window-reverse"></i><span>Seller Account</span>
+					</a>
+				</li><!-- End Tables Nav -->
 			</ul>
 
 		</aside><!-- End Sidebar-->

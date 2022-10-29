@@ -1,4 +1,4 @@
-package com.ecommerce.springbootecommerce.entity.Account;
+package com.ecommerce.springbootecommerce.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,9 +15,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class DeliveryEntity extends AccountEntity{
+public class DeliveryEntity extends BaseEntity{
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "buyer_id", nullable = true)
-    private BuyerEntity buyer;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "account_id", nullable = false)
+    private AccountEntity account;
 }

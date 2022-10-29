@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.MyAccount;
-import com.ecommerce.springbootecommerce.entity.Account.AccountEntity;
+import com.ecommerce.springbootecommerce.entity.AccountEntity;
 import com.ecommerce.springbootecommerce.repository.AccountRepository;
 
 @Service
