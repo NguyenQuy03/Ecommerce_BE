@@ -26,6 +26,24 @@
 					</a>
 				</li><!-- End Tables Nav -->
 
+				<li class="nav-item">
+					<a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+					  <i class="bi bi-journal-text"></i><span>Product</span><i class="bi bi-chevron-down ms-auto"></i>
+					</a>
+
+					<ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+					  <li>
+						<a th:href="@{/product/list}" class="active">
+						  <i class="bi bi-circle"></i><span>My Products</span>
+						</a>
+					  </li>
+					  <li>
+						<a th:href="@{/product/new}">
+						  <i class="bi bi-circle"></i><span>Add New Product</span>
+						</a>
+					  </li>
+					</ul>
+				  </li>
 			</ul>
 
 			<!-- AUDIT ADMIN -->

@@ -28,22 +28,22 @@
 <body>
     <main>
         <header class="row" id="header">
-            <div class="col">
+            <div class="col-12">
                 <div th:replace="layout/buyerLayout/fragments/header::header"></div>
             </div>
         </header>
         <sidebar class="row">
-            <div class="col">
+            <div class="col-12">
                 <div th:replace="layout/buyerLayout/fragments/sidebar::sidebar"></div>
             </div>
         </sidebar>
         <section class="row">
-            <div class="col">
+            <div class="col-12">
                 <div layout:fragment="content"></div>
             </div>
         </section>
         <footer class="row">
-            <div class="col">
+            <div class="col-12">
                 <div th:replace="layout/buyerLayout/fragments/footer::footer"></div>
             </div>
         </footer>

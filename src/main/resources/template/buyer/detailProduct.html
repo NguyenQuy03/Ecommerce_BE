@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/buyerLayout/buyerLayout}"
+>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Product</title>
+</head>
+<body>
+		<!-- Products Start -->
+		<div class="container" layout:fragment="content">
+			<div class="card">
+				<div class="container-fliud">
+					<div class="wrapper row">
+						<div class="preview col-md-6">
+							
+							<div class="tab-pane active" id="pic-1"><img src="http://placekitten.com/400/252" /></div>
+							  
+						</div>
+						<div class="details col-md-6">
+							<h2 class="product-title">men's shoes fashion</h2>
+							<p class="product-description">Suspendisse quos? Tempus cras iure temporibus? Eu laudantium cubilia sem sem! Repudiandae et! Massa senectus enim minim sociosqu delectus posuere.</p>
+							<h3 class="price">current price: <span>$180</span></h3>
+							<div class="action">
+								<button class="add-to-cart btn btn-outline-warning" type="button">
+									<span class="bi bi-card-plus"></span>
+									Add To Cart
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Products End -->
+</body>
+</html>

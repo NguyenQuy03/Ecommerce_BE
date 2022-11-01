@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -25,7 +26,11 @@ public class ProductEntity extends BaseEntity{
     private Double price;
     
     @Column(name = "image")
-    private String image;
+    @Lob
+    private Byte[] image;
+    
+    @Column(name = "description")
+    private String description;
     
     @Column(name = "stock")
     private Integer stock;

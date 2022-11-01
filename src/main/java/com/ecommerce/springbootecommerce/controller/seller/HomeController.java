@@ -17,5 +17,4 @@ public class HomeController {
 	public String topSellingPage() {
 		return "seller/topSelling";
 	}
-
 }
