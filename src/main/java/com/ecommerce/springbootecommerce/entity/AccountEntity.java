@@ -49,8 +49,8 @@ public class AccountEntity extends BaseEntity {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "accounts_roles", joinColumns = {
-            @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = false, updatable = false) }, inverseJoinColumns = {
-                    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false, updatable = false) })
+            @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
+            @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false) })
     private Set<RoleEntity> roles = new HashSet<>();
 
     // BUYER

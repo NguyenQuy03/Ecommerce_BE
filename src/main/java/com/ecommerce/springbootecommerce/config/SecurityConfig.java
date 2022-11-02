@@ -33,7 +33,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/register**", "/admin/vendor/**")
+                .antMatchers("/register**", "/admin/vendor/**", "/api/**")
                 .permitAll()
                 .antMatchers("/home").access("hasRole('ROLE_BUYER') or hasRole('ROLE_MANAGER')")
                 .antMatchers("/seller/**").access("hasRole('ROLE_SELLER')")

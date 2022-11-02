@@ -10,6 +10,7 @@ import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -17,6 +18,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProductEntity extends BaseEntity{
     
     @Column(name = "name")
@@ -29,7 +31,7 @@ public class ProductEntity extends BaseEntity{
     @Lob
     private Byte[] image;
     
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "Text")
     private String description;
     
     @Column(name = "stock")
