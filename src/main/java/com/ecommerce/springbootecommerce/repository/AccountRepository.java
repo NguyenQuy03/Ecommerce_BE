@@ -6,5 +6,6 @@ import com.ecommerce.springbootecommerce.entity.AccountEntity;
 
 public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     AccountEntity findOneByUserNameAndStatus(String username, Boolean status);
+    AccountEntity findOneByUserName(String username);
     AccountEntity findOneById(Long id);
 }

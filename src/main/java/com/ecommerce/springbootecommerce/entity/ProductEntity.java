@@ -29,7 +29,7 @@ public class ProductEntity extends BaseEntity{
     
     @Column(name = "image")
     @Lob
-    private Byte[] image;
+    private byte[] image;
     
     @Column(name = "description", columnDefinition = "Text")
     private String description;
@@ -44,4 +44,5 @@ public class ProductEntity extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "account_id", nullable = false)
     private AccountEntity account;
+
 }

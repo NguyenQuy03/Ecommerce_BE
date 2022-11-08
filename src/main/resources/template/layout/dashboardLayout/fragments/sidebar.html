@@ -18,13 +18,13 @@
 					<a class="nav-link" th:href="@{/seller/recentSales}">
 						<i class="bi bi-journal-text"></i><span>Recent Sales</span>
 					</a>
-				</li><!-- End Forms Nav -->
+				</li>
 
 				<li class="nav-item">
 					<a class="nav-link" th:href="@{/seller/topSelling}">
 						<i class="bi bi-layout-text-window-reverse"></i><span>Top Selling</span>
 					</a>
-				</li><!-- End Tables Nav -->
+				</li>
 
 				<li class="nav-item">
 					<a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
@@ -33,12 +33,12 @@
 
 					<ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
 					  <li>
-						<a th:href="@{/product/list}" class="active">
+						<a th:href="@{/seller/product/list}">
 						  <i class="bi bi-circle"></i><span>My Products</span>
 						</a>
 					  </li>
 					  <li>
-						<a th:href="@{/product/new}">
+						<a th:href="@{/seller/product/new}">
 						  <i class="bi bi-circle"></i><span>Add New Product</span>
 						</a>
 					  </li>

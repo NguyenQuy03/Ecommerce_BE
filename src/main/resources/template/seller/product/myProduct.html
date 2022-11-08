@@ -17,23 +17,25 @@
             <ul class="nav nav-tabs nav-tabs-bordered">
 
                 <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">
-                        All product</button>
+                    <a th:href="@{product/list}" class="nav-link active"
+                        data-bs-toggle="tab" data-bs-target="#all-product" aria-selected="true" role="tab">
+                        All product
+                    </a>
                 </li>
 
                 <li class="nav-item">
                     <button class="nav-link" data-bs-toggle="tab"
-                        data-bs-target="#profile-change-password">Live</button>
+                        data-bs-target="#live">Live</button>
                 </li>
 
                 <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#sold-out">
                         Sold out</button>
                 </li>
 
                 <li class="nav-item">
                     <button class="nav-link" data-bs-toggle="tab"
-                        data-bs-target="#profile-change-password">Reviewing</button>
+                        data-bs-target="#reviewing">Reviewing</button>
                 </li>
 
             </ul>
@@ -42,11 +44,11 @@
                 <div class="tab-pane fade show active profile-overview" id="profile-overview">
                     <div class="row justify-content-around align-items-center">
                         <span class="col-2 card-title">0 Product</span>
-                        <a th:href="@{/product/new}" class="col-3 btn btn-primary" style="height: 45px; line-height: 1.8;">Add a New Product</a>
+                        <a th:href="@{/product/new}" class="col-3 btn btn-primary" style="height: 40px; line-height: 1.8;">Add a New Product</a>
                     </div>
                 </div>
 
-                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                <div class="tab-pane fade pt-3 active show" id="all-product">
                     <!-- All Product -->
                     <div class="card">
                           <!-- Table with stripped rows -->
@@ -62,19 +64,35 @@
                             </thead>
                             <tbody>
                               <tr>
-                                <th scope="row">1</th>
-                                <td>Brandon Jacob</td>
-                                <td>Designer</td>
-                                <td>28</td>
-                                <td>2016-05-25</td>
+                                <th scope="row">3</th>
+                                <td>Ashleigh Langosh</td>
+                                <td>Finance</td>
+                                <td>45</td>
+                                <td>2011-08-12</td>
                               </tr>
+                            </tbody>
+                          </table>
+                          <!-- End Table with stripped rows -->
+            
+                    </div>
+
+                </div>
+                
+                <div class="tab-pane fade pt-3" id="live">
+                    <!-- All Product -->
+                    <div class="card">
+                          <!-- Table with stripped rows -->
+                          <table class="table table-striped table-bordered">
+                            <thead>
                               <tr>
-                                <th scope="row">2</th>
-                                <td>Bridie Kessler</td>
-                                <td>Developer</td>
-                                <td>35</td>
-                                <td>2014-12-05</td>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Position</th>
+                                <th scope="col">Age</th>
+                                <th scope="col">Start Date</th>
                               </tr>
+                            </thead>
+                            <tbody>
                               <tr>
                                 <th scope="row">3</th>
                                 <td>Ashleigh Langosh</td>
@@ -82,65 +100,72 @@
                                 <td>45</td>
                                 <td>2011-08-12</td>
                               </tr>
-                              <tr>
-                                <th scope="row">4</th>
-                                <td>Angus Grady</td>
-                                <td>HR</td>
-                                <td>34</td>
-                                <td>2012-06-11</td>
-                              </tr>
-                              <tr>
-                                <th scope="row">5</th>
-                                <td>Raheem Lehner</td>
-                                <td>Dynamic Division Officer</td>
-                                <td>47</td>
-                                <td>2011-04-19</td>
-                              </tr>
                             </tbody>
                           </table>
                           <!-- End Table with stripped rows -->
             
+                    </div>
+
+                </div>
+
+                <div class="tab-pane fade pt-3" id="sold-out">
+                    <div class="card">
+                          <table class="table table-striped table-bordered">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Position</th>
+                                <th scope="col">Age</th>
+                                <th scope="col">Start Date</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th scope="row">3</th>
+                                <td>Ashleigh Langosh</td>
+                                <td>Finance</td>
+                                <td>45</td>
+                                <td>2011-08-12</td>
+                              </tr>
+                            </tbody>
+                          </table>            
                       </div>
 
                 </div>
 
-                <div class="tab-pane fade pt-3" id="profile-change-password">
-                    <!-- Change Password Form -->
-                    <form>
-
-                        <div class="row mb-3">
-                            <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current
-                                Password</label>
-                            <div class="col-md-8 col-lg-9">
-                                <input name="password" type="password" class="form-control" id="currentPassword">
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New
-                                Password</label>
-                            <div class="col-md-8 col-lg-9">
-                                <input name="newpassword" type="password" class="form-control" id="newPassword">
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter
-                                New Password</label>
-                            <div class="col-md-8 col-lg-9">
-                                <input name="renewpassword" type="password" class="form-control" id="renewPassword">
-                            </div>
-                        </div>
-
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Change Password</button>
-                        </div>
-                    </form><!-- End Change Password Form -->
+                <div class="tab-pane fade pt-3" id="reviewing">
+                    <div class="card">
+                          <table class="table table-striped table-bordered">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Position</th>
+                                <th scope="col">Age</th>
+                                <th scope="col">Start Date</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <th scope="row">3</th>
+                                <td>Ashleigh Langosh</td>
+                                <td>Finance</td>
+                                <td>45</td>
+                                <td>2011-08-12</td>
+                              </tr>
+                            </tbody>
+                          </table>            
+                      </div>
 
                 </div>
+                
             </div><!-- End Bordered Tabs -->
         </div>
     </div>
+
+    <script>
+    </script>
 </body>
 
 </html>

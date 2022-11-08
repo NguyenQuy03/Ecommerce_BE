@@ -4,4 +4,5 @@ import com.ecommerce.springbootecommerce.dto.ProductDTO;
 
 public interface IProductService {
     ProductDTO save(ProductDTO productDTO);
+    void delete(long[] ids);
 }

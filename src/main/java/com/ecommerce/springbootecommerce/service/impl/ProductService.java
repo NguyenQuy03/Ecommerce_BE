@@ -2,6 +2,8 @@ package com.ecommerce.springbootecommerce.service.impl;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.springbootecommerce.converter.ProductConverter;
@@ -36,16 +38,27 @@ public class ProductService implements IProductService {
             ProductEntity preProductEntity = productRepository.findOneById(productDTO.getId());
             productEntity = productConverter.toEntity(productDTO, preProductEntity);
         } else {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentPrincipalName  = authentication.getName();
+            
             productEntity = productConverter.toEntity(productDTO);            
+            CategoryEntity categoryEntity = categoryRepository.findOneById(productDTO.getCategoryId());
+            AccountEntity accountEntity = accountRepository.findOneByUserName(currentPrincipalName);
+            
+            productEntity.setCategory(categoryEntity);
+            productEntity.setAccount(accountEntity);
+            
         }
         
-        CategoryEntity categoryEntity = categoryRepository.findOneByCode(productDTO.getCategoryCode());
-        AccountEntity accountEntity = accountRepository.findOneById(productDTO.getAccountId());
         
-        productEntity.setCategory(categoryEntity);
-        productEntity.setAccount(accountEntity);
-
         productRepository.save(productEntity);
         return productConverter.toDTO(productEntity);
+    }
+
+    @Override
+    public void delete(long[] ids) {
+        for (long id : ids) {
+            productRepository.deleteById(id);
+        }
     }
 }

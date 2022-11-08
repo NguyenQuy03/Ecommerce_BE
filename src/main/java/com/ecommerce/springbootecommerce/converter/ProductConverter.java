@@ -12,28 +12,25 @@ public class ProductConverter {
         ProductEntity productEntity = new ProductEntity();
         productEntity.setName(product.getName());
         productEntity.setPrice(product.getPrice());
-        productEntity.setImage(product.getImage());
-        productEntity.setStock(product.getStock());
         productEntity.setDescription(product.getDescription());
+        productEntity.setStock(product.getStock());
+        productEntity.setImage(product.getImage());
         return productEntity;
     }
     
     public ProductDTO toDTO(ProductEntity entity) {
         ProductDTO productDTO = new ProductDTO();
-        if (entity.getId() != null) {
-            productDTO.setId(entity.getId());
-        } else {
-            productDTO.setModifiedDate(entity.getMordifiedDate());
-            productDTO.setModifiedBy(entity.getMordifiedBy());
-        }
+        
+        productDTO.setId(entity.getId());
         productDTO.setName(entity.getName());
         productDTO.setPrice(entity.getPrice());
-        productDTO.setImage(entity.getImage());
         productDTO.setStock(entity.getStock());
         productDTO.setDescription(entity.getDescription());
-        
+        productDTO.setImage(entity.getImage());
         productDTO.setCreatedDate(entity.getCreatedDate());
         productDTO.setCreatedBy(entity.getCreatedBy());
+        productDTO.setModifiedDate(entity.getMordifiedDate());
+        productDTO.setModifiedBy(entity.getMordifiedBy());
         
         return productDTO;
     }
@@ -41,9 +38,9 @@ public class ProductConverter {
     public ProductEntity toEntity(ProductDTO product, ProductEntity productEntity) {
         productEntity.setName(product.getName());
         productEntity.setPrice(product.getPrice());
-        productEntity.setImage(product.getImage());
         productEntity.setStock(product.getStock());
         productEntity.setDescription(product.getDescription());
+        productEntity.setImage(product.getImage());
         return productEntity;
     }
 }
