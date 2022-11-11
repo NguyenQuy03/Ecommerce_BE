@@ -1,11 +1,12 @@
 package com.ecommerce.springbootecommerce.entity;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -29,10 +30,11 @@ public class CategoryEntity extends BaseEntity{
     private String code;
 
     @Column(name = "thumbnail")
-    private String thumbnail;
+    @Lob
+    private byte[] thumbnail;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
-    private Set<ProductEntity> products;
+    private List<ProductEntity> products;
 
 }

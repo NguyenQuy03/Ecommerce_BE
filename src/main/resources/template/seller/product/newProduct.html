@@ -34,15 +34,11 @@
                             <div class="row mb-3">
                                 <label for="inputCategory" class="col-sm-2 col-form-label">Category</label>
 								<div class="col-sm-10">
-                                    <select class="form-control" id="inputCategory" th:field="*{categoryId}">
-                                        <option value="1">
-                                            1
+                                    <select class="form-control" id="inputCategory" th:field="*{categoryId}" required>
+                                        <option selected value="" hidden>
                                         </option>
-                                        <option value="2">
-                                            2
-                                        </option>
-                                        <option value="3">
-                                            3
+                                        <option th:each="category : ${categories}"
+												th:utext="${category.name}" value="${category.id}">
                                         </option>
                                     </select>
 								</div>

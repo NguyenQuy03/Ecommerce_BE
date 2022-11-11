@@ -16,16 +16,18 @@
     <!-- Vendor CSS Files -->
     <link rel="stylesheet" href="/admin/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/admin/vendor/bootstrap-icons/bootstrap-icons.css">
-    <link rel="stylesheet" href="/admin/vendor/boxicons/css/boxicons.min.css">
-    <link rel="stylesheet" href="/admin/vendor/remixicon/remixicon.css">
     <link rel="stylesheet" href="/admin/vendor/simple-datatables/style.css">
 
     <!-- Template Main CSS File -->
     <link rel="stylesheet" href="/admin/css/style.css">
+    
+    <script defer src="/seller/js/jquery.twbsPagination.min.js"></script>
+    <script defer src="/seller/js/seller.js"></script>
+    
 </head>
 
 <body>
-    <main>
+    <main style="min-width: 100vw">
         <!-- HEADER -->
         <header class="row">
             <div class="col">
@@ -41,15 +43,11 @@
         </sidebar>
 
         <!-- CONTENT -->
-        <main id="main" class="main">
+        <main id="main" class="main" style="padding-right: 0;">
             <section class="section dashboard">
                 <div class="row">
                     <div class="col-lg-12">
-                        <div class="row">
-                            <div class="col">
                                 <div layout:fragment="content"></div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </section>

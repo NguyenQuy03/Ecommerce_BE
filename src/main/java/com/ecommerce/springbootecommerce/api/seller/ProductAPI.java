@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,7 +52,6 @@ public class ProductAPI {
         }
 
         product.setImage(imageBytes);
-        product.setBase64Image(imageBytes.toString());
         productService.save(product);
         
         return "redirect:/seller/product/list";
@@ -67,6 +70,26 @@ public class ProductAPI {
     @DeleteMapping(value="/product")
     public void deleteProduct(@RequestBody long[] ids) {
         productService.delete(ids);
+    }
+    
+    @GetMapping(value="/product")
+    public ProductDTO displayProduct(
+        @RequestParam("page") int page,
+        @RequestParam("size") int size
+    ) {
+        ProductDTO product = new ProductDTO();
+        product.setPage(page);
+        product.setSize(size);
+        
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        List<ProductDTO> listProductDTO = productService.findAll(pageable);
+        
+        product.setListResult(listProductDTO);
+
+        product.setTotalPage((int) Math.ceil(productService.countTotalProduct() / size));
+
+        return product;
     }
     
 }
