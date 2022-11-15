@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
+import com.ecommerce.springbootecommerce.entity.AccountEntity;
+import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.IProductService;
 
@@ -25,6 +28,9 @@ public class ProductController {
 
     @Autowired
     private IProductService productService;
+    
+    @Autowired
+    private IAccountService accountService;
 
     @GetMapping("list/all")
     public String allProduct(
@@ -32,10 +38,13 @@ public class ProductController {
             @RequestParam("page") int page,
             @RequestParam("size") int size
         ) {
-            long quantityProduct = productService.countTotalProduct(); 
+            String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+            AccountEntity account = accountService.findUserByUserName(userName);
+            
+            long quantityProduct = productService.countAllByAccountId(account.getId()); 
             
             Pageable pageable = PageRequest.of(page - 1, size);
-            List<ProductDTO> listProduct = productService.findAll(pageable);
+            List<ProductDTO> listProduct = productService.findAllByAccountId(account.getId(), pageable);
             Integer totalPage = (int) Math.ceil((double) quantityProduct / size);
             
             ProductDTO dto = new ProductDTO();

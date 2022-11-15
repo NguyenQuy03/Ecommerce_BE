@@ -1,3 +1,4 @@
+
 package com.ecommerce.springbootecommerce.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/register**", "/admin/vendor/**", "/api/**")
+                .antMatchers("/register**", "/admin/vendor/**", "/common/**", "/home/**", "/buyer/**")
                 .permitAll()
                 .antMatchers("/home").access("hasRole('ROLE_BUYER') or hasRole('ROLE_MANAGER')")
                 .antMatchers("/seller/**").access("hasRole('ROLE_SELLER')")

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head>
     <meta charset="UTF-8">
@@ -70,9 +71,9 @@
                           </div>
                     </div>
 
-                    <div sec:authorize="isAnonymous()">
-                        <a href="" class="nav-item nav-link">Login</a>
-                        <a href="" class="nav-item nav-link">Register</a>
+                    <div sec:authorize="isAnonymous()" class="d-flex">
+                        <a th:href="@{/login}" class="nav-item nav-link">Login</a>
+                        <a th:href="@{/register}" class="nav-item nav-link">Register</a>
                     </div>
                     
                 </div>

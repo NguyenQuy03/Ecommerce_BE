@@ -30,7 +30,6 @@ public class ProductConverter {
         productDTO.setStock(entity.getStock());
         productDTO.setDescription(entity.getDescription());
         productDTO.setImage(entity.getImage());
-        productDTO.setImageBase64(entity.getImage().toString());
 
         productDTO.setCreatedDate(entity.getCreatedDate());
         productDTO.setCreatedBy(entity.getCreatedBy());

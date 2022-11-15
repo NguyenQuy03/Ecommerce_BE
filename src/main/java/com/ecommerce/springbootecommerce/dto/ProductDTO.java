@@ -1,6 +1,8 @@
 package com.ecommerce.springbootecommerce.dto;
 
+import java.text.NumberFormat;
 import java.util.Base64;
+import java.util.Locale;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +13,8 @@ public class ProductDTO extends BaseDTO<ProductDTO>{
 
     private String name;
     private Double price;
+    @SuppressWarnings("unused")
+    private String intPrice;
     private byte[] image;
     private String imageBase64;
     private String description;
@@ -25,5 +29,16 @@ public class ProductDTO extends BaseDTO<ProductDTO>{
     
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
+    }
+    
+    public String getIntPrice() {
+        Locale vnd = new Locale("vi", "VN");
+        NumberFormat vndFormat = NumberFormat.getCurrencyInstance(vnd);
+        vndFormat.format(this.getPrice());
+        return vndFormat.format(this.getPrice());
+    }
+    
+    public void setIntPrice(String intPrice) {
+        this.intPrice = intPrice;
     }
 };

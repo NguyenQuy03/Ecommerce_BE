@@ -62,10 +62,17 @@ public class ProductService implements IProductService {
             productRepository.deleteById(id);
         }
     }
-
+    
     @Override
     public List<ProductDTO> findAll(Pageable pageable) {
         List<ProductEntity> listProductEntity = productRepository.findAll(pageable).getContent();
+        List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
+        return listProductDTO;
+    }
+
+    @Override
+    public List<ProductDTO> findAllByAccountId(long accountId, Pageable pageable) {
+        List<ProductEntity> listProductEntity = productRepository.findAllByAccountId(accountId, pageable).getContent();
         List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
         return listProductDTO;
     }
@@ -86,8 +93,8 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public long countTotalProduct() {
-        return productRepository.count();
+    public long countAllByAccountId(long accountId) {
+        return productRepository.countAllByAccountId(accountId);
     }
 
     @Override
@@ -99,6 +106,5 @@ public class ProductService implements IProductService {
     public long countSoldOutProduct() {
         return productRepository.countSoldOutProduct();
     }
-
 
 }

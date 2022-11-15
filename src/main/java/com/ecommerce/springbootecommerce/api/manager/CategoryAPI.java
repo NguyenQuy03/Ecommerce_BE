@@ -51,7 +51,7 @@ public class CategoryAPI {
         category.setThumbnailBase64(imageBytes.toString());
         categoryService.save(category);
         
-        return new RedirectView("/manager/category");
+        return new RedirectView("/manager/category?page=1&size=2");
     }
 
 }
