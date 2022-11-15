@@ -38,7 +38,6 @@ public class SecurityConfig {
                 .antMatchers("/home").access("hasRole('ROLE_BUYER') or hasRole('ROLE_MANAGER')")
                 .antMatchers("/seller/**").access("hasRole('ROLE_SELLER')")
                 .antMatchers("/manager/**").access("hasRole('ROLE_MANAGER')")
-                .antMatchers("/admin/account/**").access("hasRole('ROLE_ACCOUNTADMIN') or hasRole('ROLE_MANAGER')")
                 .antMatchers("/admin/audit/**").access("hasRole('ROLE_AUDITADMIN') or hasRole('ROLE_MANAGER')")
                 .anyRequest().authenticated()
                 .and()

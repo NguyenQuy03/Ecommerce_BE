@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head>
-	<meta charset="UTF-8">
+<meta charset="UTF-8">
 </head>
 
 <body>
@@ -12,75 +13,110 @@
 
 			<!-- SELLER -->
 			<ul th:each="authority : ${#authentication.getAuthorities()}"
-				th:if="${authority.getAuthority().startsWith('ROLE_SELLER')}" class="sidebar-nav" id="sidebar-nav">
+				th:if="${authority.getAuthority().startsWith('ROLE_SELLER')}"
+				class="sidebar-nav" id="sidebar-nav">
 
-				<li class="nav-item">
-					<a class="nav-link" th:href="@{/seller/recentSales}">
-						<i class="bi bi-journal-text"></i><span>Recent Sales</span>
-					</a>
-				</li>
+				<li class="nav-item"><a class="nav-link"
+					th:href="@{/seller/recentSales}"> <i class="bi bi-journal-text"></i><span>Recent
+							Sales</span>
+				</a></li>
 
-				<li class="nav-item">
-					<a class="nav-link" th:href="@{/seller/topSelling}">
-						<i class="bi bi-layout-text-window-reverse"></i><span>Top Selling</span>
-					</a>
-				</li>
+				<li class="nav-item"><a class="nav-link"
+					th:href="@{/seller/topSelling}"> <i
+						class="bi bi-layout-text-window-reverse"></i><span>Top
+							Selling</span>
+				</a></li>
 
-				<li class="nav-item">
-					<a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-					  <i class="bi bi-journal-text"></i><span>Product</span><i class="bi bi-chevron-down ms-auto"></i>
-					</a>
+				<li class="nav-item"><a class="nav-link "
+					data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+						<i class="bi bi-journal-text"></i><span>Product</span><i
+						class="bi bi-chevron-down ms-auto"></i>
+				</a>
 
-					<ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
-					  <li>
-						<a th:href="@{/seller/product/list/all?page=1&size=2}">
-						  <i class="bi bi-circle"></i><span>My Products</span>
-						</a>
-					  </li>
-					  <li>
-						<a th:href="@{/seller/product/new}">
-						  <i class="bi bi-circle"></i><span>Add New Product</span>
-						</a>
-					  </li>
-					</ul>
-				  </li>
+					<ul id="forms-nav" class="nav-content collapse show"
+						data-bs-parent="#sidebar-nav">
+						<li><a th:href="@{/seller/product/list/all?page=1&size=2}">
+								<i class="bi bi-circle"></i><span>My Products</span>
+						</a></li>
+						<li><a th:href="@{/seller/product/new}"> <i
+								class="bi bi-circle"></i><span>Add New Product</span>
+						</a></li>
+					</ul></li>
 			</ul>
 
 			<!-- AUDIT ADMIN -->
 			<ul th:each="authority : ${#authentication.getAuthorities()}"
-				th:if="${authority.getAuthority().startsWith('ROLE_AUDITADMIN')}" class="sidebar-nav" id="sidebar-nav">
+				th:if="${authority.getAuthority().startsWith('ROLE_AUDITADMIN')}"
+				class="sidebar-nav" id="sidebar-nav">
 
-				<li class="nav-item">
-					<a class="nav-link" th:href="@{/admin/auditAdmin/recentTransaction}">
-						<i class="bi bi-journal-text"></i><span>Recent Transaction</span>
-					</a>
-				</li><!-- End Forms Nav -->
+				<li class="nav-item"><a class="nav-link"
+					th:href="@{/admin/auditAdmin/recentTransaction}"> <i
+						class="bi bi-journal-text"></i><span>Recent Transaction</span>
+				</a></li>
+				<!-- End Forms Nav -->
 
-				<li class="nav-item">
-					<a class="nav-link" th:href="@{/admin/auditAdmin/topSelling}">
-						<i class="bi bi-layout-text-window-reverse"></i><span>Top Selling</span>
-					</a>
-				</li><!-- End Tables Nav -->
+				<li class="nav-item"><a class="nav-link"
+					th:href="@{/admin/auditAdmin/topSelling}"> <i
+						class="bi bi-layout-text-window-reverse"></i><span>Top
+							Selling</span>
+				</a></li>
+				<!-- End Tables Nav -->
 			</ul>
 
-			<!-- ACCOUNT ADMIN -->
+			<!-- MANAGER -->
 			<ul th:each="authority : ${#authentication.getAuthorities()}"
-				th:if="${authority.getAuthority().startsWith('ROLE_ACCOUNTADMIN')}" class="sidebar-nav" id="sidebar-nav">
+				th:if="${authority.getAuthority().startsWith('ROLE_MANAGER')}"
+				class="sidebar-nav" id="sidebar-nav">
 
-				<li class="nav-item">
-					<a class="nav-link" th:href="@{/admin/account/buyerAccount}">
-						<i class="bi bi-journal-text"></i><span>Buyer Account</span>
+				<li class="nav-item"><a class="nav-link "
+					data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+						<i class="bi bi-person-lines-fill"></i>
+						<span>Accounts</span><i
+						class="bi bi-chevron-down ms-auto"></i>
 					</a>
-				</li><!-- End Forms Nav -->
 
-				<li class="nav-item">
-					<a class="nav-link" th:href="@{/admin/account/sellerAccount}">
-						<i class="bi bi-layout-text-window-reverse"></i><span>Seller Account</span>
-					</a>
-				</li><!-- End Tables Nav -->
+					<ul id="forms-nav" class="nav-content collapse show"
+						data-bs-parent="#sidebar-nav">
+
+						<li class="nav-item">
+							<a class="nav-link" th:href="@{/manager/account/adminAccount}">
+								<i class="bi bi-person-bounding-box"></i>
+								<span>Admin Account</span>
+							</a>
+						</li>
+
+						<li class="nav-item">
+							<a class="nav-link" th:href="@{/manager/account/sellerAccount}">
+								<i class="bi bi-coin"></i>
+								<span>Seller Account</span>
+							</a>
+						</li>
+
+						<li class="nav-item">
+							<a class="nav-link" th:href="@{/manager/account/buyerAccount}">
+								<i class="bi bi-people"></i>
+								<span>Buyer Account</span>
+							</a>
+						</li>
+					</ul></li>
+					
+					<li class="nav-item"><a class="nav-link" th:href="@{/manager/category?page=1&size=2}">
+						<i class="bi bi-card-list"></i>
+						<span>Categories</span>
+						</a>
+					</li>
+					
+					<li class="nav-item">
+							<a class="nav-link" th:href="@{/manager/transaction}">
+								<i class="bi bi-cart3"></i>
+								<span>Transactions</span>
+							</a>
+						</li>
+				<!-- End Tables Nav -->
 			</ul>
 
-		</aside><!-- End Sidebar-->
+		</aside>
+		<!-- End Sidebar-->
 	</div>
 </body>
 

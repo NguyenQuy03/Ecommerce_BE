@@ -3,8 +3,6 @@ package com.ecommerce.springbootecommerce.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Component;
 
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
@@ -32,6 +30,7 @@ public class ProductConverter {
         productDTO.setStock(entity.getStock());
         productDTO.setDescription(entity.getDescription());
         productDTO.setImage(entity.getImage());
+        productDTO.setImageBase64(entity.getImage().toString());
 
         productDTO.setCreatedDate(entity.getCreatedDate());
         productDTO.setCreatedBy(entity.getCreatedBy());

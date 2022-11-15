@@ -41,11 +41,9 @@ public class CustomLoginHandler extends SimpleUrlAuthenticationSuccessHandler {
         List<String> roles = SecurityUtil.getAuthorities();
 
         if (isManager(roles)) {
-            url = "/manager/home";
+            url = "/manager/transaction";
         } else if (isAuditAdmin(roles)) {
             url = "/admin/audit/recentTransaction";
-        } else if (isAccountAdmin(roles)) {
-            url = "/admin/account/buyerAccount";
         } else if (isSeller(roles)) {
             url = "/seller/recentSales";
         } else if (isBuyer(roles)) {
@@ -61,10 +59,6 @@ public class CustomLoginHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private boolean isAuditAdmin(List<String> roles) {
         return roles.contains("ROLE_AUDITADMIN");
-    }
-
-    private boolean isAccountAdmin(List<String> roles) {
-        return roles.contains("ROLE_ACCOUNTADMIN");
     }
 
     private boolean isBuyer(List<String> roles) {

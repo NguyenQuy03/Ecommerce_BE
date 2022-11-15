@@ -61,6 +61,7 @@
 										<th scope="col">Price</th>
 										<th scope="col">Stock</th>
 										<th scope="col">Description</th>
+										<th scope="col">Image</th>
 										<th scope="col">Action</th>
 									</tr>
 								</thead>
@@ -71,6 +72,7 @@
 										<td th:utext="${product.price}"></td>
 										<td th:utext="${product.stock}"></td>
 										<td th:utext="${product.description}"></td>
+										<td><img style="max-width: 80px;" id="imagePreview" th:src="'data:image/png;base64,' + ${product.imageBase64}" alt="Background image" /></td>
 										<td><button class="btn btn-success">
 												<i class="bi bi-pencil-square"></i>
 											</button></td>
@@ -98,6 +100,7 @@
 			</div>
 		</form>
 			<input type="hidden" th:value="*{totalPage}" name="totalPage" id="totalPage">
+			
 	</div>
 </body>
 

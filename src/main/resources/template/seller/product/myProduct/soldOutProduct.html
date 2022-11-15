@@ -18,19 +18,19 @@
 				<!-- Bordered Tabs -->
 				<ul class="nav nav-tabs nav-tabs-bordered">
 
-					<li class="nav-item"><a th:href="@{/seller/product/list/all}"
+					<li class="nav-item"><a th:href="@{/seller/product/list/all?page=1&size=2}"
 						class="nav-link" role="tab"> All </a></li>
 
-					<li class="nav-item"><a th:href="@{/seller/product/list/live}"
+					<li class="nav-item"><a th:href="@{/seller/product/list/live?page=1&size=2}"
 						class="nav-link" role="tab"> Live </a></li>
 
 					<li class="nav-item"><a
-						th:href="@{/seller/product/list/soldout}" class="nav-link active"
+						th:href="@{/seller/product/list/soldout?page=1&size=2}" class="nav-link active"
 						data-bs-toggle="tab" data-bs-target="#sold-out"
 						aria-selected="true" role="tab"> Sold out </a></li>
 
 					<li class="nav-item"><a
-						th:href="@{/seller/product/list/reviewing}" class="nav-link"
+						th:href="@{/seller/product/list/reviewing?page=1&size=2}" class="nav-link"
 						role="tab"> Reviewing </a></li>
 
 				</ul>

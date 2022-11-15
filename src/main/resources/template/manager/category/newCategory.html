@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/dashboardLayout/dashboardLayout}"
+>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Category</title>
+
+</head>
+
+<body>
+    <div class="card" layout:fragment="content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Basic Information</h5>
+
+                        <form th:action="@{/api/manager/category}" method="POST"
+                            id="formSubmit" enctype="multipart/form-data"
+                            th:object="${category}"
+                        >
+                            <div class="row mb-3">
+                                <label for="inputName" class="col-sm-2 col-form-label">Category Name</label>
+                                <div class="col-sm-10">
+                                    <input id="inputName" th:field="*{name}" type="text" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="inputCode" class="col-sm-2 col-form-label">Category Code</label>
+								<div class="col-sm-10">
+								   	<input id="inputCode" th:field="*{code}" type="text" class="form-control" required>
+								
+								</div>
+							</div>
+                            <div class="row mb-3">
+                                <label for="formFile" class="col-sm-2 col-form-label">Category Image</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" name="imageField"
+                                    	type="file" id="formFile" accept="image/png, image/jpeg" required
+                                    >
+                                </div>
+                            </div>
+                            <br/>
+                            <div class="row mb-3">
+                                <div class="col-4">
+                                    <label class="col-sm-2 col-form-label">Action</label>
+                                </div>
+                                <div class="col-8 d-flex">
+                                    <div class="col-sm-10 col-lg-3">
+                                        <a th:href="@{/manager/category}" class="btn btn-danger">Cancel</a>
+                                    </div>
+                                    <div class="col-sm-10 col-lg-3">
+                                        <button id="saveBtn" type="submit" class="button-update btn btn-primary">Save and Publish</button>
+                                    </div>
+
+                                    <input type="hidden" th:field="*{id}"/>
+
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>

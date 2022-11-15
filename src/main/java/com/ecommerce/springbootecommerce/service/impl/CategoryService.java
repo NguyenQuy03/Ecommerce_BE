@@ -1,9 +1,9 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.springbootecommerce.converter.CategoryConverter;
@@ -21,16 +21,46 @@ public class CategoryService implements ICategoryService {
     @Autowired
     private CategoryConverter categoryConverter;
 
-    @Override
     public List<CategoryDTO> findAll() {
-        List<CategoryEntity> categories = categoryRepository.findAll();
-        List<CategoryDTO> listCategory = new ArrayList<>();
-        for (CategoryEntity category : categories) {
-            CategoryDTO categoryDto = new CategoryDTO();
-            categoryDto = categoryConverter.toDTO(category);
-            listCategory.add(categoryDto);
-        }
+        List<CategoryEntity> listCategorieEntity = categoryRepository.findAll();
+        List<CategoryDTO> listCategory = categoryConverter.toListCategoryDTO(listCategorieEntity);
         return listCategory;
+    }
+
+    @Override
+    public CategoryDTO save(CategoryDTO categoryDTO) {
+        CategoryEntity categoryEntity = new CategoryEntity();
+
+        if (categoryDTO.getId() != null) {
+            CategoryEntity preCategoryEntity = categoryRepository.findOneById(categoryDTO.getId());
+            categoryEntity = categoryConverter.toEntity(categoryDTO, preCategoryEntity);
+        } else {
+
+            categoryEntity = categoryConverter.toEntity(categoryDTO);
+
+        }
+
+        categoryRepository.save(categoryEntity);
+        return categoryConverter.toDTO(categoryEntity);
+    }
+
+    @Override
+    public void delete(long[] ids) {
+        for (long id : ids) {
+            categoryRepository.deleteById(id);
+        }   
+    }
+
+    @Override
+    public long count() {
+        return categoryRepository.count();
+    }
+
+    @Override
+    public List<CategoryDTO> findAll(Pageable pageable) {
+        List<CategoryEntity> listCategoryEntity = categoryRepository.findAll(pageable).getContent();
+        List<CategoryDTO> listProductDTO = categoryConverter.toListCategoryDTO(listCategoryEntity);
+        return listProductDTO;
     }
 
 }

@@ -4,13 +4,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,29 +17,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IProductService;
 
 
-@RestController()
+@RestController
 @RequestMapping("/api/seller")
 public class ProductAPI {
     
     @Autowired
     private IProductService productService;
 
-    public static String uploadDirectory = System.getProperty("user.dir") + "/src/main/resources/imagedata";
+    public static String uploadDirectory = System.getProperty("user.dir") + "/src/main/resources/imagedata/seller";
     
     @PostMapping(value="/product")
-    public String createProduct(
+    public RedirectView createProduct(
         @ModelAttribute(name = "product") ProductDTO product,
         @RequestParam(value = "imageField") MultipartFile file
     ) throws IOException{
         byte[] imageBytes = file.getBytes();
         
+        String author = SecurityContextHolder.getContext().getAuthentication().getName();
+        
         String fileName= file.getOriginalFilename();
-        Path fileNameAndPath = Paths.get(uploadDirectory, fileName);
+        Path fileNameAndPath = Paths.get(uploadDirectory, author + "_" + fileName);
         
         try {
             Files.write(fileNameAndPath, imageBytes);
@@ -52,9 +52,10 @@ public class ProductAPI {
         }
 
         product.setImage(imageBytes);
+        product.setImageBase64(imageBytes.toString());
         productService.save(product);
         
-        return "redirect:/seller/product/list";
+        return new RedirectView("/seller/product/list/all?page=1&size=2");
     }
     
     @PutMapping(value="/product/{id}")
@@ -70,26 +71,6 @@ public class ProductAPI {
     @DeleteMapping(value="/product")
     public void deleteProduct(@RequestBody long[] ids) {
         productService.delete(ids);
-    }
-    
-    @GetMapping(value="/product")
-    public ProductDTO displayProduct(
-        @RequestParam("page") int page,
-        @RequestParam("size") int size
-    ) {
-        ProductDTO product = new ProductDTO();
-        product.setPage(page);
-        product.setSize(size);
-        
-
-        Pageable pageable = PageRequest.of(page - 1, size);
-        List<ProductDTO> listProductDTO = productService.findAll(pageable);
-        
-        product.setListResult(listProductDTO);
-
-        product.setTotalPage((int) Math.ceil(productService.countTotalProduct() / size));
-
-        return product;
     }
     
 }
