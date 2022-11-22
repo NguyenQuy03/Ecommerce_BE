@@ -19,4 +19,10 @@ public class AccountService implements IAccountService{
         return account;
     }
 
+    @Override
+    public boolean accountExist(String email) {      
+        return accountRepository.findByEmail(email).isPresent();
+    }
+
+
 }

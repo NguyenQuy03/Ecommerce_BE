@@ -66,10 +66,10 @@ public class ProductController {
             @RequestParam("size") int size
         ) {
         
-        long quantityLiveProduct = productService.countLiveProduct();
+        long quantityLiveProduct = productService.countByStockGreaterThan(0);
 
         Pageable pageable = PageRequest.of(page - 1, size);
-        List<ProductDTO> liveProducts = productService.findLiveProduct(pageable);
+        List<ProductDTO> liveProducts = productService.findByStockGreaterThan(0, pageable);
         Integer totalPage = (int) Math.ceil((double) quantityLiveProduct / size);
         
         ProductDTO dto = new ProductDTO();
@@ -91,10 +91,10 @@ public class ProductController {
             @RequestParam("size") int size
         ) {
         
-        long quantitySoldOutProduct = productService.countSoldOutProduct();
+        long quantitySoldOutProduct = productService.countByStockEquals(0);
 
         Pageable pageable = PageRequest.of(page - 1, size);
-        List<ProductDTO> soldOutProducts = productService.findSoldOutProduct(pageable);
+        List<ProductDTO> soldOutProducts = productService.findByStockEquals(0, pageable);
         Integer totalPage = (int) Math.ceil((double) quantitySoldOutProduct / size);
         
         ProductDTO dto = new ProductDTO();

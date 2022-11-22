@@ -21,19 +21,22 @@
                         <h5 class="card-title">Basic Information</h5>
 
                         <form th:action="@{/api/seller/product}" method="POST"
-                            id="formSubmit" enctype="multipart/form-data"
-                            th:object="${product}"
+                            id="formSubmit" enctype="multipart/form-data" th:object="${product}"
+                    		th:classappend="${#fields.hasErrors('*')} ? was-validated : d-block"
                         >
                             <div class="row mb-3">
                                 <label for="inputName" class="col-sm-2 col-form-label">Product Name</label>
                                 <div class="col-sm-10">
-                                    <input id="inputName" th:field="*{name}" type="text" class="form-control" required>
+                                    <input th:value="*{name}" name="name" type="text" class="form-control" th:errorClass="is-invalid"
+                      					th:attr="${#fields.hasErrors('name')} ? required : id='inputName'"
+                                    >
+                                   	<div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <label for="inputCategory" class="col-sm-2 col-form-label">Category</label>
 								<div class="col-sm-10">
-                                    <select class="form-control" id="inputCategory" th:field="*{categoryId}" required>
+                                    <select class="form-control" id="inputCategory" th:field="*{categoryId}">
                                         <option selected value="" hidden>
                                         </option>
                                         <option th:each="category : ${categories}"
@@ -45,8 +48,12 @@
                             <div class="row mb-3">
                                 <label for="inputDescription" class="col-sm-2 col-form-label">Product Description</label>
                                 <div class="col-sm-10">
-                                  <textarea id="inputDescription" th:field="*{description}"
-                                  class="form-control" style="height: 100px" required></textarea>
+                                  <textarea th:field="*{description}"
+                                  		class="form-control" style="height: 100px" th:errorClass="is-invalid"
+                      					th:attr="${#fields.hasErrors('description')} ? required : id='inputDescription'"
+                                  >
+                                  </textarea>
+                                  <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="invalid-feedback"></div>
                                 </div>
                               </div>
                             <div class="row mb-3">
@@ -55,24 +62,30 @@
                                     <input id="inputPrice" class="form-control" th:field="*{price}"
                                         style="width: 30%; display: inline-block;" type="number" 
                                         oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"
-                                        required min="1" max="99999999"
+                                        min="1" max="99999999" th:errorClass="is-invalid"
+                      					th:attr="${#fields.hasErrors('price')} ? required : id='inputPrice'"
                                     />
                                     <span>VND</span>
+                                    <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <label for="inputStock" class="col-sm-2 col-form-label">Stock</label>
                                 <div class="col-sm-10">
                                     <input id="inputStock" type="number" th:field="*{stock}" style="width: 30%;"
-                                    class="form-control" min="1" max="1000" required>
+                                    	class="form-control" min="1" max="1000" th:errorClass="is-invalid"
+                      					th:attr="${#fields.hasErrors('stock')} ? required : id='inputStock'"
+                                    >
+                                    <div th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <label for="formFile" class="col-sm-2 col-form-label">Product Image</label>
                                 <div class="col-sm-10">
                                     <input class="form-control" name="imageField"
-                                    	type="file" id="formFile" accept="image/png, image/jpeg" required
+                                    	type="file" id="formFile" accept="image/png, image/jpeg"
                                     >
+                                    <div th:if="${#fields.hasErrors('image')}" th:errors="*{image}" class="invalid-feedback"></div>
                                 </div>
                             </div>
                             <br/>

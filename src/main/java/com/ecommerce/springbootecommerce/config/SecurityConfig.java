@@ -34,7 +34,7 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/register**", "/admin/vendor/**", "/common/**", "/home/**", "/buyer/**")
+                .antMatchers("/register**", "/admin/vendor/**", "/admin/js/main.js", "/common/**", "/home/**", "/buyer/**")
                 .permitAll()
                 .antMatchers("/home").access("hasRole('ROLE_BUYER') or hasRole('ROLE_MANAGER')")
                 .antMatchers("/seller/**").access("hasRole('ROLE_SELLER')")

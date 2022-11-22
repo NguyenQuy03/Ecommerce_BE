@@ -1636,6 +1636,7 @@ pre code {
 
 .table thead th {
   vertical-align: bottom;
+  text-align: center;
   border-bottom: 2px solid #EDF1FF;
 }
 

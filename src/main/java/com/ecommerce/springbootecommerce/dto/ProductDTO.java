@@ -4,6 +4,9 @@ import java.text.NumberFormat;
 import java.util.Base64;
 import java.util.Locale;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,13 +14,22 @@ import lombok.Setter;
 @Setter
 public class ProductDTO extends BaseDTO<ProductDTO>{
 
+    @NotBlank(message = "Please enter this field")
     private String name;
+    
+    @NotNull(message = "Please enter this field")
     private Double price;
+    
     @SuppressWarnings("unused")
     private String intPrice;
+    
     private byte[] image;
     private String imageBase64;
+    
+    @NotBlank(message = "Please enter this field")
     private String description;
+    
+    @NotNull(message = "Please enter this field")
     private Integer stock;
     private Long accountId;
     private Long categoryId;

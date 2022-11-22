@@ -1,5 +1,6 @@
 package com.ecommerce.springbootecommerce.api.manager;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,13 +39,18 @@ public class CategoryAPI {
         String author = SecurityContextHolder.getContext().getAuthentication().getName();
         
         String fileName= file.getOriginalFilename();
-        Path fileNameAndPath = Paths.get(uploadDirectory, author + "_" + fileName);
+        Path storePath = Paths.get(uploadDirectory, author);
+        Path fileNameAndPath = Paths.get(uploadDirectory + "/" + author, fileName);
         
-        try {
+        File directoryStorePath = new File(String.valueOf(storePath));
+        File directoryFileNamePath = new File(String.valueOf(fileNameAndPath));
+                
+        if(!directoryStorePath.exists()) {    
+            Files.createDirectories(storePath);
+        }
+        
+        if(!directoryFileNamePath.exists()) {    
             Files.write(fileNameAndPath, imageBytes);
-
-        } catch (Exception e) {
-            e.printStackTrace();            
         }
 
         category.setThumbnail(imageBytes);

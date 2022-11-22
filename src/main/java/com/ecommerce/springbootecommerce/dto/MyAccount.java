@@ -11,12 +11,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MyAccount extends User {
-
     private String fullName;
 
-    public MyAccount(String username, String password, boolean enabled, boolean accountNonExpired,
-            boolean credentialsNonExpired, boolean accountNonLocked,
-            Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
-    } 
+    public MyAccount(String username, String fullName, String password, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, authorities);
+        this.fullName = fullName;
+    }
 }

@@ -33,9 +33,9 @@ public class CustomUserDetailsService implements UserDetailsService{
             accountEntiry.getRoles().forEach(role ->{
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getCode()));
             });    
-            MyAccount myAccount = new MyAccount(accountEntiry.getUserName(), accountEntiry.getPassword(), true, true, true, true, authorities);
-            myAccount.setFullName(accountEntiry.getFullName());
-            return myAccount;
+            
+            MyAccount myAccount = new MyAccount(accountEntiry.getUserName(), accountEntiry.getFullName(), accountEntiry.getPassword() , authorities);
+            return (UserDetails) myAccount;
         }  
     }
     

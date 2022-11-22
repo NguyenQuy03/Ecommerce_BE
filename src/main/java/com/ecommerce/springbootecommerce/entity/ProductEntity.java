@@ -36,6 +36,9 @@ public class ProductEntity extends BaseEntity{
     
     @Column(name = "stock")
     private Integer stock;
+    
+    @Column(name = "status")
+    private boolean status;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)

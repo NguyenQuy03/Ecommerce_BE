@@ -4,4 +4,5 @@ import com.ecommerce.springbootecommerce.entity.AccountEntity;
 
 public interface IAccountService {
     AccountEntity findUserByUserName(String userName);
+    boolean accountExist(String email);
 }

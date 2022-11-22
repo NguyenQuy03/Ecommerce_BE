@@ -11,13 +11,13 @@ public interface IProductService {
 
     void delete(long[] ids);
 
-    List<ProductDTO> findAllByAccountId(long accountId, Pageable pageable);
-    List<ProductDTO> findLiveProduct(Pageable pageable);
-    List<ProductDTO> findSoldOutProduct(Pageable pageable);
-
-    long countAllByAccountId(long accountId);
-    long countLiveProduct();
-    long countSoldOutProduct();
-
     List<ProductDTO> findAll(Pageable pageable);
+    List<ProductDTO> findAllByAccountId(long accountId, Pageable pageable);
+    List<ProductDTO> findByStockGreaterThan(Integer stock, Pageable pageable);
+    List<ProductDTO> findByStockEquals(Integer stock, Pageable pageable);
+    
+    long countAllByAccountId(long accountId);
+    long countByStockGreaterThan(Integer stock);
+    long countByStockEquals(Integer stock);
+
 }

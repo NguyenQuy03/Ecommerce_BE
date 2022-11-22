@@ -78,16 +78,16 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<ProductDTO> findLiveProduct(Pageable pageable) {
-        List<ProductEntity> listProductEntity = productRepository.findLiveProduct(pageable).getContent();
+    public List<ProductDTO> findByStockEquals(Integer stock, Pageable pageable) {
+        List<ProductEntity> listProductEntity = productRepository.findByStockEquals(stock, pageable).getContent();
         List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
 
         return listProductDTO;
     }
 
     @Override
-    public List<ProductDTO> findSoldOutProduct(Pageable pageable) {
-        List<ProductEntity> listProductEntity = productRepository.findSoldOutProduct(pageable).getContent();
+    public List<ProductDTO> findByStockGreaterThan(Integer stock, Pageable pageable) {
+        List<ProductEntity> listProductEntity = productRepository.findByStockGreaterThan(stock, pageable).getContent();
         List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
         return listProductDTO;
     }
@@ -98,13 +98,13 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public long countLiveProduct() {
-        return productRepository.countLiveProduct();
+    public long countByStockGreaterThan(Integer stock){
+        return productRepository.countByStockGreaterThan(stock);
     }
 
     @Override
-    public long countSoldOutProduct() {
-        return productRepository.countSoldOutProduct();
+    public long countByStockEquals(Integer stock){
+        return productRepository.countByStockEquals(stock);
     }
 
 }
