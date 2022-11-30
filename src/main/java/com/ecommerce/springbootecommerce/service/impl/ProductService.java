@@ -33,7 +33,7 @@ public class ProductService implements IProductService {
     private ProductConverter productConverter;
 
     @Override
-    public ProductDTO save(ProductDTO productDTO) {
+    public void save(ProductDTO productDTO) {
         ProductEntity productEntity = new ProductEntity();
 
         if (productDTO.getId() != null) {
@@ -53,7 +53,6 @@ public class ProductService implements IProductService {
         }
 
         productRepository.save(productEntity);
-        return productConverter.toDTO(productEntity);
     }
 
     @Override
@@ -105,6 +104,13 @@ public class ProductService implements IProductService {
     @Override
     public long countByStockEquals(Integer stock){
         return productRepository.countByStockEquals(stock);
+    }
+
+    @Override
+    public ProductDTO findById(Long id) {
+        ProductEntity productEntity = productRepository.findOneById(id);
+        ProductDTO productDTO = productConverter.toDTO(productEntity);
+        return productDTO;
     }
 
 }

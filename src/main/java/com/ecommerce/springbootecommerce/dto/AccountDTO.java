@@ -2,6 +2,7 @@ package com.ecommerce.springbootecommerce.dto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+
 import org.hibernate.validator.constraints.Length;
 
 import lombok.AllArgsConstructor;
@@ -12,6 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountDTO {
+    
+    private String address;   
+    private Double balance;
+    private String phoneNumber;
     
     @NotBlank(message = "Please enter your user name!")
     private String userName;

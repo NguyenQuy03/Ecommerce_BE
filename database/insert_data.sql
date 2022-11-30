@@ -6,16 +6,17 @@ INSERT INTO role(code, name) VALUE("BUYER", "buyer");
 INSERT INTO role(code, name) VALUE("SELLER", "seller");
 
 INSERT INTO account(username, password, fullname, status) VALUE("huyquy", "$2a$12$t.e6fMXk7MdEjy9KzcYACe12RsU2vCLO4WH2RRAGBBGQ9mlk3Mdzu", "Nguyễn Huy Quý", true);	
-INSERT INTO account(username, password, fullname, status) VALUE("buyer", "$2a$12$t.e6fMXk7MdEjy9KzcYACe12RsU2vCLO4WH2RRAGBBGQ9mlk3Mdzu", "Nguyễn Văn B", true);
-INSERT INTO account(username, password, fullname, status) VALUE("seller1", "$2a$12$t.e6fMXk7MdEjy9KzcYACe12RsU2vCLO4WH2RRAGBBGQ9mlk3Mdzu", "Nguyễn Tuấn S", true);
-INSERT INTO account(username, password, fullname, status) VALUE("seller2", "$2a$12$t.e6fMXk7MdEjy9KzcYACe12RsU2vCLO4WH2RRAGBBGQ9mlk3Mdzu", "Nguyễn Minh S", true);
-
 INSERT INTO account(username, password, fullname, status) VALUE("audit", "$2a$12$t.e6fMXk7MdEjy9KzcYACe12RsU2vCLO4WH2RRAGBBGQ9mlk3Mdzu", "Trần Danh A", true);
+INSERT INTO account(username, password, fullname, status) VALUE("buyer", "$2a$12$t.e6fMXk7MdEjy9KzcYACe12RsU2vCLO4WH2RRAGBBGQ9mlk3Mdzu", "Nguyễn Văn B", true);
+INSERT INTO account(username, password, fullname, status) VALUE("menClothes", "$2a$12$t.e6fMXk7MdEjy9KzcYACe12RsU2vCLO4WH2RRAGBBGQ9mlk3Mdzu", "Nguyễn Tuấn S", true);
+INSERT INTO account(username, password, fullname, status) VALUE("womenClothes", "$2a$12$t.e6fMXk7MdEjy9KzcYACe12RsU2vCLO4WH2RRAGBBGQ9mlk3Mdzu", "Nguyễn Minh S", true);
+
 
 INSERT INTO accounts_roles(account_id, role_id) VALUE(1, 1);
-INSERT INTO accounts_roles(account_id, role_id) VALUE(2, 3);
-INSERT INTO accounts_roles(account_id, role_id) VALUE(3, 4);
-INSERT INTO accounts_roles(account_id, role_id) VALUE(4, 2);
+INSERT INTO accounts_roles(account_id, role_id) VALUE(2, 2);
+INSERT INTO accounts_roles(account_id, role_id) VALUE(3, 3);
+INSERT INTO accounts_roles(account_id, role_id) VALUE(4, 4);
+INSERT INTO accounts_roles(account_id, role_id) VALUE(5, 4);
 
 /*https://drive.google.com/drive/folders/1f1ee6tIXzgewkF9D1s2rAwy632oUiVXL?usp=sharing*/
 INSERT INTO category(code, name) VALUE("women-clothes", "Women Clothes");

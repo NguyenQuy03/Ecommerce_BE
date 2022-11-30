@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/dashboardLayout/dashboardLayout}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Or Edit Product</title>
+
+    <script defer src="/seller/js/addOrEdit.js"></script>
+</head>
+
+<body>
+    <div class="card" layout:fragment="content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Basic Information</h5>
+                        <form th:action="@{/seller/product/new}" enctype="multipart/form-data" th:object="${product}"
+                            th:attrappend="method = ${product.id != null ? 'PUT' : 'POST'}" id="formSubmit"
+                            th:classappend="${#fields.hasErrors('*')} ? was-validated : d-block">
+                            <div class="row mb-3">
+                                <label for="name" class="col-sm-2 col-form-label">Product Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" th:field="*{name}"
+                                        th:errorClass="is-invalid"
+                                        th:attr="${#fields.hasErrors('name')} ? required : id='name'" />
+                                        
+	                                <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="invalid-feedback">
+	                                </div>
+                                </div>
+
+                            </div>
+                            <div class="row mb-3">
+                                <label for="categoryId" class="col-sm-2 col-form-label">Category</label>
+                                <div class="col-sm-10">
+                                	<select th:if="${categoryId == null}" class="form-control" th:field="*{categoryId}" th:errorClass="is-invalid"
+                                        th:attr="${#fields.hasErrors('categoryId')} ? required : id='categoryId'">
+                                        <option selected value="" hidden='true'>
+                                        </option>
+                                        <option th:each="item : ${categories}" th:utext="${item.name}"
+                                            th:value="${item.id}" th:attr="${product.categoryId == item.id} ? selected : id='categoryId'">
+                                        </option>
+                                    </select>
+                                    
+                                    <select th:if="${categoryId != null}" class="form-control" th:field="*{categoryId}" th:errorClass="is-invalid"
+                                        th:attr="${#fields.hasErrors('categoryId')} ? required : id='categoryId'">
+                                        <option selected value="" hidden='true'>
+                                        </option>
+                                        <option th:each="item : ${categories}" th:utext="${item.name}"
+                                            th:value="${item.id}" th:attr="${product.categoryId == item.id} ? selected">
+                                        </option>
+                                    </select>
+
+                                    <div th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"
+                                        class="invalid-feedback">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="description" class="col-sm-2 col-form-label">Product Description</label>
+                                <div class="col-sm-10">
+                                    <textarea th:field="*{description}" class="form-control" style="height: 100px"
+                                        th:errorClass="is-invalid"
+                                        th:attr="${#fields.hasErrors('description')} ? required : id='description'"
+                                    >
+                                  </textarea>
+                                    <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}"
+                                        class="invalid-feedback">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="price" class="col-sm-2 col-form-label">Price</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" th:field="*{price}"
+                                        style="width: 30%; display: inline-block;" type="number"
+                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"
+                                        min="1" max="99999999" th:errorClass="is-invalid"
+                                        th:attr="${#fields.hasErrors('price')} ? required : id='price'" />
+                                    <span>VND</span>
+
+                                    <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}"
+                                        class="invalid-feedback">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="stock" class="col-sm-2 col-form-label">Stock</label>
+                                <div class="col-sm-10">
+                                    <input type="number" th:field="*{stock}" style="width: 30%;" class="form-control"
+                                        min="1" max="1000" th:errorClass="is-invalid"
+                                        th:attr="${#fields.hasErrors('stock')} ? required : id='stock'" />
+                                        
+	                                <div th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"
+	                                    class="invalid-feedback">
+	                                </div>
+                                </div>
+
+                            </div>
+                            <div class="row mb-3">
+                                <label for="imageFile" class="col-sm-2 col-form-label">Product Image</label>
+                                <div class="col-sm-10">
+                                    <input class="form-control" th:field="*{imageFile}" type="file"
+                                        accept="image/png, image/jpeg" th:errorClass="is-invalid"
+                                        th:attr="${#fields.hasErrors('imageFile')} ? required : id='imageFile'">
+                                        
+	                                <div th:if="${#fields.hasErrors('imageFile')}" th:errors="*{imageFile}"
+	                                    class="invalid-feedback">
+	                                </div>
+                                </div>
+
+                            </div>
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <img id="previewImage" alt="" src="" style="max-width: 200px">
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row mb-3">
+                                <div class="col-4">
+                                    <label class="col-sm-2 col-form-label">Action</label>
+                                </div>
+                                <div class="col-8 d-flex">
+                                    <div class="col-sm-10 col-lg-3">
+                                        <a th:href="@{/seller/product/list}" class="btn btn-danger">Cancel</a>
+                                    </div>
+                                    <div class="col-sm-10 col-lg-3">
+                                        <button id="saveBtn" type="submit" class="button-update btn btn-primary">Save
+                                            and Publish</button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <input type="hidden" th:field="*{id}" />
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

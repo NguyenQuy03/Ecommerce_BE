@@ -16,6 +16,7 @@
 	<div th:object="${dto}" class="card" layout:fragment="content">
 		<form id="formSubmit" th:action="@{/seller/product/list/all}" method="GET">
 			<div class="card-body pt-3">
+				<div class="alert alert-info text-center" th:if="${message}" th:text="${message}"></div>
 
 				<ul class="nav nav-tabs nav-tabs-bordered">
 
@@ -74,15 +75,19 @@
 										<td>
 											<input type="checkbox" name="" id="">
 										</td>
-										<td th:utext="${product.id}"></td>
-										<td th:utext="${product.name}"></td>
-										<td th:utext="${product.intPrice}"></td>
-										<td th:utext="${product.stock}"></td>
-										<td th:utext="${product.description}"></td>
+										<td th:text="${product.id}"></td>
+										<td th:text="${product.name}"></td>
+										<td th:text="${product.intPrice}"></td>
+										<td th:text="${product.stock}"></td>
+										<td>
+											<p th:text="${product.description}" style="max-width: 150px;max-height: 100px;white-space: nowrap;overflow:hidden;text-overflow: ellipsis"></p>
+										</td>
 										<td><img style="max-width: 80px;" id="imagePreview"	 th:src="'data:image/png;base64,' + ${product.imageBase64}" alt="Background image" /></td>
-										<td><button class="btn btn-success">
-												<i class="bi bi-pencil-square"></i>
-											</button></td>
+										<td> 
+												<a th:href="@{/seller/product/edit/{id}(id=${product.id})}" class="btn btn-success">
+														<i class="bi bi-pencil-square"></i>
+												</a>
+										</td>
 									</tr>
 								</tbody>
 							</table>
@@ -106,9 +111,12 @@
 				
 			</div>
 		</form>
-			<input type="hidden" th:value="*{totalPage}" name="totalPage" id="totalPage">
+		
+		<input type="hidden" th:value="*{totalPage}" name="totalPage" id="totalPage">
 			
 	</div>
+
+	
 </body>
 
 </html>

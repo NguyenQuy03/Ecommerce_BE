@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 
 public interface IProductService {
-    ProductDTO save(ProductDTO productDTO);
+    void save(ProductDTO productDTO);
 
     void delete(long[] ids);
 
@@ -19,5 +19,7 @@ public interface IProductService {
     long countAllByAccountId(long accountId);
     long countByStockGreaterThan(Integer stock);
     long countByStockEquals(Integer stock);
+
+    ProductDTO findById(Long id);
 
 }

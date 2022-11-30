@@ -7,6 +7,8 @@ import java.util.Locale;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,25 +16,31 @@ import lombok.Setter;
 @Setter
 public class ProductDTO extends BaseDTO<ProductDTO>{
 
-    @NotBlank(message = "Please enter this field")
+    @NotBlank(message = "Please enter product's name!")
     private String name;
     
-    @NotNull(message = "Please enter this field")
+    @NotNull(message = "Please enter product's price!")
     private Double price;
     
     @SuppressWarnings("unused")
     private String intPrice;
     
     private byte[] image;
+    
+    private MultipartFile imageFile;
     private String imageBase64;
     
-    @NotBlank(message = "Please enter this field")
+    @NotBlank(message = "Please enter product's description!")
     private String description;
     
-    @NotNull(message = "Please enter this field")
+    @NotNull(message = "Please enter product's stock!")
     private Integer stock;
     private Long accountId;
+    
+    @NotNull(message = "Please enter product's category!")
     private Long categoryId;
+    
+    private String status;
 
     public String getImageBase64() {
         imageBase64 = Base64.getEncoder().encodeToString(this.image);

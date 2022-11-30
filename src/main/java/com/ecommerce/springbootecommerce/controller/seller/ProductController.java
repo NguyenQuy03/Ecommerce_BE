@@ -1,6 +1,11 @@
 package com.ecommerce.springbootecommerce.controller.seller;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
+
+import javax.sql.rowset.serial.SerialException;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -8,10 +13,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.ecommerce.springbootecommerce.api.seller.ProductAPI;
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.entity.AccountEntity;
@@ -22,56 +35,57 @@ import com.ecommerce.springbootecommerce.service.IProductService;
 @Controller
 @RequestMapping("seller/product")
 public class ProductController {
-    
+
     @Autowired
     private ICategoryService categoryService;
 
     @Autowired
     private IProductService productService;
-    
+
     @Autowired
     private IAccountService accountService;
+
+    @Autowired
+    private ProductAPI productAPI;
 
     @GetMapping("list/all")
     public String allProduct(
             Model model,
             @RequestParam("page") int page,
-            @RequestParam("size") int size
-        ) {
-            String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-            AccountEntity account = accountService.findUserByUserName(userName);
-            
-            long quantityProduct = productService.countAllByAccountId(account.getId()); 
-            
-            Pageable pageable = PageRequest.of(page - 1, size);
-            List<ProductDTO> listProduct = productService.findAllByAccountId(account.getId(), pageable);
-            Integer totalPage = (int) Math.ceil((double) quantityProduct / size);
-            
-            ProductDTO dto = new ProductDTO();
-            dto.setTotalPage(totalPage);
-            dto.setListResult(listProduct);
-            dto.setPage(page);
-            dto.setSize(size);
+            @RequestParam("size") int size) {
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountEntity account = accountService.findAccountByUserName(userName);
 
-            model.addAttribute("quantityProduct", quantityProduct);
-            model.addAttribute("dto", dto);
-            
-            return "seller/product/myProduct/allProduct";
-        }
+        long quantityProduct = productService.countAllByAccountId(account.getId());
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+        List<ProductDTO> listProduct = productService.findAllByAccountId(account.getId(), pageable);
+        Integer totalPage = (int) Math.ceil((double) quantityProduct / size);
+
+        ProductDTO dto = new ProductDTO();
+        dto.setTotalPage(totalPage);
+        dto.setListResult(listProduct);
+        dto.setPage(page);
+        dto.setSize(size);
+
+        model.addAttribute("quantityProduct", quantityProduct);
+        model.addAttribute("dto", dto);
+
+        return "seller/product/myProduct/allProduct";
+    }
 
     @GetMapping("list/live")
     public String liveProduct(
             Model model,
             @RequestParam("page") int page,
-            @RequestParam("size") int size
-        ) {
-        
+            @RequestParam("size") int size) {
+
         long quantityLiveProduct = productService.countByStockGreaterThan(0);
 
         Pageable pageable = PageRequest.of(page - 1, size);
         List<ProductDTO> liveProducts = productService.findByStockGreaterThan(0, pageable);
         Integer totalPage = (int) Math.ceil((double) quantityLiveProduct / size);
-        
+
         ProductDTO dto = new ProductDTO();
         dto.setTotalPage(totalPage);
         dto.setListResult(liveProducts);
@@ -83,20 +97,19 @@ public class ProductController {
 
         return "seller/product/myProduct/liveProduct";
     }
-    
+
     @GetMapping("list/soldout")
     public String soldOutProduct(
             Model model,
             @RequestParam("page") int page,
-            @RequestParam("size") int size
-        ) {
-        
+            @RequestParam("size") int size) {
+
         long quantitySoldOutProduct = productService.countByStockEquals(0);
 
         Pageable pageable = PageRequest.of(page - 1, size);
         List<ProductDTO> soldOutProducts = productService.findByStockEquals(0, pageable);
         Integer totalPage = (int) Math.ceil((double) quantitySoldOutProduct / size);
-        
+
         ProductDTO dto = new ProductDTO();
         dto.setTotalPage(totalPage);
         dto.setListResult(soldOutProducts);
@@ -116,7 +129,39 @@ public class ProductController {
 //        model.addAttribute("liveProducts", liveProducts);
 //
 //        return "seller/product/myProduct/reviewingProduct";
-//    }
+//    } 
+
+    @PostMapping("/new")
+    public String createProduct(@Valid @ModelAttribute("product") ProductDTO product,
+            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) throws IOException {
+
+        if (product.getImageFile().isEmpty()) {
+            bindingResult.addError(new FieldError("product", "imageFile", "Please choose an image"));
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "/seller/product/addOrEdit";
+        }
+
+        productAPI.saveProduct(product);
+        redirectAttributes.addFlashAttribute("message", "Success! Your product was published.");
+
+        return "redirect:/seller/product/list/all?page=1&size=2";
+    }
+
+    @PutMapping("/new")
+    public String updateProduct(@Valid @ModelAttribute("product") ProductDTO product,
+            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) throws IOException {
+
+        if (bindingResult.hasErrors()) {
+            return "/seller/product/addOrEdit";
+        }
+
+        productAPI.saveProduct(product);
+        redirectAttributes.addFlashAttribute("message", "Success! Your product was updated.");
+
+        return "redirect:/seller/product/list/all?page=1&size=2";
+    }
 
     @GetMapping("new")
     public String newProduct(Model model) {
@@ -124,6 +169,19 @@ public class ProductController {
         List<CategoryDTO> categories = categoryService.findAll();
         model.addAttribute("categories", categories);
 
-        return "seller/product/newProduct";
+        return "seller/product/addOrEdit";
+    }
+
+    @GetMapping("edit/{id}")
+    public String editProduct(
+            @PathVariable("id") Long id, Model model) throws IOException, SerialException, SQLException {
+
+        ProductDTO productDTO = productService.findById(id);
+
+        List<CategoryDTO> categories = categoryService.findAll();
+        model.addAttribute("categories", categories);
+        model.addAttribute("product", productDTO);
+
+        return "/seller/product/addOrEdit";
     }
 }

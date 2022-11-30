@@ -18,18 +18,21 @@ public class ProductConverter {
         productEntity.setDescription(product.getDescription());
         productEntity.setStock(product.getStock());
         productEntity.setImage(product.getImage());
-        return productEntity;
+        productEntity.setStatus(product.getStatus());
+        return productEntity; 
     }
 
     public ProductDTO toDTO(ProductEntity entity) {
         ProductDTO productDTO = new ProductDTO();
 
         productDTO.setId(entity.getId());
+        productDTO.setCategoryId(entity.getCategory().getId());
         productDTO.setName(entity.getName());
         productDTO.setPrice(entity.getPrice());
         productDTO.setStock(entity.getStock());
         productDTO.setDescription(entity.getDescription());
         productDTO.setImage(entity.getImage());
+        productDTO.setStatus(entity.getStatus());
 
         productDTO.setCreatedDate(entity.getCreatedDate());
         productDTO.setCreatedBy(entity.getCreatedBy());
@@ -39,12 +42,13 @@ public class ProductConverter {
         return productDTO;
     }
 
-    public ProductEntity toEntity(ProductDTO product, ProductEntity productEntity) {
-        productEntity.setName(product.getName());
-        productEntity.setPrice(product.getPrice());
-        productEntity.setStock(product.getStock());
-        productEntity.setDescription(product.getDescription());
-        productEntity.setImage(product.getImage());
+    public ProductEntity toEntity(ProductDTO dto, ProductEntity productEntity) {
+        productEntity.setName(dto.getName());
+        productEntity.setPrice(dto.getPrice());
+        productEntity.setStock(dto.getStock());
+        productEntity.setDescription(dto.getDescription());
+        productEntity.setImage(dto.getImage());
+        productEntity.setStatus(dto.getStatus());
         return productEntity;
     }
 
