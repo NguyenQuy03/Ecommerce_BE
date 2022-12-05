@@ -6,13 +6,15 @@ import javax.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccountDTO {
+public class AccountDTO extends BaseDTO<AccountDTO> {
     
     private String address;   
     private Double balance;
@@ -34,4 +36,6 @@ public class AccountDTO {
     
     @NotBlank(message = "Please re-enter your password!")
     private String rePassword;
+    
+    private boolean status;
 }

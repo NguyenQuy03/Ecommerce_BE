@@ -19,8 +19,8 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Basic Information</h5>
-                        <form th:action="@{/seller/product/new}" enctype="multipart/form-data" th:object="${product}"
-                            th:attrappend="method = ${product.id != null ? 'PUT' : 'POST'}" id="formSubmit"
+                        <form enctype="multipart/form-data" th:object="${product}" id="formSubmit"
+                            th:action="@{/seller/product}" method="POST"
                             th:classappend="${#fields.hasErrors('*')} ? was-validated : d-block">
                             <div class="row mb-3">
                                 <label for="name" class="col-sm-2 col-form-label">Product Name</label>
@@ -63,12 +63,22 @@
                             <div class="row mb-3">
                                 <label for="description" class="col-sm-2 col-form-label">Product Description</label>
                                 <div class="col-sm-10">
-                                    <textarea th:field="*{description}" class="form-control" style="height: 100px"
+                                  <input th:field="*{description}" class="form-control" type="text" th:errorClass="is-invalid"
+                                        th:attr="${#fields.hasErrors('description')} ? required : id='description'"/>
+                                    <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}"
+                                        class="invalid-feedback">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="details" class="col-sm-2 col-form-label">Product Details</label>
+                                <div class="col-sm-10">
+                                    <textarea th:field="*{details}" class="form-control" style="height: 100px"
                                         th:errorClass="is-invalid"
-                                        th:attr="${#fields.hasErrors('description')} ? required : id='description'"
+                                        th:attr="${#fields.hasErrors('details')} ? required : id='details'"
                                     >
                                   </textarea>
-                                    <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}"
+                                    <div th:if="${#fields.hasErrors('details')}" th:errors="*{details}"
                                         class="invalid-feedback">
                                     </div>
                                 </div>
@@ -101,7 +111,7 @@
                                 </div>
 
                             </div>
-                            <div class="row mb-3">
+                            <div class="row mb-4">
                                 <label for="imageFile" class="col-sm-2 col-form-label">Product Image</label>
                                 <div class="col-sm-10">
                                     <input class="form-control" th:field="*{imageFile}" type="file"
@@ -115,9 +125,14 @@
 
                             </div>
                             <div class="row mb-3">
-                                <label class="col-sm-2 col-form-label"></label>
-                                <div class="col-sm-10">
-                                    <img id="previewImage" alt="" src="" style="max-width: 200px">
+                                <div class="col-sm-12" >
+                                    <img th:if="${product.image}" class="img-fluid" id="previewImage" alt="Preview Image" 
+										th:src="'data:image/png;base64,' + ${product.imageBase64}"
+										style="max-width: 200px" 
+									>
+                                    <img th:unless="${product.image}" class="img-fluid" id="previewImage" src=""
+										style="max-width: 200px" alt=""
+									>
                                 </div>
                             </div>
                             <br />

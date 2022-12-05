@@ -31,9 +31,9 @@ public class AccountService implements IAccountService{
     private RoleService roleService;
 
     @Override
-    public AccountEntity findAccountByUserName(String userName) {
+    public AccountDTO findAccountByUserName(String userName) {
         AccountEntity account = accountRepository.findOneByUserName(userName);
-        return account;
+        return accountConverter.toDTO(account);
     }
 
     @Override
@@ -64,6 +64,12 @@ public class AccountService implements IAccountService{
     @Override
     public List<String> findAllEmail() {
         return accountRepository.findAllEmail();
+    }
+
+    @Override
+    public AccountDTO findOneById(long id) {
+        AccountDTO accountDTO = accountConverter.toDTO(accountRepository.findOneById(id));
+        return accountDTO;
     }
 
 

@@ -33,6 +33,9 @@ public class ProductDTO extends BaseDTO<ProductDTO>{
     @NotBlank(message = "Please enter product's description!")
     private String description;
     
+    @NotBlank(message = "Please enter product's details!")
+    private String details;
+    
     @NotNull(message = "Please enter product's stock!")
     private Integer stock;
     private Long accountId;

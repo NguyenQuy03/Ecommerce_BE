@@ -16,6 +16,7 @@ public class ProductConverter {
         productEntity.setName(product.getName());
         productEntity.setPrice(product.getPrice());
         productEntity.setDescription(product.getDescription());
+        productEntity.setDetails(product.getDetails());
         productEntity.setStock(product.getStock());
         productEntity.setImage(product.getImage());
         productEntity.setStatus(product.getStatus());
@@ -31,6 +32,7 @@ public class ProductConverter {
         productDTO.setPrice(entity.getPrice());
         productDTO.setStock(entity.getStock());
         productDTO.setDescription(entity.getDescription());
+        productDTO.setDetails(entity.getDetails());
         productDTO.setImage(entity.getImage());
         productDTO.setStatus(entity.getStatus());
 

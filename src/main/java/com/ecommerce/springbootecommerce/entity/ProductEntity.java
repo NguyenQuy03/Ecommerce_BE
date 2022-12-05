@@ -31,8 +31,11 @@ public class ProductEntity extends BaseEntity{
     @Lob
     private byte[] image;
     
-    @Column(name = "description", columnDefinition = "Text")
+    @Column(name = "description")
     private String description;
+    
+    @Column(name = "details", columnDefinition = "Text")
+    private String details;
     
     @Column(name = "stock")
     private Integer stock;

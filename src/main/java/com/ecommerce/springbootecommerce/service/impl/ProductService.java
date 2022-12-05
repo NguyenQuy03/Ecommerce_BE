@@ -38,6 +38,9 @@ public class ProductService implements IProductService {
 
         if (productDTO.getId() != null) {
             ProductEntity preProductEntity = productRepository.findOneById(productDTO.getId());
+            if (productDTO.getImage() == null) {
+                productDTO.setImage(preProductEntity.getImage());                
+            }
             productEntity = productConverter.toEntity(productDTO, preProductEntity);
         } else {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

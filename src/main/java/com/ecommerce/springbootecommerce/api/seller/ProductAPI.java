@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -61,7 +62,6 @@ public class ProductAPI {
         }
 
         product.setImage(imageBytes);
-        product.setImageBase64(imageBytes.toString());
         product.setStatus(SystemConstant.ACTIVE_PRODUCT);
         productService.save(product);
         
@@ -69,11 +69,35 @@ public class ProductAPI {
     
     @PutMapping(value="/product/{id}")
     public void updateProduct(
-            @RequestBody ProductDTO model, 
+            @RequestBody ProductDTO product,
             @PathVariable("id") Long id
-    ) {
-        model.setId(id);
-        productService.save(model);
+    ) throws IOException {
+        
+        String author = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!product.getImageFile().isEmpty()) {
+                byte[] imageBytes = product.getImageFile().getBytes();
+                String fileName= product.getImageFile().getOriginalFilename();
+                Path storePath = Paths.get(uploadDirectory, author);
+                Path fileNameAndPath = Paths.get(uploadDirectory + "/" + author, fileName);
+                
+                File directoryStorePath = new File(String.valueOf(storePath));
+                File directoryFileNamePath = new File(String.valueOf(fileNameAndPath));
+                
+                if(!directoryStorePath.exists()) {    
+                    Files.createDirectories(storePath);
+                } 
+                
+                if(!directoryFileNamePath.exists()) {    
+                    Files.write(fileNameAndPath, product.getImage());
+                }
+                
+                product.setImage(imageBytes);
+        }
+        
+        product.setId(id);
+        product.setModifiedBy(author);
+        product.setModifiedDate(new Date());
+        productService.save(product);
     }
     
     @DeleteMapping(value="/product")
