@@ -112,9 +112,33 @@
 								<span>Transactions</span>
 							</a>
 						</li>
-				<!-- End Tables Nav -->
 			</ul>
 
+			<!-- PROFILE -->
+			<ul th:each="authority : ${#authentication.getAuthorities()}"
+				th:if="${authority.getAuthority().startsWith('ROLE_BUYER')}"
+				class="sidebar-nav" id="sidebar-nav">
+				<li class="nav-item">
+					<a class="nav-link" th:href="@{/home}">
+						<i class="bi bi-house"></i>
+						<span>Home</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" th:href="@{/profile}">
+						<i class="bi bi-person-bounding-box"></i>
+						<span>My Account</span>
+					</a>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link" th:href="@{/manager/account/adminAccount}">
+						<i class="bi bi-card-list"></i>
+						<span>My Purchase</span>
+					</a>
+				</li>
+				<!-- End Tables Nav -->
+			</ul>
 		</aside>
 		<!-- End Sidebar-->
 	</div>

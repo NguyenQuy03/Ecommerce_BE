@@ -32,10 +32,14 @@ public class AccountDTO extends BaseDTO<AccountDTO> {
     
     @NotBlank(message = "Please enter your password!")
     @Length(min = 3, message = "Password must be at least 3 characters")
-    private String password;
+    private String password;    
     
-    @NotBlank(message = "Please re-enter your password!")
     private String rePassword;
+    
+    private String newPassword;
+    private String ReNewPassword;
+    
+    private String typeEditProfile;
     
     private boolean status;
 }

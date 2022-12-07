@@ -16,9 +16,22 @@ public class AccountConverter {
         entity.setEmail(dto.getEmail());
         entity.setFullName(dto.getFullName());
         entity.setUserName(dto.getUserName());
-        entity.setPassword(dto.getPassword());
         entity.setPhoneNumber(dto.getPhoneNumber());
         entity.setStatus(true);
+        return entity;
+    }
+    
+    public AccountEntity toInfoEntity(AccountDTO dto, AccountEntity entity) {
+        entity.setAddress(dto.getAddress());
+        entity.setEmail(dto.getEmail());
+        entity.setFullName(dto.getFullName());
+        entity.setPhoneNumber(dto.getPhoneNumber());
+        entity.setPassword(dto.getPassword());
+        return entity;
+    }
+    
+    public AccountEntity toPasswordEntity(AccountDTO dto, AccountEntity entity) {
+        entity.setPassword(dto.getPassword());
         return entity;
     }
     
@@ -36,4 +49,6 @@ public class AccountConverter {
         
         return dto;
     }
+    
+    
 }

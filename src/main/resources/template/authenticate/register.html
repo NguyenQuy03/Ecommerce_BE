@@ -41,42 +41,40 @@
                   <form th:action="@{/register}" method="POST" th:object="${account}" style="width: 400px;"
                   		class="row g-3" th:classappend="${#fields.hasErrors('*')} ? was-validated : d-block">
                     <div class="col-12">
-                      <label for="yourFullName" class="form-label">Full Name</label>
-                      <input type="text" class="form-control" name="fullName" th:value="*{fullName}" th:errorClass="is-invalid"
-                      		th:attr="${#fields.hasErrors('fullName')} ? required : id='yourFullName'"
+                      <label for="fullName" class="form-label">Full Name</label>
+                      <input type="text" class="form-control" th:field="*{fullName}" th:errorClass="is-invalid"
+                      		th:attr="${#fields.hasErrors('fullName')} ? required : id='fullName'"
                       >
                       <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="invalid-feedback"></div>                      
                     </div>
                     <div class="col-12">
-                      <label for="yourUserName" class="form-label">User Name</label>
-                      <input type="text" class="form-control" name="userName" th:value="*{userName}" th:errorClass="is-invalid" 
-                         th:attr="${#fields.hasErrors('userName')} ? required : id='yourUserName'"
+                      <label for="userName" class="form-label">User Name</label>
+                      <input type="text" class="form-control" th:field="*{userName}" th:errorClass="is-invalid" 
+                         th:attr="${#fields.hasErrors('userName')} ? required : id='userName'"
                       >
                       <div th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}" class="invalid-feedback"></div>
                     </div>
                     
                     <div class="col-12">
-                      <label for="yourEmail" class="form-label">Email</label>
-                      <input type="email" name="email" class="form-control" th:value="*{email}" th:errorClass="is-invalid" 
-                      	th:attr="${#fields.hasErrors('email')} ? required : id='yourEmail'"
+                      <label for="email" class="form-label">Email</label>
+                      <input type="email" th:field="*{email}" class="form-control" th:errorClass="is-invalid" 
+                      	th:attr="${#fields.hasErrors('email')} ? required : id='email'"
                       >
                       <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="invalid-feedback"></div>
                     </div>
                     
                     <div class="col-12">
-                      <label for="yourPassword" class="form-label">Password</label>
-                      <input th:value="*{password}" type="password" name="password" class="form-control"
-                      		th:errorClass="is-invalid" id="yourPassword"
-                      		th:attr="${#fields.hasErrors('password')} ? required : id='yourPassword'"
+                      <label for="password" class="form-label">Password</label>
+                      <input th:field="*{password}" type="password" class="form-control" th:errorClass="is-invalid"
+                      		 th:attr="${#fields.hasErrors('password')} ? required : id='password'"
                       >
                       <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="invalid-feedback"></div>
                     </div>
                     
                     <div class="col-12">
-                      <label for="yourRePassword" class="form-label">Re-enter Password</label>
-                      <input th:value="*{rePassword}" type="password" name="rePassword" class="form-control"
-                      		th:errorClass="is-invalid" id="yourRePassword"
-                      		th:attr="${#fields.hasErrors('rePassword')} ? required : id='yourRePassword'"
+                      <label for="rePassword" class="form-label">Re-enter Password</label>
+                      <input th:field="*{rePassword}" type="password" class="form-control" th:errorClass="is-invalid"
+                      		th:attr="${#fields.hasErrors('rePassword')} ? required : id='rePassword'"
                       >
                       <div th:if="${#fields.hasErrors('rePassword')}" th:errors="*{rePassword}" class="invalid-feedback"></div>
                     </div>

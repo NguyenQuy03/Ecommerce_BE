@@ -43,15 +43,29 @@ public class AccountService implements IAccountService{
 
     @Override
     public void register(AccountDTO accountDTO) {
-        String passwordEncode = encoderConfig.passwordEncoder().encode(accountDTO.getPassword());
+        AccountEntity accountEntity = new AccountEntity();
         
-        Set<RoleEntity> roles = new HashSet<>();
-        RoleEntity roleEntity = roleService.findRoleByName("buyer");
-        roles.add(roleEntity);
-        
-        AccountEntity accountEntity = accountConverter.toEntity(accountDTO);
-        accountEntity.setRoles(roles);
-        accountEntity.setPassword(passwordEncode);
+        if (accountDTO.getId()!= null) {
+            
+            AccountEntity preAccountEntity = accountRepository.findOneById(accountDTO.getId());
+            
+            if (preAccountEntity.getPassword().equals(accountDTO.getPassword())) {
+                accountEntity = accountConverter.toInfoEntity(accountDTO, preAccountEntity);
+            } else {
+                accountEntity = accountConverter.toPasswordEntity(accountDTO, preAccountEntity);
+            }
+            
+            
+        } else {
+            
+            Set<RoleEntity> roles = new HashSet<>();
+            RoleEntity roleEntity = roleService.findRoleByName("buyer");
+            roles.add(roleEntity);
+            String passwordEncode = encoderConfig.passwordEncoder().encode(accountDTO.getPassword());
+            accountEntity = accountConverter.toEntity(accountDTO);
+            accountEntity.setRoles(roles);
+            accountEntity.setPassword(passwordEncode);
+        }
         
         accountRepository.save(accountEntity);
     }
@@ -71,6 +85,5 @@ public class AccountService implements IAccountService{
         AccountDTO accountDTO = accountConverter.toDTO(accountRepository.findOneById(id));
         return accountDTO;
     }
-
 
 }

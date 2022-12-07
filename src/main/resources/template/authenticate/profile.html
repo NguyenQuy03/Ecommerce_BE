@@ -10,10 +10,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
+	<script defer src="/common/js/removeAttr.js"></script> 
 </head>
 
 <body>
-    <div class="col-12" layout:fragment="content">
+    <div class="col-12" layout:fragment="content" th:object="${account}">
 
         <div class="pagetitle">
             <h1>Profile</h1>    
@@ -42,31 +43,32 @@
                             <div class="tab-content pt-2">
 
                                 <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                                
+                                	<!-- ALERT ELEMENT -->
+                                	<div class="alert text-center" th:if="${alertMessage}" 
+                                		th:text="${alertMessage}" th:classappend="alert+'-'+${alertType}">
+                                	</div>
+                                	
                                     <h5 class="card-title">Profile Details</h5>
 
                                     <div class="row">
                                         <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                                        <div class="col-lg-9 col-md-8">Kevin Anderson</div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-lg-3 col-md-4 label">Country</div>
-                                        <div class="col-lg-9 col-md-8">USA</div>
+                                        <div th:utext="*{fullName}" class="col-lg-9 col-md-8"></div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-lg-3 col-md-4 label">Address</div>
-                                        <div class="col-lg-9 col-md-8">A108 Adam Street, New York, NY 535022</div>
+                                        <div th:utext="*{address}" class="col-lg-9 col-md-8"></div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-lg-3 col-md-4 label">Phone</div>
-                                        <div class="col-lg-9 col-md-8">(436) 486-3538 x29071</div>
+                                        <div th:utext="*{phoneNumber}" class="col-lg-9 col-md-8"></div>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-lg-3 col-md-4 label">Email</div>
-                                        <div class="col-lg-9 col-md-8">k.anderson@example.com</div>
+                                        <div th:utext="*{email}" class="col-lg-9 col-md-8"></div>
                                     </div>
 
                                 </div>
@@ -74,22 +76,12 @@
                                 <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
 
                                     <!-- Profile Edit Form -->
-                                    <form>
+                                    <form id="inforForm" th:action="@{/profile}" method="POST">
                                         <div class="row mb-3">
                                             <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full
                                                 Name</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input name="fullName" type="text" class="form-control" id="fullName"
-                                                    value="Kevin Anderson">
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3">
-                                            <label for="Country"
-                                                class="col-md-4 col-lg-3 col-form-label">Country</label>
-                                            <div class="col-md-8 col-lg-9">
-                                                <input name="country" type="text" class="form-control" id="Country"
-                                                    value="USA">
+                                                <input th:field="*{fullName}" type="text" class="form-control">
                                             </div>
                                         </div>
 
@@ -97,44 +89,44 @@
                                             <label for="Address"
                                                 class="col-md-4 col-lg-3 col-form-label">Address</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input name="address" type="text" class="form-control" id="Address"
-                                                    value="A108 Adam Street, New York, NY 535022">
+                                                <input th:field="*{address}" type="text" class="form-control">
                                             </div>
                                         </div>
 
                                         <div class="row mb-3">
-                                            <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                                            <label for="phoneNumber" class="col-md-4 col-lg-3 col-form-label">Phone</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input name="phone" type="text" class="form-control" id="Phone"
-                                                    value="(436) 486-3538 x29071">
+                                                <input th:field="*{phoneNumber}" class="form-control" type="tel"
+													pattern="[0-9]{10}" placeholder="0123456789" required
+												>
                                             </div>
                                         </div>
 
                                         <div class="row mb-3">
                                             <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input name="email" type="email" class="form-control" id="Email"
-                                                    value="k.anderson@example.com">
+                                                <input th:field="*{email}" type="email" class="form-control">
                                             </div>
                                         </div>
 
                                         <div class="text-center">
                                             <button type="submit" class="btn btn-primary">Save Changes</button>
                                         </div>
+                                        
+                                        <input type="hidden" name="typeEditProfile" th:value="inforForm"/>
                                     </form><!-- End Profile Edit Form -->
 
                                 </div>
 
                                 <div class="tab-pane fade pt-3" id="profile-change-password">
                                     <!-- Change Password Form -->
-                                    <form>
+                                    <form id="passwordForm" th:action="@{/profile}" method="POST">
 
                                         <div class="row mb-3">
-                                            <label for="currentPassword"
+                                            <label for="password"
                                                 class="col-md-4 col-lg-3 col-form-label">Current Password</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input name="password" type="password" class="form-control"
-                                                    id="currentPassword">
+                                                <input th:field="*{password}" type="password" class="form-control" required>
                                             </div>
                                         </div>
 
@@ -142,23 +134,23 @@
                                             <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New
                                                 Password</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input name="newpassword" type="password" class="form-control"
-                                                    id="newPassword">
+                                                <input th:field="*{newPassword}" type="password" class="form-control" required>
                                             </div>
                                         </div>
 
                                         <div class="row mb-3">
-                                            <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter
+                                            <label for="reNewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter
                                                 New Password</label>
                                             <div class="col-md-8 col-lg-9">
-                                                <input name="renewpassword" type="password" class="form-control"
-                                                    id="renewPassword">
+                                                <input th:field="*{reNewPassword}" type="password" class="form-control" required>
                                             </div>
                                         </div>
 
                                         <div class="text-center">
                                             <button type="submit" class="btn btn-primary">Change Password</button>
                                         </div>
+                                        
+                                        <input type="hidden" name="typeEditProfile" th:value="passwordForm"/>
                                     </form><!-- End Change Password Form -->
 
                                 </div>

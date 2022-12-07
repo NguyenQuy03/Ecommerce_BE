@@ -39,11 +39,6 @@ public class AuthenticateController {
         
         return "authenticate/register";
     }
-    
-	@GetMapping("/profile")
-	public String profile() {
-		return "authenticate/profile";
-	}	
 	    
     @InitBinder
     public void initBinder(WebDataBinder dataBinder) {
@@ -60,7 +55,7 @@ public class AuthenticateController {
                 bindingResult.addError(new FieldError("account", "rePassword", "Password must match"));
             }
         }
-        
+         
         if (account.getUserName() != null) {
             List<String> listUserName = accountService.findAllUserName();
             for (String userName : listUserName) {
