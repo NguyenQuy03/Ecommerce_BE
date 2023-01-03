@@ -10,6 +10,7 @@
     <title>Add Or Edit Product</title>
 
     <script defer src="/seller/js/addOrEdit.js"></script>
+    <script defer src="/common/ckeditor/ckeditor.js"></script>
 </head>
 
 <body>
@@ -88,10 +89,9 @@
                                 <div class="col-sm-10">
                                     <input class="form-control" th:field="*{price}"
                                         style="width: 30%; display: inline-block;" type="number"
-                                        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0');"
-                                        min="1" max="99999999" th:errorClass="is-invalid"
+                                        min="1" max="99999" th:errorClass="is-invalid" step="any"
                                         th:attr="${#fields.hasErrors('price')} ? required : id='price'" />
-                                    <span>VND</span>
+                                    <span>$</span>
 
                                     <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}"
                                         class="invalid-feedback">

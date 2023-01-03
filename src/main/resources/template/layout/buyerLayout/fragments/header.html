@@ -17,11 +17,11 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                     </a>
                 </div>
                 <div class="col-lg-6 col-6 text-left">
-                    <form action="">
-                        <div class="input-group">
+                    <form action="" >
+                        <div class="input-group rounded" style="position: relative; overflow: hidden;">
                             <input type="text" class="form-control" placeholder="Search for products">
-                            <div class="input-group-append">
-                                <span class="input-group-text bg-transparent text-primary">
+                            <div class="input-group-append ">
+                                <span class="input-group-text bg-primary text-white" style="position: absolute; right: 0; height: 100%; cursor: pointer;">
                                     <i class="fa fa-search"></i>
                                 </span>
                             </div>
@@ -30,8 +30,8 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                 </div>
                 <div class="col-lg-3 col-6 text-right d-flex justify-content-end">
                     <div sec:authorize="isAuthenticated()" class="d-flex">
-	                    <a href="" class="btn border">
-	                        <i class="fas fa-shopping-cart text-primary"></i>
+	                    <a href="" class="btn text-primary">
+	                        <i class="fas fa-shopping-cart "></i>
 	                        <span class="badge">0</span>
 	                    </a>
                     		

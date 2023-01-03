@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/buyerLayout/buyerLayout}">
+<head>
+<meta charset="utf-8">
+<title>EShopper - Bootstrap Shop Template</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+<!-- Favicon -->
+<link href="img/favicon.ico" rel="icon">
+
+<!-- Google Web Fonts -->
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+	rel="stylesheet">
+
+</head>
+<body>
+	<div th:object="${dto}" class="container-fluid pt-5"
+		layout:fragment="content">
+		<div class="row px-xl-5">
+			<!-- Shop Sidebar Start -->
+			<div class="col-lg-3 col-md-12">
+				<!-- Price Start -->
+				<div class="border-bottom mb-4 pb-4">
+					<h5 class="font-weight-semi-bold mb-4">Filter by price</h5>
+					<form>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" checked
+								id="price-all"> <label class="custom-control-label"
+								for="price-all">All Price</label> <span
+								class="badge border font-weight-normal">1000</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" id="price-1">
+							<label class="custom-control-label" for="price-1">$0 -
+								$100</label> <span class="badge border font-weight-normal">150</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" id="price-2">
+							<label class="custom-control-label" for="price-2">$100 -
+								$200</label> <span class="badge border font-weight-normal">295</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" id="price-3">
+							<label class="custom-control-label" for="price-3">$200 -
+								$300</label> <span class="badge border font-weight-normal">246</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" id="price-4">
+							<label class="custom-control-label" for="price-4">$300 -
+								$400</label> <span class="badge border font-weight-normal">145</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
+							<input type="checkbox" class="custom-control-input" id="price-5">
+							<label class="custom-control-label" for="price-5">$400 -
+								$500</label> <span class="badge border font-weight-normal">168</span>
+						</div>
+					</form>
+				</div>
+				<!-- Price End -->
+
+				<!-- Color Start -->
+				<div class="border-bottom mb-4 pb-4">
+					<h5 class="font-weight-semi-bold mb-4">Filter by color</h5>
+					<form>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" checked
+								id="color-all"> <label class="custom-control-label"
+								for="price-all">All Color</label> <span
+								class="badge border font-weight-normal">1000</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" id="color-1">
+							<label class="custom-control-label" for="color-1">Black</label> <span
+								class="badge border font-weight-normal">150</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" id="color-2">
+							<label class="custom-control-label" for="color-2">White</label> <span
+								class="badge border font-weight-normal">295</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" id="color-3">
+							<label class="custom-control-label" for="color-3">Red</label> <span
+								class="badge border font-weight-normal">246</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" id="color-4">
+							<label class="custom-control-label" for="color-4">Blue</label> <span
+								class="badge border font-weight-normal">145</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
+							<input type="checkbox" class="custom-control-input" id="color-5">
+							<label class="custom-control-label" for="color-5">Green</label> <span
+								class="badge border font-weight-normal">168</span>
+						</div>
+					</form>
+				</div>
+				<!-- Color End -->
+
+				<!-- Size Start -->
+				<div class="mb-5">
+					<h5 class="font-weight-semi-bold mb-4">Filter by size</h5>
+					<form>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" checked
+								id="size-all"> <label class="custom-control-label"
+								for="size-all">All Size</label> <span
+								class="badge border font-weight-normal">1000</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" id="size-1">
+							<label class="custom-control-label" for="size-1">XS</label> <span
+								class="badge border font-weight-normal">150</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" id="size-2">
+							<label class="custom-control-label" for="size-2">S</label> <span
+								class="badge border font-weight-normal">295</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" id="size-3">
+							<label class="custom-control-label" for="size-3">M</label> <span
+								class="badge border font-weight-normal">246</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+							<input type="checkbox" class="custom-control-input" id="size-4">
+							<label class="custom-control-label" for="size-4">L</label> <span
+								class="badge border font-weight-normal">145</span>
+						</div>
+						<div
+							class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
+							<input type="checkbox" class="custom-control-input" id="size-5">
+							<label class="custom-control-label" for="size-5">XL</label> <span
+								class="badge border font-weight-normal">168</span>
+						</div>
+					</form>
+				</div>
+				<!-- Size End -->
+			</div>
+			<!-- Shop Sidebar End -->
+
+			<div class="col-lg-9 col-md-12">
+				<div class="row pb-3">
+					<div class="col-12 pb-1">
+						<div
+							class="d-flex align-items-center justify-content-between mb-4">
+							<form action="">
+								<div class="input-group">
+									<input type="text" class="form-control"
+										placeholder="Search by name">
+									<div class="input-group-append">
+										<span class="input-group-text bg-transparent text-primary">
+											<i class="fa fa-search"></i>
+										</span>
+									</div>
+								</div>
+							</form>
+							<div class="dropdown">
+								<button class="btn btn-secondary dropdown-toggle" type="button"
+									id="dropdownMenuButton" data-toggle="dropdown"
+									aria-haspopup="true" aria-expanded="false">Sort by</button>
+								<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+									<a class="dropdown-item" href="#">Latest</a> <a
+										class="dropdown-item" href="#">Popularity</a> <a
+										class="dropdown-item" href="#">Best Rating</a>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+					<div th:each="product : *{listResult}"
+						class="col-lg-4 col-md-6 col-sm-12 pb-1">
+						<a th:href="@{/product/detail/{id}(id=${product.id})}">
+							<div class="card product-item border-0 mb-4">
+								<div
+									class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+									<img class="img-fluid w-100" id="imageProduct"
+										th:src="'data:image/png;base64,' + ${product.imageBase64}"
+										alt="Background image" />
+								</div>
+								<div
+									class="card-body border-left border-right p-0 pt-1 pr-2 pl-2 text-dark">
+									<p class="text-truncate mb-3" th:utext="${product.name}"
+										style="font-size: 14px;"></p>
+									<div class="d-flex justify-content-between">
+										<h6 class="text-primary" th:utext="${product.intPrice}"></h6>
+										<span style="font-size: 14px;">100 sold</span>
+									</div>
+								</div>
+							</div>
+						</a>
+					</div>
+				</div>
+				
+				<form id="formSubmit" action="">
+					<!-- Pagination -->
+					<nav aria-label="Page navigation"
+						class="d-flex justify-content-center">
+						<ul class="pagination" id="pagination"></ul>
+					</nav>
+					
+					<!-- Request Input value -->
+					<input type="hidden" th:value="*{page}" name="page" id="currPage">
+					<input type="hidden" th:value="*{size}" name="size" id="size">
+				</form>
+					<input type="hidden" th:value="*{totalPage}" name="totalPage"
+						id="totalPage">
+
+			</div>
+
+		</div>
+	</div>
+
+</body>
+</html>

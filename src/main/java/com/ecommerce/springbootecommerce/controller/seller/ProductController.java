@@ -51,7 +51,8 @@ public class ProductController {
     public String allProduct(
             Model model,
             @RequestParam("page") int page,
-            @RequestParam("size") int size) {
+            @RequestParam("size") int size
+    ) {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountDTO account = accountService.findAccountByUserName(userName);
 
@@ -101,8 +102,8 @@ public class ProductController {
     public String soldOutProduct(
             Model model,
             @RequestParam("page") int page,
-            @RequestParam("size") int size) {
-
+            @RequestParam("size") int size
+    ){
         long quantitySoldOutProduct = productService.countByStockEquals(0);
 
         Pageable pageable = PageRequest.of(page - 1, size);
@@ -166,7 +167,8 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public String editProduct(
-            @PathVariable("id") Long id, Model model) throws IOException, SerialException, SQLException {
+            @PathVariable("id") Long id, Model model
+    ) throws IOException, SerialException, SQLException {
 
         ProductDTO productDTO = productService.findById(id);
 

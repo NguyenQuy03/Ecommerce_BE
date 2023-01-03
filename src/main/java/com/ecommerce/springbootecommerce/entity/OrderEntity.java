@@ -26,13 +26,10 @@ import lombok.Setter;
 public class OrderEntity extends BaseEntity {
 
     @Column(name = "status")
-    private Boolean status;
+    private String status;
 
     @Column(name = "quantity")
-    private Integer quantity;
-
-    @Column(name = "price")
-    private Double price;
+    private Long quantity;
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "account_id", nullable = false)

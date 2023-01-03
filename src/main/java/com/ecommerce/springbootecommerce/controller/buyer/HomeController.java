@@ -29,10 +29,10 @@ public class HomeController {
         Pageable pageable = PageRequest.of(0, 8);
         List<ProductDTO> products = productService.findAll(pageable);
 
-
         model.addAttribute("categories", categories);
         model.addAttribute("products", products);
 
         return "buyer/home";
     }
+    
 }

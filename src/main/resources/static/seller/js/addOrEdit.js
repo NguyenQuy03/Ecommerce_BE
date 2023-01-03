@@ -3,6 +3,7 @@ $(document).ready(function() {
 	$("#imageFile").change(function() {
 		showPreviewImage(this);
 	})
+	
 })
 
 function showPreviewImage(imageFile) {

@@ -25,7 +25,7 @@ import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IProductService;
 
 @RestController
-@RequestMapping("/api/seller")
+@RequestMapping("/api/seller/product")
 public class ProductAPI {
     
     @Autowired  
@@ -39,7 +39,7 @@ public class ProductAPI {
         dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
     }
     
-    @PostMapping(value="/product")
+    @PostMapping()
     public void saveProduct(
         ProductDTO product
     ) throws IOException{
@@ -67,7 +67,7 @@ public class ProductAPI {
         
     }
     
-    @PutMapping(value="/product/{id}")
+    @PutMapping(value="/{id}")
     public void updateProduct(
             @RequestBody ProductDTO product,
             @PathVariable("id") Long id
@@ -100,7 +100,7 @@ public class ProductAPI {
         productService.save(product);
     }
     
-    @DeleteMapping(value="/product")
+    @DeleteMapping()
     public void deleteProduct(@RequestBody long[] ids) {
         productService.delete(ids);
     }

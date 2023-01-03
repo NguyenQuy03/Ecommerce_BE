@@ -17,7 +17,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>{
     long countByStockEquals(Integer stock);
 
     Slice<ProductEntity> findAllByAccountId(long accountId, Pageable pageable);
-
+    Slice<ProductEntity> findAllByCategoryId(long categoryId, Pageable pageable);
+    
     long countAllByAccountId(long accountId);
+    long countAllByCategoryId(Long categoryId);
 
 }

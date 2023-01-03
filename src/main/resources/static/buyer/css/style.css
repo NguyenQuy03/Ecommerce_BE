@@ -67,6 +67,7 @@ body {
   align-items: center;
 }
 
+
 .dropdown-menu {
   border-radius: 4px;
   padding: 10px 0;
@@ -244,14 +245,8 @@ sup {
 }
 
 a {
-  color: #D19C97;
   text-decoration: none;
   background-color: transparent;
-}
-
-a:hover {
-  color: #ba6a62;
-  text-decoration: underline;
 }
 
 a:not([href]):not([class]) {

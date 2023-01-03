@@ -2,6 +2,7 @@ package com.ecommerce.springbootecommerce.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,9 @@ public class AccountController {
     
     @Autowired
     private IAccountService accountService;
+    
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
     
     @Autowired
     private EncoderConfig encoderConfig;
@@ -45,8 +49,8 @@ public class AccountController {
             
         } else if (account.getTypeEditProfile().equals("passwordForm")) {
             String passwordEncode = encoderConfig.passwordEncoder().encode(account.getPassword());
-            boolean test = encoderConfig.
-            if (!passwordEncode.equals(preAccount.getPassword())) {
+            
+            if (!bCryptPasswordEncoder.matches(account.getPassword(), preAccount.getPassword())) {
                 redirectAttributes.addFlashAttribute("alertType", "danger");
                 redirectAttributes.addFlashAttribute("alertMessage", "Failue! Your password is incorrect.");
                 return "redirect:/profile";

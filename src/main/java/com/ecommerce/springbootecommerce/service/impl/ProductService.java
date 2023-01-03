@@ -80,6 +80,13 @@ public class ProductService implements IProductService {
     }
 
     @Override
+    public List<ProductDTO> findAllByCategoryId(long categoryId, Pageable pageable) {
+        List<ProductEntity> listProductEntity = productRepository.findAllByCategoryId(categoryId, pageable).getContent();
+        List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
+        return listProductDTO;
+    }
+
+    @Override
     public List<ProductDTO> findByStockEquals(Integer stock, Pageable pageable) {
         List<ProductEntity> listProductEntity = productRepository.findByStockEquals(stock, pageable).getContent();
         List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
@@ -114,6 +121,11 @@ public class ProductService implements IProductService {
         ProductEntity productEntity = productRepository.findOneById(id);
         ProductDTO productDTO = productConverter.toDTO(productEntity);
         return productDTO;
+    }
+
+    @Override
+    public long countAllByCategoryId(Long categoryId) {
+        return productRepository.countAllByCategoryId(categoryId);
     }
 
 }
