@@ -16,11 +16,13 @@ public interface IProductService {
     List<ProductDTO> findAllByCategoryId(long categoryId, Pageable pageable);
     List<ProductDTO> findByStockGreaterThan(Integer stock, Pageable pageable);
     List<ProductDTO> findByStockEquals(Integer stock, Pageable pageable);
+    List<ProductDTO> findAllByNameContains(String keyword, Pageable pageable);
     
     long countAllByAccountId(long accountId);
     long countAllByCategoryId(Long categoryId);
     long countByStockGreaterThan(Integer stock);
     long countByStockEquals(Integer stock);
+    long countByNameContains(String keyword);
 
     ProductDTO findById(Long id);
 

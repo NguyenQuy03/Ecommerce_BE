@@ -21,5 +21,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>{
     
     long countAllByAccountId(long accountId);
     long countAllByCategoryId(Long categoryId);
+    long countByNameContains(String keyword);
+    
+    Slice<ProductEntity> findAllByNameContains(String keyword, Pageable pageable);
 
 }

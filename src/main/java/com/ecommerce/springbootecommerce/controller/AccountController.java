@@ -40,8 +40,10 @@ public class AccountController {
     }
     
     @PostMapping()
-    public String updateProfile(Model model, AccountDTO account, RedirectAttributes redirectAttributes
-        ) {
+    public String updateProfile(
+            Model model, AccountDTO account,
+            RedirectAttributes redirectAttributes
+    ) {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountDTO preAccount = accountService.findAccountByUserName(userName);
         if (account.getTypeEditProfile().equals("inforForm")) {
@@ -69,10 +71,8 @@ public class AccountController {
             }
             
             account.setPassword(passwordEncode);
-            
         }
             
-        
         account.setId(preAccount.getId());
         
         accountService.register(account);

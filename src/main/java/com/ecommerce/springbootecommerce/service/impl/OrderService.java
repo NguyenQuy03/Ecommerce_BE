@@ -24,4 +24,21 @@ public class OrderService implements IOrderService{
         orderRepository.save(entity);
     }
 
+    @Override
+    public OrderDTO findOneByProductIdAndAccountIdAndStatus(Long productId, Long accountId, String status) {
+        OrderEntity orderEntity = orderRepository.findOneByProductIdAndAccountIdAndStatus(productId, accountId, status);
+        OrderDTO orderDTO = orderConverter.toDTO(orderEntity);
+        return orderDTO;
+    }
+
+    @Override
+    public Long countByAccountId(Long id) {
+        return orderRepository.countByAccountId(id);
+    }
+
+    @Override
+    public boolean isOrderExistByProductIdAndAccountIdAndStatus(Long productID, Long accountId, String status) {
+        return orderRepository.findByProductIdAndAccountIdAndStatus(productID, accountId, status).isPresent();
+    }
+
 }

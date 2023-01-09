@@ -1,8 +1,6 @@
 package com.ecommerce.springbootecommerce.controller;
 
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,20 +55,16 @@ public class AuthenticateController {
         }
          
         if (account.getUserName() != null) {
-            List<String> listUserName = accountService.findAllUserName();
-            for (String userName : listUserName) {
-                if (account.getUserName().equals(userName)) {
-                    bindingResult.addError(new FieldError("account", "userName", "The user name has existed, please choose another."));
-                }
+            boolean isAcountExistByUserName = accountService.isAccountExistByUserName(account.getUserName());
+            if (isAcountExistByUserName) {
+                bindingResult.addError(new FieldError("account", "userName", "The user name has existed, please choose another."));
             }
         }
         
         if (account.getEmail() != null) {
-            List<String> listEmail = accountService.findAllEmail();
-            for (String email : listEmail) {
-                if (account.getEmail().equals(email)) {
-                    bindingResult.addError(new FieldError("account", "email", "The email has existed, please choose another."));
-                }
+            boolean isAcountExistByEmail = accountService.isAccountExistByEmail(account.getEmail());
+            if (isAcountExistByEmail) {
+                bindingResult.addError(new FieldError("account", "email", "The email has existed, please choose another."));
             }
         }
         

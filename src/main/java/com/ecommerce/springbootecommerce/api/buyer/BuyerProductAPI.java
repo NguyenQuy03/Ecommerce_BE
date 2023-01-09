@@ -2,10 +2,11 @@ package com.ecommerce.springbootecommerce.api.buyer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.converter.AccountConverter;
@@ -39,23 +40,34 @@ public class BuyerProductAPI {
     private AccountService accountService;
     
     @PostMapping()
-    public void addProduct(
-            @PathVariable("id") Long id,
-            @PathVariable("quantity") Long quantity
+    public RedirectView addProduct(
+            @RequestParam("id") Long productId,
+            @RequestParam("quantity") Long quantity
     ) {
-        OrderDTO orderDTO = new OrderDTO();
-        ProductDTO productDTO = productService.findById(id);
-        ProductEntity productEntity = productConverter.toEntity(productDTO);
-        orderDTO.setProduct(productEntity);
         
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountDTO accountDTO = accountService.findAccountByUserName(userName);
-        AccountEntity accountEntity = accountConverter.toEntity(accountDTO);
-        orderDTO.setAccount(accountEntity);
+        boolean isOrderExist = orderService.isOrderExistByProductIdAndAccountIdAndStatus(productId, accountDTO.getId(), SystemConstant.ACTIVE_PRODUCT);
         
-        orderDTO.setStatus(SystemConstant.ACTIVE_PRODUCT);
-        orderDTO.setQuantity(quantity);
+        if (!isOrderExist) {
+            OrderDTO orderDTO = new OrderDTO();
+            ProductDTO productDTO = productService.findById(productId);
+            ProductEntity productEntity = productConverter.toEntity(productDTO);
+            AccountEntity accountEntity = accountConverter.toEntity(accountDTO);
+            orderDTO.setProduct(productEntity);
+            
+            orderDTO.setAccount(accountEntity);
+            
+            orderDTO.setStatus(SystemConstant.ACTIVE_PRODUCT);
+            orderDTO.setQuantity(quantity);
+            orderService.save(orderDTO);
         
-        orderService.save(orderDTO);
+        } else {
+            OrderDTO existedOrder = orderService.findOneByProductIdAndAccountIdAndStatus(productId, accountDTO.getId(), SystemConstant.ACTIVE_PRODUCT);
+            existedOrder.setQuantity(quantity + existedOrder.getQuantity());
+            orderService.save(existedOrder);
+        }
+            
+        return new RedirectView("/product/detail/" + productId);
     }
 }

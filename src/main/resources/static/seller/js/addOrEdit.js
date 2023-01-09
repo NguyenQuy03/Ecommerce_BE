@@ -16,3 +16,4 @@ function showPreviewImage(imageFile) {
 
 	reader.readAsDataURL(file);
 }
+

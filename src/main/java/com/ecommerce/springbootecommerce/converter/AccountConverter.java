@@ -11,6 +11,7 @@ public class AccountConverter {
     public AccountEntity toEntity(AccountDTO dto) {
         AccountEntity entity = new AccountEntity();    
         
+        entity.setId(dto.getId());
         entity.setAddress(dto.getAddress());
         entity.setBalance(dto.getBalance());
         entity.setEmail(dto.getEmail());

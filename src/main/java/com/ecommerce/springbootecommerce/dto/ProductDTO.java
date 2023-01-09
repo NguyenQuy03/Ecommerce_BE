@@ -44,6 +44,7 @@ public class ProductDTO extends BaseDTO<ProductDTO>{
     private Long categoryId;
     
     private String status;
+    private Long quantity;
 
     public String getImageBase64() {
         imageBase64 = Base64.getEncoder().encodeToString(this.image);

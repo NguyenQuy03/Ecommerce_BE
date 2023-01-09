@@ -11,15 +11,15 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
         <div class="container-fluid">
             <div class="row align-items-center py-3 px-xl-5">
                 <div class="col-lg-3 d-none d-lg-block">
-                    <a href="" class="text-decoration-none">
+                    <a href="/home" class="text-decoration-none">
                         <h1 class="m-0 display-5 font-weight-semi-bold">
                         <span class="text-primary font-weight-bold border px-3 mr-1">Z</span>Ecommerce</h1>
                     </a>
                 </div>
                 <div class="col-lg-6 col-6 text-left">
-                    <form action="" >
+                    <form th:action="@{/search}" method="POST">
                         <div class="input-group rounded" style="position: relative; overflow: hidden;">
-                            <input type="text" class="form-control" placeholder="Search for products">
+                            <input type="text" value="" class="form-control" placeholder="Search for products">
                             <div class="input-group-append ">
                                 <span class="input-group-text bg-primary text-white" style="position: absolute; right: 0; height: 100%; cursor: pointer;">
                                     <i class="fa fa-search"></i>
@@ -32,7 +32,7 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                     <div sec:authorize="isAuthenticated()" class="d-flex">
 	                    <a href="" class="btn text-primary">
 	                        <i class="fas fa-shopping-cart "></i>
-	                        <span class="badge">0</span>
+	                        <span th:text="${quantityOrder}" class="badge"></span>
 	                    </a>
                     		
                         <div class="dropdown show border ml-2">

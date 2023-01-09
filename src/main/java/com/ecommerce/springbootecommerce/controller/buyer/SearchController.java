@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
@@ -16,7 +18,8 @@ import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.IProductService;
 
 @Controller
-public class CategoryController {
+@RequestMapping("/search")
+public class SearchController {
     
     @Autowired
     private ICategoryService categoryService;
@@ -48,6 +51,30 @@ public class CategoryController {
         model.addAttribute("quantitySoldOutProduct", quantityProduct);
         model.addAttribute("dto", dto);
 
-        return "buyer/category";
+        return "buyer/search";
+    }
+    
+    @PostMapping()
+    public String searchPage(
+            Model model,
+            @RequestParam("keyword") String keyword,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size
+    ) {
+        
+        Pageable pageable = PageRequest.of(page - 1, size);   
+        
+        long quantityProduct = productService.countByNameContains(keyword);
+        
+        Integer totalPage = (int) Math.ceil((double) quantityProduct / size);
+        List<ProductDTO> products = productService.findAllByNameContains(keyword, pageable);
+        
+        ProductDTO dto = new ProductDTO();
+        dto.setTotalPage(totalPage);
+        dto.setListResult(products);
+        dto.setPage(page);
+        dto.setSize(size);
+        
+        return "buyer/search";
     }
 }

@@ -31,6 +31,9 @@ public class OrderConverter {
         dto.setProduct(entity.getProduct());
         dto.setCarts(entity.getCarts());
         
+        dto.setCreatedDate(entity.getCreatedDate());
+        dto.setCreatedBy(entity.getCreatedBy());
+        
         return dto;
     }
 }

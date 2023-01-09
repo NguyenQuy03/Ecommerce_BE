@@ -23,18 +23,18 @@ public class CustomUserDetailsService implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AccountEntity accountEntiry = accountRepository.findOneByUserNameAndStatus(username, SystemConstant.ACTIVE_STATUS);
+        AccountEntity accountEntity = accountRepository.findOneByUserNameAndStatus(username, SystemConstant.ACTIVE_STATUS);
 
-        if (accountEntiry == null) {
+        if (accountEntity == null) {
             System.out.print("User not found in the database");
             return null;
         } else {
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            accountEntiry.getRoles().forEach(role ->{
+            accountEntity.getRoles().forEach(role ->{
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getCode()));
             });    
             
-            MyAccount myAccount = new MyAccount(accountEntiry.getUserName(), accountEntiry.getFullName(), accountEntiry.getPassword() , authorities);
+            MyAccount myAccount = new MyAccount(accountEntity.getUserName(), accountEntity.getFullName(), accountEntity.getPassword(), authorities);
             return (UserDetails) myAccount;
         }  
     }

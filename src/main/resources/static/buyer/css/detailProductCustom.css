@@ -1,0 +1,17 @@
+.model-product {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    width: 450px;
+    background-color: rgba(0,0,0,.7);
+    border-radius: 2px;
+    font-size: 18px;
+    padding-top: 25px;
+    color: #fff;
+}
+
+.model-icon {
+	font-size: 55px;
+	color: #00bfa5;
+}

@@ -1,7 +1,6 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +36,15 @@ public class AccountService implements IAccountService{
     }
 
     @Override
-    public boolean accountExist(String email) {      
+    public boolean isAccountExistByEmail(String email) {      
         return accountRepository.findByEmail(email).isPresent();
     }
 
+    @Override
+    public boolean isAccountExistByUserName(String userName) {      
+        return accountRepository.findByUserName(userName).isPresent();
+    }
+    
     @Override
     public void register(AccountDTO accountDTO) {
         AccountEntity accountEntity = new AccountEntity();
@@ -68,16 +72,6 @@ public class AccountService implements IAccountService{
         }
         
         accountRepository.save(accountEntity);
-    }
-
-    @Override
-    public List<String> findAllUserName() {
-        return accountRepository.findAllUserName();
-    }
-
-    @Override
-    public List<String> findAllEmail() {
-        return accountRepository.findAllEmail();
     }
 
     @Override

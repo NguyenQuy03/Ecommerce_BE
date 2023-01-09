@@ -128,4 +128,16 @@ public class ProductService implements IProductService {
         return productRepository.countAllByCategoryId(categoryId);
     }
 
+    @Override
+    public long countByNameContains(String keyword) {
+        return productRepository.countByNameContains(keyword);
+    }
+
+    @Override
+    public List<ProductDTO> findAllByNameContains(String keyword, Pageable pageable) {
+        List<ProductEntity> productEntities = productRepository.findAllByNameContains(keyword, pageable).getContent();
+        List<ProductDTO> productDTOs = productConverter.toListProductDTO(productEntities);
+        return productDTOs;
+    }
+
 }
