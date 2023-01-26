@@ -64,18 +64,16 @@ $("#btnDelete").click(function() {
 	if (!confirm("Do you want to delete")) {
 		return false;
 	} else {
-		//var data = {};
 		var ids = [];
 		$('tbody input[type=checkbox]:checked').map((index, item) => {
 			ids.push(item.id);
 		})
-		//data["ids"] = ids
-		deleteBook(ids);
+		deleteProduct(ids);
 	}
 
 });
 
-function deleteBook(data) {
+function deleteProduct(data) {
 	$.ajax({
 		url: "/api/seller/product",
 		type: "DELETE",

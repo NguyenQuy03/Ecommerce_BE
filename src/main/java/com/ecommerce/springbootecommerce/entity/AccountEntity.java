@@ -44,9 +44,6 @@ public class AccountEntity extends BaseEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "balance")
-    private Double balance;
-
     @Column(name = "status")
     private boolean status;
 

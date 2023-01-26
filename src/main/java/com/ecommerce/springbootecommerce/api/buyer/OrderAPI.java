@@ -2,7 +2,9 @@ package com.ecommerce.springbootecommerce.api.buyer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,8 +23,8 @@ import com.ecommerce.springbootecommerce.service.IProductService;
 import com.ecommerce.springbootecommerce.service.impl.AccountService;
 
 @RestController
-@RequestMapping("/api/buyer/product")
-public class BuyerProductAPI {
+@RequestMapping("/api/buyer/order")
+public class OrderAPI {
     
     @Autowired
     private IOrderService orderService;
@@ -40,7 +42,7 @@ public class BuyerProductAPI {
     private AccountService accountService;
     
     @PostMapping()
-    public RedirectView addProduct(
+    public RedirectView addOrder(
             @RequestParam("id") Long productId,
             @RequestParam("quantity") Long quantity
     ) {
@@ -69,5 +71,10 @@ public class BuyerProductAPI {
         }
             
         return new RedirectView("/product/detail/" + productId);
+    }
+    
+    @DeleteMapping
+    public void deleteProduct(@RequestBody long id) {
+        orderService.delete(id);
     }
 }

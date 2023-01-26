@@ -89,7 +89,7 @@
                                 <div class="col-sm-10">
                                     <input class="form-control" th:field="*{price}"
                                         style="width: 30%; display: inline-block;" type="number"
-                                        min="1" max="99999" th:errorClass="is-invalid" step="any"
+                                        min="1" max="9999" th:errorClass="is-invalid" step="any"
                                         th:attr="${#fields.hasErrors('price')} ? required : id='price'" />
                                     <span>$</span>
 

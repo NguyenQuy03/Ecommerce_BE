@@ -1,12 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/buyerLayout/buyerLayoutWithoutSideBar}">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart</title>
+<script defer src="/buyer/js/cart.js"></script>
+<link rel="stylesheet" href="/buyer/css/cart.css">
 </head>
 <body>
-    
+	<!-- Cart Start -->
+	<div class="container-fluid pt-5" layout:fragment="content">
+
+		<div class="row px-xl-5">
+			<div class="col-lg-12 table-responsive mb-5">
+				<table class="table table-bordered text-center mb-0">
+					<thead class="bg-secondary text-dark">
+						<tr>
+							<th><input type="checkbox" id="check-all"></th>
+							<th>Products</th>
+							<th>Price</th>
+							<th>Quantity</th>
+							<th>Total</th>
+							<th>Remove</th>
+						</tr>
+					</thead>
+					<tbody class="align-middle">
+						<tr th:each="item, index : ${listOrder}">
+							<td><input class="check-box-item" type="checkbox"
+								th:id="${item.id}" /></td>
+							<td class="align-middle"><a
+								class="d-flex justify-content-around align-items-center"
+								th:href="@{/product/detail/{id}(id=${item.product.id})}"> <img
+									class="img-fluid w-100" id="image-product"
+									th:src="'data:image/png;base64,' + ${item.imageBase64}"
+									alt="Background image" /> <span th:text="${item.product.name}">
+								</span>
+							</a></td>
+							<td class="align-middle " th:text="${item.intPrice}"></td>
+							<td class="align-middle"><input id="price-el" type="hidden"
+								th:value="${item.product.price}" />
+								<div class="input-group quantity mx-auto" style="width: 100px;">
+									<div class="input-group-btn">
+										<button class="btn btn-sm btn-primary btn-minus">
+											<i class="fa fa-minus"></i>
+										</button>
+									</div>
+									<input type="text" th:id="quantity-el"
+										class="form-control form-control-sm bg-secondary text-center"
+										th:value="${item.quantity}" th:max="${item.product.stock}"
+										th:attr="oninput=|changeTotalPriceValue(${index.index})|">
+									<div class="input-group-btn">
+										<button class="btn btn-sm btn-primary btn-plus">
+											<i class="fa fa-plus"></i>
+										</button>
+									</div>
+								</div></td>
+							<td class="align-middle price-el"><input id="total-price-el"
+								value="" disabled="disabled" /></td>
+							<td class="align-middle"><button th:id="${item.id}"
+									class="btn btn-sm btn-primary delete-btn">
+									<i class="fa fa-times"></i>
+								</button></td>
+						</tr>
+					</tbody>
+				</table>
+				<!-- Modal -->
+				<div class="modal fade align-items-center" id="exampleModal"
+					tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+					aria-hidden="true" style="background-color: rgba(0, 0, 0, 0.6)">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">Do you want
+									to remove this item?</h5>
+							</div>
+							<div class="col-12 modal-footer d-flex justify-content-between">
+								<button type="button" class="col-5 btn btn-primary accept-btn">Yes</button>
+								<button type="button" class="col-5 btn btn-secondary close-btn"
+									data-dismiss="modal">No</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="cart-checkout col-12">
+				<div class="card border-secondary">
+					<div class="card-header bg-secondary border-0">
+						<h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
+					</div>
+					<div class="card-footer border-secondary bg-transparent col-12">
+						<div class="d-flex justify-content-between mt-2 col-12">
+							<h5 class="font-weight-bold">Total</h5>
+							<h5 id="summary-price" class="font-weight-bold">$0.00</h5>
+						<button class="btn btn-block btn-primary my-3 py-3 col-4">Check out</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Cart End -->
 </body>
 </html>

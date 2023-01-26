@@ -13,7 +13,6 @@ public class AccountConverter {
         
         entity.setId(dto.getId());
         entity.setAddress(dto.getAddress());
-        entity.setBalance(dto.getBalance());
         entity.setEmail(dto.getEmail());
         entity.setFullName(dto.getFullName());
         entity.setUserName(dto.getUserName());
@@ -41,7 +40,6 @@ public class AccountConverter {
         
         dto.setId(entity.getId());
         dto.setAddress(entity.getAddress());
-        dto.setBalance(entity.getBalance());
         dto.setEmail(entity.getEmail());
         dto.setFullName(entity.getFullName());
         dto.setUserName(entity.getUserName());

@@ -1,5 +1,8 @@
 package com.ecommerce.springbootecommerce.converter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.ecommerce.springbootecommerce.dto.OrderDTO;
@@ -35,5 +38,14 @@ public class OrderConverter {
         dto.setCreatedBy(entity.getCreatedBy());
         
         return dto;
+    }
+    
+    public List<OrderDTO> toListOrderDTO(List<OrderEntity> listOrderEntity) {
+        List<OrderDTO> listOrderDTO = new ArrayList<>();
+        for (OrderEntity orderEntity : listOrderEntity) {
+            OrderDTO orderDTO = toDTO(orderEntity);
+            listOrderDTO.add(orderDTO);
+        }
+        return listOrderDTO;
     }
 }

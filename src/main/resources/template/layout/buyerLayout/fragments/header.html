@@ -30,7 +30,7 @@ xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
                 </div>
                 <div class="col-lg-3 col-6 text-right d-flex justify-content-end">
                     <div sec:authorize="isAuthenticated()" class="d-flex">
-	                    <a href="" class="btn text-primary">
+	                    <a href="/cart" class="btn text-primary">
 	                        <i class="fas fa-shopping-cart "></i>
 	                        <span th:text="${quantityOrder}" class="badge"></span>
 	                    </a>

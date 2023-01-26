@@ -1,5 +1,7 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,18 @@ public class OrderService implements IOrderService{
     @Override
     public boolean isOrderExistByProductIdAndAccountIdAndStatus(Long productID, Long accountId, String status) {
         return orderRepository.findByProductIdAndAccountIdAndStatus(productID, accountId, status).isPresent();
+    }
+
+    @Override
+    public List<OrderDTO> findAllByAccountId(Long accountId) {
+        List<OrderEntity> orderEntities = orderRepository.findAllByAccountId(accountId);
+        List<OrderDTO> orderDTOs = orderConverter.toListOrderDTO(orderEntities);
+        return orderDTOs;
+    }
+
+    @Override
+    public void delete(long id) {
+        orderRepository.deleteById(id);
     }
 
 }

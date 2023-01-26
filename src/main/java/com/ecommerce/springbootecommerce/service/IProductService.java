@@ -10,7 +10,7 @@ public interface IProductService {
     void save(ProductDTO productDTO);
 
     void delete(long[] ids);
-
+    
     List<ProductDTO> findAll(Pageable pageable);
     List<ProductDTO> findAllByAccountId(long accountId, Pageable pageable);
     List<ProductDTO> findAllByCategoryId(long categoryId, Pageable pageable);

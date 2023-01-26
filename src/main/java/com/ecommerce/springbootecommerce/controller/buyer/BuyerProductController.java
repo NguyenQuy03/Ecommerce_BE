@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.ecommerce.springbootecommerce.api.buyer.BuyerProductAPI;
+import com.ecommerce.springbootecommerce.api.buyer.OrderAPI;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IAccountService;
@@ -27,7 +27,7 @@ public class BuyerProductController {
     private IProductService productService;
     
     @Autowired
-    private BuyerProductAPI buyerProductAPI;
+    private OrderAPI orderAPI;
     
     @Autowired
     private IAccountService accountService;
@@ -61,9 +61,9 @@ public class BuyerProductController {
             @RequestParam("id") Long id,
             @RequestParam("quantity") Long quantity
     ) {
-        buyerProductAPI.addProduct(id, quantity);
+        orderAPI.addOrder(id, quantity);
         
-        redirectAttributes.addFlashAttribute("showModel", "show");
+        redirectAttributes.addFlashAttribute("showModal", "show");
         
         return new RedirectView("/product/detail/" + id);
     }

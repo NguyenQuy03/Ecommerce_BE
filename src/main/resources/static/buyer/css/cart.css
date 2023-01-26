@@ -1,0 +1,23 @@
+#total-price-el {
+	border: none;
+	text-align: center;
+}
+
+input[type="checkbox"] {
+	height: 16px;
+	width: 16px;
+}
+
+#image-product {
+	display: inline-block;
+	max-width: 100px;
+}
+
+.cart-checkout-fixed {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	z-index: 1000;
+	box-shadow: -2px -2px #888888;
+	background-color: #fff;
+}
