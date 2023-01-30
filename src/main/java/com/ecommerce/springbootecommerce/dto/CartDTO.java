@@ -1,23 +1,19 @@
 package com.ecommerce.springbootecommerce.dto;
 
-import java.util.Base64;
+import java.util.Set;
+
+import com.ecommerce.springbootecommerce.entity.AccountEntity;
+import com.ecommerce.springbootecommerce.entity.OrderEntity;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class CartDTO {
+public class CartDTO extends BaseDTO<CartDTO> {
+    private String status;
     
-    private Long id;
-    private Long quantity;
-    private String name;
-    private Long price;
-    private byte[] image;
-    private String imageBase64;
+    private AccountEntity account;
     
-    public String getImageBase64() {
-        imageBase64 = Base64.getEncoder().encodeToString(this.image);
-        return imageBase64;
-    }
+    private Set<OrderEntity> setOrders;
 }

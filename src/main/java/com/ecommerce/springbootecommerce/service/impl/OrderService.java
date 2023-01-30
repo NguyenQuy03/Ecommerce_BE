@@ -23,29 +23,29 @@ public class OrderService implements IOrderService{
     @Override
     public void save(OrderDTO dto) {
         OrderEntity entity = orderConverter.toEntity(dto);
-        orderRepository.save(entity);
+        orderRepository.saveAndFlush(entity);
     }
 
     @Override
-    public OrderDTO findOneByProductIdAndAccountIdAndStatus(Long productId, Long accountId, String status) {
-        OrderEntity orderEntity = orderRepository.findOneByProductIdAndAccountIdAndStatus(productId, accountId, status);
+    public OrderDTO findOneByProductIdAndCartIdAndStatus(Long productId, Long cartId, String status) {
+        OrderEntity orderEntity = orderRepository.findOneByProductIdAndCartIdAndStatus(productId, cartId, status);
         OrderDTO orderDTO = orderConverter.toDTO(orderEntity);
         return orderDTO;
     }
 
     @Override
-    public Long countByAccountId(Long id) {
-        return orderRepository.countByAccountId(id);
+    public Long countByCartId(Long cartId) {
+        return orderRepository.countByCartId(cartId);
     }
 
     @Override
-    public boolean isOrderExistByProductIdAndAccountIdAndStatus(Long productID, Long accountId, String status) {
-        return orderRepository.findByProductIdAndAccountIdAndStatus(productID, accountId, status).isPresent();
+    public boolean isOrderExistByProductIdAndCartIdAndStatus(Long productID, Long cartId, String status) {
+        return orderRepository.findByProductIdAndCartIdAndStatus(productID, cartId, status).isPresent();
     }
 
     @Override
-    public List<OrderDTO> findAllByAccountId(Long accountId) {
-        List<OrderEntity> orderEntities = orderRepository.findAllByAccountId(accountId);
+    public List<OrderDTO> findAllByCartId(Long cartId) {
+        List<OrderEntity> orderEntities = orderRepository.findAllByCartId(cartId);
         List<OrderDTO> orderDTOs = orderConverter.toListOrderDTO(orderEntities);
         return orderDTOs;
     }
@@ -54,5 +54,6 @@ public class OrderService implements IOrderService{
     public void delete(long id) {
         orderRepository.deleteById(id);
     }
+
 
 }

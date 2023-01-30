@@ -9,71 +9,77 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
-import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.IProductService;
+import com.ecommerce.springbootecommerce.util.QuantityOrderUtil;
 
 @Controller
 @RequestMapping("/search")
 public class SearchController {
-    
-    @Autowired
-    private ICategoryService categoryService;
 
     @Autowired
     private IProductService productService;
+
+    @Autowired
+    private QuantityOrderUtil quantityOrderUtil;
 
     @GetMapping("/category/{id}")
     public String categoryPage(
             Model model,
             @PathVariable("id") long id,
             @RequestParam("page") int page,
-            @RequestParam("size") int size
-    ) {
-        
-        Pageable pageable = PageRequest.of(page - 1, size);   
-        
+            @RequestParam("size") int size) {
+
+        Pageable pageable = PageRequest.of(page - 1, size);
+
         long quantityProduct = productService.countAllByCategoryId(id);
-        
+
         Integer totalPage = (int) Math.ceil((double) quantityProduct / size);
         List<ProductDTO> products = productService.findAllByCategoryId(id, pageable);
-        
+
         ProductDTO dto = new ProductDTO();
         dto.setTotalPage(totalPage);
         dto.setListResult(products);
         dto.setPage(page);
         dto.setSize(size);
 
-        model.addAttribute("quantitySoldOutProduct", quantityProduct);
+        model.addAttribute("quantityOrder", quantityOrderUtil.getQuantityOrder());
         model.addAttribute("dto", dto);
 
         return "buyer/search";
     }
-    
-    @PostMapping()
+
+    @SuppressWarnings("null")
+    @GetMapping()
     public String searchPage(
             Model model,
-            @RequestParam("keyword") String keyword,
-            @RequestParam("page") int page,
-            @RequestParam("size") int size
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", required = false) Integer page,
+            @RequestParam(name = "size", required = false) Integer size
     ) {
-        
-        Pageable pageable = PageRequest.of(page - 1, size);   
-        
+        if (page == null && size == null) {
+            page = 1;
+            size = 9;
+        }
+        Pageable pageable = PageRequest.of(page - 1, size);
+
         long quantityProduct = productService.countByNameContains(keyword);
-        
+
         Integer totalPage = (int) Math.ceil((double) quantityProduct / size);
         List<ProductDTO> products = productService.findAllByNameContains(keyword, pageable);
-        
+
         ProductDTO dto = new ProductDTO();
         dto.setTotalPage(totalPage);
         dto.setListResult(products);
         dto.setPage(page);
         dto.setSize(size);
+
+        model.addAttribute("keyword",  keyword);
+        model.addAttribute("quantityOrder", quantityOrderUtil.getQuantityOrder());
+        model.addAttribute("dto", dto);
         
         return "buyer/search";
     }

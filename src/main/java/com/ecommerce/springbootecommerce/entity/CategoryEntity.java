@@ -1,6 +1,6 @@
 package com.ecommerce.springbootecommerce.entity;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,6 +35,6 @@ public class CategoryEntity extends BaseEntity{
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY,
             cascade = CascadeType.ALL)
-    private List<ProductEntity> products;
+    private Set<ProductEntity> products;
 
 }

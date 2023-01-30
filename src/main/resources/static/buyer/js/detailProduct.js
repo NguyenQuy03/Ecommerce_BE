@@ -11,6 +11,7 @@ $(document).ready(function() {
 	productQuantity.addEventListener('input', () => {
 		if (+productQuantity.value > +productQuantity.max) {
 			productQuantity.value = +productQuantity.max;
+			plusBtn.setAttribute("disabled", "true");
 		}
 		
 	});

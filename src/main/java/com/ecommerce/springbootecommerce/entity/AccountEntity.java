@@ -55,10 +55,7 @@ public class AccountEntity extends BaseEntity {
 
     // BUYER
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    private Set<OrderEntity> orders;
-
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<DeliveryEntity> deliveries;
+    private Set<CartEntity> carts;
 
     // SELLER
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

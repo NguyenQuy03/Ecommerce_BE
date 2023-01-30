@@ -39,8 +39,8 @@ public class ProductConverter {
 
         dto.setCreatedDate(entity.getCreatedDate());
         dto.setCreatedBy(entity.getCreatedBy());
-        dto.setModifiedDate(entity.getMordifiedDate());
-        dto.setModifiedBy(entity.getMordifiedBy());
+        dto.setModifiedDate(entity.getModifiedDate());
+        dto.setModifiedBy(entity.getModifiedBy());
 
         return dto;
     }

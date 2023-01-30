@@ -1,7 +1,6 @@
 package com.ecommerce.springbootecommerce.controller.buyer;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,11 +12,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.ecommerce.springbootecommerce.api.buyer.OrderAPI;
-import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
-import com.ecommerce.springbootecommerce.service.IAccountService;
-import com.ecommerce.springbootecommerce.service.IOrderService;
 import com.ecommerce.springbootecommerce.service.IProductService;
+import com.ecommerce.springbootecommerce.util.QuantityOrderUtil;
 
 @Controller
 @RequestMapping("/product")
@@ -30,10 +27,7 @@ public class BuyerProductController {
     private OrderAPI orderAPI;
     
     @Autowired
-    private IAccountService accountService;
-    
-    @Autowired
-    private IOrderService orderService;
+    private QuantityOrderUtil quantityOrderUtil;
     
     @GetMapping("/detail/{id}")
     public String displayProduct(
@@ -42,20 +36,14 @@ public class BuyerProductController {
     ) {
         ProductDTO productDTO = productService.findById(id);
         productDTO.setQuantity(1L);
-        
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (!userName.contains("anonymousUser")) {
-            AccountDTO accountDTO = accountService.findAccountByUserName(userName);
-            Long quantityOrder = orderService.countByAccountId(accountDTO.getId());
-            
-            model.addAttribute("quantityOrder", quantityOrder);
-        }
+                
         model.addAttribute("product", productDTO);
+        model.addAttribute("quantityOrder", quantityOrderUtil.getQuantityOrder());
         return "/buyer/detailProduct";
     }
     
     @PostMapping()
-    public RedirectView addProductToCart(
+    public RedirectView addOrderToCart(
             Model model,
             RedirectAttributes redirectAttributes,
             @RequestParam("id") Long id,

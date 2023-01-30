@@ -9,10 +9,10 @@ const modal = document.querySelector(".modal");
 const closeBtn = document.querySelector(".close-btn");
 const acceptBtn = document.querySelector(".accept-btn");
 const checkAll = document.querySelector("#check-all");
-let summaryPrice = document.querySelector("#summary-price");
 const checkBoxes = document.querySelectorAll(".check-box-item");
 const tableResponsive = document.querySelector(".table-responsive");
 const cartCheckout = document.querySelector(".cart-checkout");
+let summaryPrice = document.querySelector("#summary-price");
 
 
 const formatter = new Intl.NumberFormat('en-US', {
@@ -24,6 +24,9 @@ $(document).ready(function() {
 	totalPriceEls.forEach((item, i) => {
 		item.value = formatter.format(priceEls[i].defaultValue * (quantityEls[i].defaultValue));
 	})
+	
+	window.onscroll = function() {changeDisplayCartCheckOut()};
+
 })
 
 function changeTotalPriceValue(index) {
@@ -112,10 +115,9 @@ function deleteOrder(data) {
 		}
 	})
 }
-window.onscroll = function() {myFunction()};
 
-function myFunction() {
-  if (document.documentElement.scrollTop > tableResponsive.clientHeight - cartCheckout.clientHeight - 35) {
+function changeDisplayCartCheckOut() {
+  if (document.documentElement.scrollTop > tableResponsive.clientHeight - cartCheckout.clientHeight - 80) {
     cartCheckout.classList.remove("cart-checkout-fixed");
   } else {
     cartCheckout.classList.add("cart-checkout-fixed");

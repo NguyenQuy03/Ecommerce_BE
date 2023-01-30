@@ -34,11 +34,11 @@ public class BaseEntity {
     @CreatedDate
     private Date createdDate;
 
-    @Column(name = "mordified_by")
+    @Column(name = "modified_by")
     @LastModifiedBy
-    private String mordifiedBy;
+    private String modifiedBy;
 
-    @Column(name = "mordified_date")
+    @Column(name = "modified_date")
     @LastModifiedDate
-    private Date mordifiedDate;
+    private Date modifiedDate;
 }

@@ -3,9 +3,7 @@ package com.ecommerce.springbootecommerce.dto;
 import java.text.NumberFormat;
 import java.util.Base64;
 import java.util.Locale;
-import java.util.Set;
 
-import com.ecommerce.springbootecommerce.entity.AccountEntity;
 import com.ecommerce.springbootecommerce.entity.CartEntity;
 import com.ecommerce.springbootecommerce.entity.ProductEntity;
 
@@ -25,9 +23,8 @@ public class OrderDTO extends BaseDTO<OrderDTO>{
     private String imageBase64;
     @SuppressWarnings("unused")
     private String intPrice;
-    private AccountEntity account;
     private ProductEntity product;
-    private Set<CartEntity> carts;
+    private CartEntity cart;
     
     public String getImageBase64() {
         imageBase64 = Base64.getEncoder().encodeToString(this.product.getImage());

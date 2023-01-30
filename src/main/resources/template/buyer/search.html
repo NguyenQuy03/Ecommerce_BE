@@ -19,7 +19,7 @@
 
 </head>
 <body>
-	<div th:object="${dto}" class="container-fluid pt-5"
+	<div id="search-container" th:object="${dto}" class="container-fluid pt-5"
 		layout:fragment="content">
 		<div class="row px-xl-5">
 			<!-- Shop Sidebar Start -->
@@ -166,17 +166,6 @@
 					<div class="col-12 pb-1">
 						<div
 							class="d-flex align-items-center justify-content-between mb-4">
-							<form action="">
-								<div class="input-group">
-									<input type="text" class="form-control"
-										placeholder="Search by name">
-									<div class="input-group-append">
-										<span class="input-group-text bg-transparent text-primary">
-											<i class="fa fa-search"></i>
-										</span>
-									</div>
-								</div>
-							</form>
 							<div class="dropdown">
 								<button class="btn btn-secondary dropdown-toggle" type="button"
 									id="dropdownMenuButton" data-toggle="dropdown"
@@ -223,6 +212,7 @@
 					</nav>
 					
 					<!-- Request Input value -->
+					<input type="hidden" th:value="${keyword}" name="keyword" id="keyword">
 					<input type="hidden" th:value="*{page}" name="page" id="currPage">
 					<input type="hidden" th:value="*{size}" name="size" id="size">
 				</form>

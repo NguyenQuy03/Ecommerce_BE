@@ -11,20 +11,25 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.converter.AccountConverter;
+import com.ecommerce.springbootecommerce.converter.CartConverter;
 import com.ecommerce.springbootecommerce.converter.ProductConverter;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
+import com.ecommerce.springbootecommerce.dto.CartDTO;
 import com.ecommerce.springbootecommerce.dto.OrderDTO;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
-import com.ecommerce.springbootecommerce.entity.AccountEntity;
+import com.ecommerce.springbootecommerce.entity.CartEntity;
 import com.ecommerce.springbootecommerce.entity.ProductEntity;
+import com.ecommerce.springbootecommerce.service.IAccountService;
+import com.ecommerce.springbootecommerce.service.ICartService;
 import com.ecommerce.springbootecommerce.service.IOrderService;
 import com.ecommerce.springbootecommerce.service.IProductService;
-import com.ecommerce.springbootecommerce.service.impl.AccountService;
 
 @RestController
 @RequestMapping("/api/buyer/order")
 public class OrderAPI {
+
+    @Autowired
+    private IAccountService accountService;
     
     @Autowired
     private IOrderService orderService;
@@ -33,39 +38,40 @@ public class OrderAPI {
     private IProductService productService;
     
     @Autowired
+    private ICartService cartService;
+    
+    @Autowired
     private ProductConverter productConverter;
     
     @Autowired
-    private AccountConverter accountConverter;
-    
-    @Autowired
-    private AccountService accountService;
+    private CartConverter cartConverter;
     
     @PostMapping()
     public RedirectView addOrder(
             @RequestParam("id") Long productId,
             @RequestParam("quantity") Long quantity
     ) {
-        
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountDTO accountDTO = accountService.findAccountByUserName(userName);
-        boolean isOrderExist = orderService.isOrderExistByProductIdAndAccountIdAndStatus(productId, accountDTO.getId(), SystemConstant.ACTIVE_PRODUCT);
+        CartDTO cartDTO = cartService.findByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
+        
+        boolean isOrderExist = orderService.isOrderExistByProductIdAndCartIdAndStatus(productId, cartDTO.getId(), SystemConstant.STRING_ACTIVE_STATUS);      
         
         if (!isOrderExist) {
             OrderDTO orderDTO = new OrderDTO();
             ProductDTO productDTO = productService.findById(productId);
             ProductEntity productEntity = productConverter.toEntity(productDTO);
-            AccountEntity accountEntity = accountConverter.toEntity(accountDTO);
+            CartEntity cartEntity = cartConverter.toEntity(cartDTO); 
             orderDTO.setProduct(productEntity);
+            orderDTO.setCart(cartEntity);;
             
-            orderDTO.setAccount(accountEntity);
-            
-            orderDTO.setStatus(SystemConstant.ACTIVE_PRODUCT);
+            orderDTO.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
             orderDTO.setQuantity(quantity);
+            
             orderService.save(orderDTO);
         
         } else {
-            OrderDTO existedOrder = orderService.findOneByProductIdAndAccountIdAndStatus(productId, accountDTO.getId(), SystemConstant.ACTIVE_PRODUCT);
+            OrderDTO existedOrder = orderService.findOneByProductIdAndCartIdAndStatus(productId, cartDTO.getId(), SystemConstant.STRING_ACTIVE_STATUS);
             existedOrder.setQuantity(quantity + existedOrder.getQuantity());
             orderService.save(existedOrder);
         }

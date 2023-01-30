@@ -30,9 +30,9 @@ public class CategoryConverter {
         category.setThumbnailBase64(entity.getThumbnail().toString());
         
         category.setCreatedBy(entity.getCreatedBy());
-        category.setModifiedBy(entity.getMordifiedBy());
+        category.setModifiedBy(entity.getModifiedBy());
         category.setCreatedDate(entity.getCreatedDate());
-        category.setModifiedDate(entity.getMordifiedDate());        
+        category.setModifiedDate(entity.getModifiedDate());        
         
         return category;
     }

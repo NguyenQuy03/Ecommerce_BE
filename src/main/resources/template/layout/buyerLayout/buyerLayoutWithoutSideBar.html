@@ -1,62 +1,66 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
-    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang chủ</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trang chủ</title>
 
-    <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
+<!-- Favicon -->
+<link href="img/favicon.ico" rel="icon">
 
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+<!-- Google Web Fonts -->
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+	rel="stylesheet">
 
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+	rel="stylesheet">
 
-    <!-- Libraries Stylesheet -->
-    <link rel="stylesheet" href="/buyer/lib/owlcarousel/assets/owl.carousel.min.css">
+<!-- Libraries Stylesheet -->
+<link rel="stylesheet"
+	href="/buyer/lib/owlcarousel/assets/owl.carousel.min.css">
 
-    <!-- Customized Bootstrap Stylesheet -->
-    <link rel="stylesheet" href="/buyer/css/style.css">
-    
-    <script defer src="/common/js/jquery.twbsPagination.min.js"></script>
+<!-- Customized Bootstrap Stylesheet -->
+<link rel="stylesheet" href="/buyer/css/style.css">
+
+<script defer src="/common/js/jquery.twbsPagination.min.js"></script>
 </head>
 
 <body>
-    <main>
-        <header class="row bg-secondary" id="header">
-            <div class="col-12">
-                <div th:replace="layout/buyerLayout/fragments/header::header"></div>
-            </div>
-        </header>
-        
-        <section class="row">
-            <div class="col-12">
-                <div layout:fragment="content"></div>
-            </div>
-        </section>
-        <footer class="row">
-            <div class="col-12">
-                <div th:replace="layout/buyerLayout/fragments/footer::footer"></div>
-            </div>
-        </footer>
-        
-        <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-                class="bi bi-arrow-up-short"></i></a>
-    </main>
-    
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="/buyer/lib/owlcarousel/owl.carousel.min.js"></script>
+	<main>
+		<header class="bg-secondary" id="header">
+			<div class="container-fluid">
+			<div th:replace="layout/buyerLayout/fragments/header::header"></div>
+			</div>
+		</header>
 
-    <!-- Template Javascript -->
-    <script src="/buyer/js/main.js"></script>
+		<section>
+			<div layout:fragment="content"></div>
+		</section>
+		<footer>
+			<div th:replace="layout/buyerLayout/fragments/footer::footer"></div>
+		</footer>
+
+		<a href="#"
+			class="back-to-top d-flex align-items-center justify-content-center"><i
+			class="bi bi-arrow-up-short"></i></a>
+	</main>
+
+	<!-- JavaScript Libraries -->
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+	<script src="/buyer/lib/owlcarousel/owl.carousel.min.js"></script>
+
+	<!-- Template Javascript -->
+	<script src="/buyer/js/main.js"></script>
 </body>
 
 </html>

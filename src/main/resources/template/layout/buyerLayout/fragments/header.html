@@ -1,62 +1,70 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 </head>
 
 <body>
-    <div th:fragment="header">
-        <div class="container-fluid">
-            <div class="row align-items-center py-3 px-xl-5">
-                <div class="col-lg-3 d-none d-lg-block">
-                    <a href="/home" class="text-decoration-none">
-                        <h1 class="m-0 display-5 font-weight-semi-bold">
-                        <span class="text-primary font-weight-bold border px-3 mr-1">Z</span>Ecommerce</h1>
-                    </a>
-                </div>
-                <div class="col-lg-6 col-6 text-left">
-                    <form th:action="@{/search}" method="POST">
-                        <div class="input-group rounded" style="position: relative; overflow: hidden;">
-                            <input type="text" value="" class="form-control" placeholder="Search for products">
-                            <div class="input-group-append ">
-                                <span class="input-group-text bg-primary text-white" style="position: absolute; right: 0; height: 100%; cursor: pointer;">
-                                    <i class="fa fa-search"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-lg-3 col-6 text-right d-flex justify-content-end">
-                    <div sec:authorize="isAuthenticated()" class="d-flex">
-	                    <a href="/cart" class="btn text-primary">
-	                        <i class="fas fa-shopping-cart "></i>
-	                        <span th:text="${quantityOrder}" class="badge"></span>
-	                    </a>
-                    		
-                        <div class="dropdown show border ml-2">
-                            <button class="d-flex align-items-center btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <h6 class="mb-0" th:text="${#authentication.getPrincipal().getFullName()}"></h6>
-                            </button>
-                          
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                              <a class="dropdown-item" th:href="@{/profile}">My Profile</a>
-                              <a class="dropdown-item" th:href="@{/purchase}">My Purchase</a>
-                              <a class="dropdown-item" href="/logout">Sign Out</a>
-                            </div>
-                          </div>
-                    </div>
+	<div th:fragment="header">
+		<div class="container-fluid">
+			<div class="row align-items-center py-3 px-xl-5"
+				style="margin: 0 -15px;">
+				<div class="col-lg-3 d-none d-lg-block">
+					<a href="/home" class="text-decoration-none">
+						<h1 class="m-0 display-5 font-weight-semi-bold">
+							<span class="text-primary font-weight-bold border px-3 mr-1">Z</span>Ecommerce
+						</h1>
+					</a>
+				</div>
+				<div class="col-lg-6 col-6 text-left">
+					<form id="search-form" th:action=@{/search} method="GET">
+						<div class="input-group rounded"
+							style="position: relative; overflow: hidden;">
+							<input name="keyword" id="search-input" type="text" class="form-control"
+								placeholder="Search for products">
+							<button class="input-group-text bg-primary text-white search-btn"
+								style="position: absolute; right: 0; height: 100%; cursor: pointer; z-index: 10; border:none;">
+								<i class="fa fa-search"></i>
+							</button>
 
-                    <div sec:authorize="isAnonymous()" class="d-flex">
-                        <a th:href="@{/login}" class="nav-item nav-link">Login</a>
-                        <a th:href="@{/register}" class="nav-item nav-link">Register</a>
-                    </div>
-                    
-                </div>
-            </div>
-        </div>
-    </div>
+						</div>
+					</form>
+				</div>
+				<div class="col-lg-3 col-6 text-right d-flex justify-content-end">
+					<div sec:authorize="isAuthenticated()" class="d-flex">
+						<a href="/cart" class="btn text-primary"> <i
+							class="fas fa-shopping-cart "></i> <span
+							th:text="${quantityOrder}" class="badge"></span>
+						</a>
+
+						<div class="dropdown show border ml-2">
+							<button class="d-flex align-items-center btn dropdown-toggle"
+								type="button" id="dropdownMenuButton" data-toggle="dropdown"
+								aria-haspopup="true" aria-expanded="false">
+								<h6 class="mb-0"
+									th:text="${#authentication.getPrincipal().getFullName()}"></h6>
+							</button>
+
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+								<a class="dropdown-item" th:href="@{/profile}">My Profile</a> <a
+									class="dropdown-item" th:href="@{/purchase}">My Purchase</a> <a
+									class="dropdown-item" href="/logout">Sign Out</a>
+							</div>
+						</div>
+					</div>
+
+					<div sec:authorize="isAnonymous()" class="d-flex">
+						<a th:href="@{/login}" class="nav-item nav-link">Login</a> <a
+							th:href="@{/register}" class="nav-item nav-link">Register</a>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
 </body>
 
 </html>

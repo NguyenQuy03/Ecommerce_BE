@@ -17,9 +17,8 @@ public class OrderConverter {
         entity.setId(dto.getId());
         entity.setQuantity(dto.getQuantity());
         entity.setStatus(dto.getStatus());
-        entity.setAccount(dto.getAccount());
         entity.setProduct(dto.getProduct());
-        entity.setCarts(dto.getCarts());
+        entity.setCart(dto.getCart());
         
         return entity;
     }
@@ -30,9 +29,8 @@ public class OrderConverter {
         dto.setId(entity.getId());
         dto.setQuantity(entity.getQuantity());
         dto.setStatus(entity.getStatus());
-        dto.setAccount(entity.getAccount());
         dto.setProduct(entity.getProduct());
-        dto.setCarts(entity.getCarts());
+        dto.setCart(entity.getCart());
         
         dto.setCreatedDate(entity.getCreatedDate());
         dto.setCreatedBy(entity.getCreatedBy());

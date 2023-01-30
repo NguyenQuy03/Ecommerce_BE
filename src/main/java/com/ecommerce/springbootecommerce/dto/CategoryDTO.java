@@ -1,7 +1,7 @@
 package com.ecommerce.springbootecommerce.dto;
 
 import java.util.Base64;
-import java.util.List;
+import java.util.Set;
 
 import com.ecommerce.springbootecommerce.entity.ProductEntity;
 
@@ -16,7 +16,7 @@ public class CategoryDTO extends BaseDTO<CategoryDTO> {
     private String code;
     private byte[] thumbnail;
     private String thumbnailBase64;
-    private List<ProductEntity> products;
+    private Set<ProductEntity> products;
 
     public String getThumbnailBase64() {
         thumbnailBase64 = Base64.getEncoder().encodeToString(this.thumbnail);
