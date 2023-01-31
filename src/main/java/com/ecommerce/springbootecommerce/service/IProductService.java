@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
+import com.ecommerce.springbootecommerce.entity.ProductEntity;
 
 public interface IProductService {
     void save(ProductDTO productDTO);
@@ -25,5 +26,7 @@ public interface IProductService {
     long countByNameContains(String keyword);
 
     ProductDTO findById(Long id);
+
+    void save(ProductEntity product);
 
 }

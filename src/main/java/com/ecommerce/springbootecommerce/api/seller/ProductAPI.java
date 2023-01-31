@@ -62,6 +62,7 @@ public class ProductAPI {
         }
 
         product.setImage(imageBytes);
+        product.setSold(0L);
         product.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
         productService.save(product);
         

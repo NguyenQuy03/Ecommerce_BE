@@ -40,4 +40,8 @@ public class HomeController {
         return "buyer/home";
     }
     
+    @GetMapping
+    public String redirectHomePage() {
+        return "redirect:/home";
+    }
 }

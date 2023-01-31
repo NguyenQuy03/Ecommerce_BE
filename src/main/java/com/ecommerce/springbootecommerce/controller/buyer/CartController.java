@@ -51,12 +51,12 @@ public class CartController {
             cartService.save(cartDTO);
         }
                 
-        List<OrderDTO> listOrder = orderService.findAllByCartId(cartDTO.getId());
+        List<OrderDTO> listOrder = orderService.findAllByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_ACTIVE_STATUS);
         model.addAttribute("quantityOrder",quantityOrderUtil.getQuantityOrder());
         model.addAttribute("listOrder", listOrder);
+        model.addAttribute("cartId", cartDTO.getId());
         
         return "buyer/cart";
     }
-    
     
 }

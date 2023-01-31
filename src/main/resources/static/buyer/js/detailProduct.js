@@ -58,7 +58,7 @@ if (modalSuccess) {
 	setTimeout(() => {
 		modalSuccess.classList.remove("show");
 		modalSuccess.style.display="none";
-	}, 2000)
+	}, 1200)
 	
 }
 

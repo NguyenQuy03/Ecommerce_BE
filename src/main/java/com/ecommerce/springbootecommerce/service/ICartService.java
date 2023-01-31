@@ -6,4 +6,5 @@ public interface ICartService {
     void save(CartDTO cartDTO);
     boolean isExistByStatusAndAccountId(String status, Long id);
     CartDTO findByStatusAndAccountId(String stringActiveStatus, Long id);
+    CartDTO findOneById(Long id);
 }

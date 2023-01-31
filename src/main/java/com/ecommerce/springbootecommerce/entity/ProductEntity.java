@@ -42,6 +42,9 @@ public class ProductEntity extends BaseEntity{
     
     @Column(name = "status")
     private String status;
+    
+    @Column
+    private Long sold;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "account_id", nullable = false)

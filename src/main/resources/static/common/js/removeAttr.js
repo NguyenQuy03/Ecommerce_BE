@@ -1,5 +1,5 @@
 
-var alertElement = $(".alert");
+var alertElement = document.querySelector(".alert");
 if (alertElement) {
 	setTimeout(() => {
 		alertElement.remove();

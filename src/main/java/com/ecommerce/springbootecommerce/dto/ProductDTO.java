@@ -27,6 +27,8 @@ public class ProductDTO extends BaseDTO<ProductDTO>{
     
     private byte[] image;
     
+    private Long sold;
+    
     private MultipartFile imageFile;
     private String imageBase64;
     

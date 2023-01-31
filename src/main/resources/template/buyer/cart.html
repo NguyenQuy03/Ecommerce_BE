@@ -43,22 +43,24 @@
 							<td class="align-middle " th:text="${item.intPrice}"></td>
 							<td class="align-middle"><input id="price-el" type="hidden"
 								th:value="${item.product.price}" />
-								<div class="input-group quantity mx-auto" style="width: 100px;">
+								<div class="input-group quantity mx-auto" style="width: 130px;">
 									<div class="input-group-btn">
 										<button class="btn btn-sm btn-primary btn-minus">
 											<i class="fa fa-minus"></i>
 										</button>
 									</div>
-									<input type="text" th:id="quantity-el"
+									<input th:id="quantity-el" type="number"
 										class="form-control form-control-sm bg-secondary text-center"
 										th:value="${item.quantity}" th:max="${item.product.stock}"
-										th:attr="oninput=|changeTotalPriceValue(${index.index})|">
+										th:attr="oninput=|changeTotalPriceValue(${index.index})|"
+									>
 									<div class="input-group-btn">
 										<button class="btn btn-sm btn-primary btn-plus">
 											<i class="fa fa-plus"></i>
 										</button>
 									</div>
-								</div></td>
+								</div>
+							</td>
 							<td class="align-middle price-el"><input id="total-price-el"
 								value="" disabled="disabled" /></td>
 							<td class="align-middle"><button th:id="${item.id}"
@@ -75,8 +77,8 @@
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h5 class="modal-title" id="exampleModalLabel">Do you want
-									to remove this item?</h5>
+								<h5 class="modal-title" id="exampleModalLabel" style="
+    								user-select: none;">Do you want to remove this item?</h5>
 							</div>
 							<div class="col-12 modal-footer d-flex justify-content-between">
 								<button type="button" class="col-5 btn btn-primary accept-btn">Yes</button>
@@ -96,13 +98,15 @@
 						<div class="d-flex justify-content-between mt-2 col-12">
 							<h5 class="font-weight-bold">Total</h5>
 							<h5 id="summary-price" class="font-weight-bold">$0.00</h5>
-						<button class="btn btn-block btn-primary my-3 py-3 col-4">Purchase</button>
+						<button class="purchase-btn btn btn-block btn-primary my-3 py-3 col-4" disabled>Purchase</button>
+						<input type="hidden" th:value="${cartId}" id="cartId"/>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	
 	<!-- Cart End -->
 </body>
 </html>

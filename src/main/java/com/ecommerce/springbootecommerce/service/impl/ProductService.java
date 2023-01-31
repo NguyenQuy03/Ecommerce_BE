@@ -140,4 +140,9 @@ public class ProductService implements IProductService {
         return productDTOs;
     }
 
+    @Override
+    public void save(ProductEntity product) {
+        productRepository.save(product);
+    }
+
 }

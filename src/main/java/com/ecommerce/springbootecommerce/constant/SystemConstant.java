@@ -5,4 +5,5 @@ public class SystemConstant {
     public static final boolean INACTIVE_STATUS = false;
     
     public static final String STRING_ACTIVE_STATUS = "ACTIVE";
+    public static final String STRING_DELIVERIED_ORDER = "DELIVERIED";
 }

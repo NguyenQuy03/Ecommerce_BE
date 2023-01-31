@@ -10,8 +10,9 @@ import com.ecommerce.springbootecommerce.entity.OrderEntity;
 public interface OrderRepository extends JpaRepository<OrderEntity, Long>{
     OrderEntity findOneByProductIdAndCartIdAndStatus(Long productId, Long cartId, String status);
     Optional<OrderEntity> findByProductIdAndCartIdAndStatus(Long productID, Long cartId, String status);
-    Long countByCartId(Long cartId);
-    List<OrderEntity> findAllByCartId(Long cartId);
+    Long countByCartIdAndStatus(Long cartId, String status);
+    List<OrderEntity> findAllByCartIdAndStatus(Long cartId, String status);
+    OrderEntity findOneById(Long id);
     
     
 }

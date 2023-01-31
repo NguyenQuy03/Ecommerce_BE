@@ -10,6 +10,7 @@ public interface CartRepository extends JpaRepository<CartEntity, Long>{
     
     Optional<CartEntity> findByStatus(String status);
     Optional<CartEntity> findByStatusAndAccountId(String status, long id);
+    CartEntity findOneById(Long id);
     
     CartEntity findOneByStatusAndAccountId(String status, Long id);
 }

@@ -20,6 +20,9 @@ public class OrderConverter {
         entity.setProduct(dto.getProduct());
         entity.setCart(dto.getCart());
         
+        entity.setCreatedDate(dto.getCreatedDate());
+        entity.setCreatedBy(dto.getCreatedBy());
+        
         return entity;
     }
     
@@ -34,6 +37,8 @@ public class OrderConverter {
         
         dto.setCreatedDate(entity.getCreatedDate());
         dto.setCreatedBy(entity.getCreatedBy());
+        dto.setModifiedDate(entity.getModifiedDate());
+        dto.setModifiedBy(entity.getModifiedBy());
         
         return dto;
     }

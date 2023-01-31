@@ -38,7 +38,7 @@ public class QuantityOrderUtil {
             
             if (isCartExist) {
                 cartDTO = cartService.findByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
-                quantityOrder = orderService.countByCartId(cartDTO.getId());
+                quantityOrder = orderService.countByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_ACTIVE_STATUS);
             } else {
                 cartDTO.setAccount(accountConverter.toEntity(accountDTO));
                 cartDTO.setStatus(SystemConstant.STRING_ACTIVE_STATUS);

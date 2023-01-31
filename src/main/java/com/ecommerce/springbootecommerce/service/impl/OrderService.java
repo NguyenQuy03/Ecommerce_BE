@@ -23,7 +23,7 @@ public class OrderService implements IOrderService{
     @Override
     public void save(OrderDTO dto) {
         OrderEntity entity = orderConverter.toEntity(dto);
-        orderRepository.saveAndFlush(entity);
+        orderRepository.save(entity);
     }
 
     @Override
@@ -34,8 +34,8 @@ public class OrderService implements IOrderService{
     }
 
     @Override
-    public Long countByCartId(Long cartId) {
-        return orderRepository.countByCartId(cartId);
+    public Long countByCartIdAndStatus(Long cartId, String status) {
+        return orderRepository.countByCartIdAndStatus(cartId, status);
     }
 
     @Override
@@ -44,8 +44,8 @@ public class OrderService implements IOrderService{
     }
 
     @Override
-    public List<OrderDTO> findAllByCartId(Long cartId) {
-        List<OrderEntity> orderEntities = orderRepository.findAllByCartId(cartId);
+    public List<OrderDTO> findAllByCartIdAndStatus(Long cartId, String status) {
+        List<OrderEntity> orderEntities = orderRepository.findAllByCartIdAndStatus(cartId, status);
         List<OrderDTO> orderDTOs = orderConverter.toListOrderDTO(orderEntities);
         return orderDTOs;
     }
@@ -53,6 +53,12 @@ public class OrderService implements IOrderService{
     @Override
     public void delete(long id) {
         orderRepository.deleteById(id);
+    }
+
+    @Override
+    public OrderEntity findOneById(Long id) {
+        OrderEntity orderEntity = orderRepository.findOneById(id);
+        return orderEntity;
     }
 
 

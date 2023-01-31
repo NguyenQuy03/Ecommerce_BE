@@ -19,8 +19,17 @@ public class CartService implements ICartService{
 
     @Override
     public void save(CartDTO cartDTO) {
-        CartEntity cartEntity = cartConverter.toEntity(cartDTO);
-        cartRepository.save(cartEntity);
+        
+        if (cartDTO.getId() == null) {
+            CartEntity cartEntity = cartConverter.toEntity(cartDTO);
+            cartRepository.save(cartEntity);
+            
+        } else {
+            CartEntity preCartEntity = cartRepository.findOneById(cartDTO.getId());
+            CartEntity cartEntity = cartConverter.toEntity(cartDTO, preCartEntity);
+            cartRepository.save(cartEntity);
+            
+        }
     }
 
     @Override
@@ -33,6 +42,13 @@ public class CartService implements ICartService{
     @Override
     public boolean isExistByStatusAndAccountId(String status, Long id) {
         return cartRepository.findByStatusAndAccountId(status, id).isPresent();
+    }
+
+    @Override
+    public CartDTO findOneById(Long id) {
+        CartEntity cartEntity = cartRepository.findOneById(id);
+        CartDTO cartDTO = cartConverter.toDTO(cartEntity);
+        return cartDTO;
     }
     
     

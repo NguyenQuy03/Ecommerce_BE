@@ -11,9 +11,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CartDTO extends BaseDTO<CartDTO> {
+    
     private String status;
-    
     private AccountEntity account;
-    
     private Set<OrderEntity> setOrders;
 }

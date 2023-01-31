@@ -51,7 +51,9 @@
 								<p class="text-truncate mb-3" th:utext="${product.name}" style="font-size: 14px;"></p>
 								<div class="d-flex justify-content-between">
 									<h6 class="text-primary" th:utext="${product.intPrice}"></h6>
-									<span style="font-size: 14px;">100 sold</span>
+									<div>
+										<span th:text="${product.sold}" style="font-size: 14px;"></span> <span>sold</span>
+									</div>
 								</div>
 							</div>
 						</div>

@@ -30,4 +30,12 @@ public class CartConverter {
         
         return entity;
     }
+    
+    public CartEntity toEntity(CartDTO dto, CartEntity entity) {
+        entity.setAccount(dto.getAccount());
+        entity.setStatus(dto.getStatus());
+        entity.setSetOrders(dto.getSetOrders());
+        
+        return entity;
+    }
 }
