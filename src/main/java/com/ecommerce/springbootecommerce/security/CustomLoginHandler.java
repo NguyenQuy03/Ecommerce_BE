@@ -32,7 +32,6 @@ public class CustomLoginHandler extends SimpleUrlAuthenticationSuccessHandler {
         if (response.isCommitted()) {
             return;
         }
-
         redirectStrategy.sendRedirect(request, response, targetUrl);
     }
 
@@ -42,8 +41,6 @@ public class CustomLoginHandler extends SimpleUrlAuthenticationSuccessHandler {
 
         if (isManager(roles)) {
             url = "/manager/transaction";
-        } else if (isAuditAdmin(roles)) {
-            url = "/admin/audit/recentTransaction";
         } else if (isSeller(roles)) {
             url = "/seller/recentSales";
         } else if (isBuyer(roles)) {
@@ -55,10 +52,6 @@ public class CustomLoginHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private boolean isManager(List<String> roles) {
         return roles.contains("ROLE_MANAGER");
-    }
-
-    private boolean isAuditAdmin(List<String> roles) {
-        return roles.contains("ROLE_AUDITADMIN");
     }
 
     private boolean isBuyer(List<String> roles) {

@@ -135,10 +135,13 @@ public class ProductController {
     public String createProduct(@Valid @ModelAttribute("product") ProductDTO product,
             BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) throws IOException {
         
+        if (product.getImageFile().isEmpty()) {
+            bindingResult.addError(new FieldError("product", "imageFile", "Please choose an image"));
+        }
+        
         if (bindingResult.hasErrors()) {
             List<CategoryDTO> categories = categoryService.findAll();
             model.addAttribute("categories", categories);
-            bindingResult.addError(new FieldError("product", "imageFile", "Please choose an image"));
             return "/seller/product/addOrEdit";
         }
         

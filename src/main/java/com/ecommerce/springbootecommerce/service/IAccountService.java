@@ -8,4 +8,5 @@ public interface IAccountService {
     boolean isAccountExistByEmail(String email);
     boolean isAccountExistByUserName(String userName);
     void register(AccountDTO accountDTO);
+    
 }

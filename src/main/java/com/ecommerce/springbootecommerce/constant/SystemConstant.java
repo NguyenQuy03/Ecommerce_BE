@@ -6,4 +6,7 @@ public class SystemConstant {
     
     public static final String STRING_ACTIVE_STATUS = "ACTIVE";
     public static final String STRING_DELIVERIED_ORDER = "DELIVERIED";
+    
+    public static final String ROLE_BUYER = "BUYER";
+    public static final String ROLE_SELLER = "SELLER";
 }

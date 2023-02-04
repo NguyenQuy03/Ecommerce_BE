@@ -1,17 +1,18 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.springbootecommerce.config.EncoderConfig;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.converter.AccountConverter;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.entity.AccountEntity;
+import com.ecommerce.springbootecommerce.entity.AccountRoleEntity;
 import com.ecommerce.springbootecommerce.entity.RoleEntity;
 import com.ecommerce.springbootecommerce.repository.AccountRepository;
+import com.ecommerce.springbootecommerce.repository.AccountRoleRepository;
+import com.ecommerce.springbootecommerce.repository.RoleRepository;
 import com.ecommerce.springbootecommerce.service.IAccountService;
 
 @Service
@@ -25,9 +26,12 @@ public class AccountService implements IAccountService{
     
     @Autowired
     private EncoderConfig encoderConfig;
+
+    @Autowired
+    private AccountRoleRepository accountRoleRepository;
     
     @Autowired
-    private RoleService roleService;
+    private RoleRepository roleRepository;
 
     @Override
     public AccountDTO findAccountByUserName(String userName) {
@@ -49,7 +53,7 @@ public class AccountService implements IAccountService{
     public void register(AccountDTO accountDTO) {
         AccountEntity accountEntity = new AccountEntity();
         
-        if (accountDTO.getId()!= null) {
+        if (accountDTO.getId() != null) {
             
             AccountEntity preAccountEntity = accountRepository.findOneById(accountDTO.getId());
             
@@ -58,20 +62,23 @@ public class AccountService implements IAccountService{
             } else {
                 accountEntity = accountConverter.toPasswordEntity(accountDTO, preAccountEntity);
             }
-            
-            
         } else {
             
-            Set<RoleEntity> roles = new HashSet<>();
-            RoleEntity roleEntity = roleService.findRoleByName("buyer");
-            roles.add(roleEntity);
             String passwordEncode = encoderConfig.passwordEncoder().encode(accountDTO.getPassword());
             accountEntity = accountConverter.toEntity(accountDTO);
-            accountEntity.setRoles(roles);
             accountEntity.setPassword(passwordEncode);
         }
         
-        accountRepository.save(accountEntity);
+        AccountEntity returnedEntity = accountRepository.save(accountEntity);
+        
+        if (accountDTO.getId() == null) {
+            RoleEntity roleEntity = roleRepository.findOneByCode(SystemConstant.ROLE_BUYER);
+            AccountRoleEntity accountRoleEntity = new AccountRoleEntity();
+            accountRoleEntity.setAccount(returnedEntity);
+            accountRoleEntity.setRole(roleEntity);
+            accountRoleRepository.save(accountRoleEntity);
+        }
+
     }
 
     @Override

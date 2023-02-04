@@ -56,7 +56,6 @@ $(document).ready(function() {
 
 		});
 	})
-	atLeastChecked();
 
 	window.onscroll = function() { changeDisplayCartCheckOut() };
 
@@ -116,11 +115,12 @@ checkAll.addEventListener('click', event => {
 	if (event.target.checked) {
 		$('tbody input[type=checkbox]').prop('checked', true);
 		getTotal();
+		purchaseBtn.removeAttribute("disabled");
 	} else {
 		$('tbody input[type=checkbox]').prop('checked', false);
 		summaryPrice.innerText = "$0.00"
+		purchaseBtn.setAttribute("disabled", "true");
 	}
-	atLeastChecked();
 });
 
 checkBoxes.forEach((item) => {

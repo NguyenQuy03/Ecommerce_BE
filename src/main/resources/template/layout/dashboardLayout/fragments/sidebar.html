@@ -44,25 +44,6 @@
 					</ul></li>
 			</ul>
 
-			<!-- AUDIT ADMIN -->
-			<ul th:each="authority : ${#authentication.getAuthorities()}"
-				th:if="${authority.getAuthority().startsWith('ROLE_AUDITADMIN')}"
-				class="sidebar-nav" id="sidebar-nav">
-
-				<li class="nav-item"><a class="nav-link"
-					th:href="@{/admin/auditAdmin/recentTransaction}"> <i
-						class="bi bi-journal-text"></i><span>Recent Transaction</span>
-				</a></li>
-				<!-- End Forms Nav -->
-
-				<li class="nav-item"><a class="nav-link"
-					th:href="@{/admin/auditAdmin/topSelling}"> <i
-						class="bi bi-layout-text-window-reverse"></i><span>Top
-							Selling</span>
-				</a></li>
-				<!-- End Tables Nav -->
-			</ul>
-
 			<!-- MANAGER -->
 			<ul th:each="authority : ${#authentication.getAuthorities()}"
 				th:if="${authority.getAuthority().startsWith('ROLE_MANAGER')}"
@@ -77,13 +58,6 @@
 
 					<ul id="forms-nav" class="nav-content collapse show"
 						data-bs-parent="#sidebar-nav">
-
-						<li class="nav-item">
-							<a class="nav-link" th:href="@{/manager/account/adminAccount}">
-								<i class="bi bi-person-bounding-box"></i>
-								<span>Admin Account</span>
-							</a>
-						</li>
 
 						<li class="nav-item">
 							<a class="nav-link" th:href="@{/manager/account/sellerAccount}">
@@ -132,7 +106,7 @@
 				</li>
 
 				<li class="nav-item">
-					<a class="nav-link" th:href="@{/manager/account/adminAccount}">
+					<a class="nav-link" th:href="@{/purchase}">
 						<i class="bi bi-card-list"></i>
 						<span>My Purchase</span>
 					</a>

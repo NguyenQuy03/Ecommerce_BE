@@ -3,10 +3,14 @@ package com.ecommerce.springbootecommerce.controller.buyer;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
@@ -59,4 +63,61 @@ public class CartController {
         return "buyer/cart";
     }
     
+    @GetMapping("/purchase")
+    public String purchase(
+            Model model,
+            @RequestParam(value="page", required = false) Integer page,
+            @RequestParam(value="size", required = false) Integer size
+    ) {
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountDTO accountDTO = accountService.findAccountByUserName(userName);
+        
+        CartDTO cartDTO = cartService.findByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
+        Long quantityOrder = orderService.countByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_DELIVERIED_ORDER);
+        
+        if (page == null && size == null) {
+            page = 1;
+            size = 5;
+        }
+        @SuppressWarnings("null")
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Integer totalPage = (int) Math.ceil((double) quantityOrder / size);
+        
+        List<OrderDTO> listOrder = orderService.findAllByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_DELIVERIED_ORDER, pageable);
+
+        OrderDTO dto = new OrderDTO();
+        dto.setTotalPage(totalPage);
+        dto.setListResult(listOrder);
+        dto.setPage(page);
+        dto.setSize(size);
+
+        model.addAttribute("dto", dto);
+        model.addAttribute("quantityOrder", quantityOrderUtil.getQuantityOrder());
+        model.addAttribute("cartId", cartDTO.getId());
+                
+        return "buyer/purchase";
+    }
+    
+    @PostMapping("/buy-again")
+    public String redirectToCart(
+            Model model,
+            @RequestParam("orderId") Long orderId,
+            @RequestParam("cartId") Long cartId
+    ) {
+        OrderDTO orderDTO = orderService.findOneById(orderId);
+        
+        boolean isorderExisted = orderService.isOrderExistByProductIdAndCartIdAndStatus(orderDTO.getProduct().getId(), cartId, SystemConstant.STRING_ACTIVE_STATUS);
+        if (isorderExisted) {
+            OrderDTO existedDTO = orderService.findOneByProductIdAndCartIdAndStatus(orderDTO.getProduct().getId(), cartId, SystemConstant.STRING_ACTIVE_STATUS);
+            existedDTO.setQuantity(1 + existedDTO.getQuantity());
+            orderService.save(existedDTO);
+        } else {
+            orderDTO.setId(null);
+            orderDTO.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
+            orderDTO.setQuantity(1L);
+            
+            orderService.save(orderDTO);
+        }
+        return "redirect:/cart";
+    }
 }

@@ -1,15 +1,11 @@
 package com.ecommerce.springbootecommerce.entity;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -46,12 +42,6 @@ public class AccountEntity extends BaseEntity {
 
     @Column(name = "status")
     private boolean status;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "accounts_roles", joinColumns = {
-            @JoinColumn(name = "account_id", referencedColumnName = "id", nullable = false) }, inverseJoinColumns = {
-            @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false) })
-    private Set<RoleEntity> roles = new HashSet<>();
 
     // BUYER
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY,cascade = CascadeType.ALL)

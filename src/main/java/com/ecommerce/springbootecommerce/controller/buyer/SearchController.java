@@ -31,7 +31,8 @@ public class SearchController {
             Model model,
             @PathVariable("id") long id,
             @RequestParam("page") int page,
-            @RequestParam("size") int size) {
+            @RequestParam("size") int size
+    ) {
 
         Pageable pageable = PageRequest.of(page - 1, size);
 

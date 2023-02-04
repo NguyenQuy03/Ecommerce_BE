@@ -3,6 +3,7 @@ package com.ecommerce.springbootecommerce.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.springbootecommerce.converter.OrderConverter;
@@ -27,22 +28,22 @@ public class OrderService implements IOrderService{
     }
 
     @Override
-    public OrderDTO findOneByProductIdAndCartIdAndStatus(Long productId, Long cartId, String status) {
-        OrderEntity orderEntity = orderRepository.findOneByProductIdAndCartIdAndStatus(productId, cartId, status);
-        OrderDTO orderDTO = orderConverter.toDTO(orderEntity);
-        return orderDTO;
-    }
-
-    @Override
     public Long countByCartIdAndStatus(Long cartId, String status) {
         return orderRepository.countByCartIdAndStatus(cartId, status);
     }
 
     @Override
     public boolean isOrderExistByProductIdAndCartIdAndStatus(Long productID, Long cartId, String status) {
-        return orderRepository.findByProductIdAndCartIdAndStatus(productID, cartId, status).isPresent();
+        return orderRepository.findOneByProductIdAndCartIdAndStatus(productID, cartId, status).isPresent();
     }
 
+    @Override
+    public List<OrderDTO> findAllByCartIdAndStatus(Long cartId, String status, Pageable pageable) {
+        List<OrderEntity> orderEntities = orderRepository.findAllByCartIdAndStatus(cartId, status, pageable).getContent();
+        List<OrderDTO> orderDTOs = orderConverter.toListOrderDTO(orderEntities);
+        return orderDTOs;
+    }
+    
     @Override
     public List<OrderDTO> findAllByCartIdAndStatus(Long cartId, String status) {
         List<OrderEntity> orderEntities = orderRepository.findAllByCartIdAndStatus(cartId, status);
@@ -56,9 +57,17 @@ public class OrderService implements IOrderService{
     }
 
     @Override
-    public OrderEntity findOneById(Long id) {
+    public OrderDTO findOneById(Long id) {
         OrderEntity orderEntity = orderRepository.findOneById(id);
-        return orderEntity;
+        OrderDTO orderDTO = orderConverter.toDTO(orderEntity);
+        return orderDTO;
+    }
+
+    @Override
+    public OrderDTO findOneByProductIdAndCartIdAndStatus(Long productId, Long cartId, String status) {
+        OrderEntity orderEntity = orderRepository.findOneByProductIdAndCartIdAndStatus(productId, cartId, status).get();
+        OrderDTO orderDTO = orderConverter.toDTO(orderEntity);
+        return orderDTO;
     }
 
 

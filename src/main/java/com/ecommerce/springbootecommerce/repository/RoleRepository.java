@@ -6,4 +6,5 @@ import com.ecommerce.springbootecommerce.entity.RoleEntity;
 
 public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
     RoleEntity findRoleByName(String name);
+    RoleEntity findOneByCode(String code);
 }

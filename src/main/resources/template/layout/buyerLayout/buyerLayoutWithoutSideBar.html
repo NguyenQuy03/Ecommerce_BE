@@ -9,9 +9,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trang chủ</title>
 
-<!-- Favicon -->
-<link href="img/favicon.ico" rel="icon">
-
 <!-- Google Web Fonts -->
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link
@@ -31,13 +28,16 @@
 <link rel="stylesheet" href="/buyer/css/style.css">
 
 <script defer src="/common/js/jquery.twbsPagination.min.js"></script>
+<script type="text/javascript"
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 </head>
 
 <body>
 	<main>
 		<header class="bg-secondary" id="header">
 			<div class="container-fluid">
-			<div th:replace="layout/buyerLayout/fragments/header::header"></div>
+				<div th:replace="layout/buyerLayout/fragments/header::header"></div>
 			</div>
 		</header>
 
@@ -47,20 +47,17 @@
 		<footer>
 			<div th:replace="layout/buyerLayout/fragments/footer::footer"></div>
 		</footer>
-
-		<a href="#"
-			class="back-to-top d-flex align-items-center justify-content-center"><i
-			class="bi bi-arrow-up-short"></i></a>
 	</main>
 
 	<!-- JavaScript Libraries -->
-	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 	<script
 		src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
 	<script src="/buyer/lib/owlcarousel/owl.carousel.min.js"></script>
 
 	<!-- Template Javascript -->
 	<script src="/buyer/js/main.js"></script>
+	<script src="/common/js/twb.js"></script>
+
 </body>
 
 </html>

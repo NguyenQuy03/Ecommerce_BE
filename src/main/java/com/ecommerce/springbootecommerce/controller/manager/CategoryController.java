@@ -1,4 +1,4 @@
-package com.ecommerce.springbootecommerce.controller.admin;
+package com.ecommerce.springbootecommerce.controller.manager;
 
 import java.util.List;
 
@@ -14,29 +14,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 
-
 @Controller
 @RequestMapping("/manager")
-public class ManagerController {
+public class CategoryController {
     
     @Autowired
     private ICategoryService categoryService;
     
-    @GetMapping(value="/account/adminAccount")
-    public String adminAccount() {
-        return "manager/account/adminAccount";
-    }
-
-    @GetMapping(value="/account/sellerAccount")
-    public String sellerAccount() {
-        return "manager/account/sellerAccount";
-    }
-    
-    @GetMapping(value="/account/buyerAccount")
-    public String buyerAccount() {
-        return "manager/account/buyerAccount";
-    }
-
     @GetMapping(value="/category")
     public String categories(
             Model model,
@@ -61,10 +45,6 @@ public class ManagerController {
         return "manager/category/categories";
     }
 
-    @GetMapping(value="/transaction")
-    public String transactions() {
-        return "manager/transactions";
-    }
 
     @GetMapping(value="/category/new")
     public String newCategory(Model model) {
