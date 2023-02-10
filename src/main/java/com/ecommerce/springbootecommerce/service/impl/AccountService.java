@@ -34,7 +34,7 @@ public class AccountService implements IAccountService{
     private RoleRepository roleRepository;
 
     @Override
-    public AccountDTO findAccountByUserName(String userName) {
+    public AccountDTO findByUserName(String userName) {
         AccountEntity account = accountRepository.findOneByUserName(userName);
         return accountConverter.toDTO(account);
     }

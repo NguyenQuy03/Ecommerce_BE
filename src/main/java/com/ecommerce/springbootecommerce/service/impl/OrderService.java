@@ -70,5 +70,12 @@ public class OrderService implements IOrderService{
         return orderDTO;
     }
 
+    @Override
+    public List<OrderDTO> findAllByStatus(String status, Pageable pageable) {
+        List<OrderEntity> orderEntities = orderRepository.findAllByStatus(status, pageable).getContent();
+        List<OrderDTO> orderDTOs = orderConverter.toListOrderDTO(orderEntities);
+        return orderDTOs;
+    }
+
 
 }

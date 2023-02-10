@@ -40,7 +40,13 @@ public class CartAPI {
                     order.setStatus(SystemConstant.STRING_DELIVERIED_ORDER);
                     orderService.save(orderConverter.toDTO(order));
                     
+                    Long remainingStock = order.getProduct().getStock() - order.getQuantity();
+                    
                     order.getProduct().setSold(order.getProduct().getSold() + order.getQuantity());
+                    order.getProduct().setStock(remainingStock);
+                    if (remainingStock == 0) {
+                        order.getProduct().setStatus(SystemConstant.SOLD_OUT_PRODUCT);
+                    }
                     productService.save(order.getProduct());
                 }
             }

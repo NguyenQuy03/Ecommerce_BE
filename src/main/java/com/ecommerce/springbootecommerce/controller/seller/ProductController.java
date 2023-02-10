@@ -54,7 +54,7 @@ public class ProductController {
             @RequestParam("size") int size
     ) {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO account = accountService.findAccountByUserName(userName);
+        AccountDTO account = accountService.findByUserName(userName);
 
         long quantityProduct = productService.countAllByAccountId(account.getId());
 

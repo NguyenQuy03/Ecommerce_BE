@@ -32,7 +32,7 @@ public class QuantityOrderUtil {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         
         if (!userName.contains("anonymousUser")) {
-            AccountDTO accountDTO = accountService.findAccountByUserName(userName);
+            AccountDTO accountDTO = accountService.findByUserName(userName);
             boolean isCartExist = cartService.isExistByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
             CartDTO cartDTO = new CartDTO();
             

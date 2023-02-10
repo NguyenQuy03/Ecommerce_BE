@@ -15,5 +15,7 @@ public interface IOrderService {
     
     List<OrderDTO> findAllByCartIdAndStatus(Long cartId, String status, Pageable pageable);
     List<OrderDTO> findAllByCartIdAndStatus(Long cartId, String status);
+    
+    List<OrderDTO> findAllByStatus(String status, Pageable pageable);
     void delete(long id);
 }

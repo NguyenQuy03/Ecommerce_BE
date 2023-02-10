@@ -48,9 +48,11 @@
 							</button>
 
 							<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-								<a class="dropdown-item" th:href="@{/profile}">My Profile</a> <a
-									class="dropdown-item" th:href="@{/purchase}">My Purchase</a> <a
-									class="dropdown-item" href="/logout">Sign Out</a>
+								<a class="dropdown-item" th:href="@{/profile}">My Profile</a>
+								<a class="dropdown-item" th:href="@{/purchase}">My Purchase</a>
+								<a th:if="${isSeller}" class="dropdown-item" th:href="@{/seller/recentSales}">My Shop</a>
+								<a th:unless="${isSeller}" class="dropdown-item" th:href="@{/register-seller}">Register Seller</a>
+								<a class="dropdown-item" href="/logout">Sign Out</a>
 							</div>
 						</div>
 					</div>

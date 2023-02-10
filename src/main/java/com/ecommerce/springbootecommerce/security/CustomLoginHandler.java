@@ -40,11 +40,11 @@ public class CustomLoginHandler extends SimpleUrlAuthenticationSuccessHandler {
         List<String> roles = SecurityUtil.getAuthorities();
 
         if (isManager(roles)) {
-            url = "/manager/transaction";
-        } else if (isSeller(roles)) {
-            url = "/seller/recentSales";
+            return url = "/manager/transaction";
         } else if (isBuyer(roles)) {
-            url = "/home";
+            return url = "/home";
+        } else if (isSeller(roles)) {
+            return url = "/seller/recentSales";
         }
 
         return url;

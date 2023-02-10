@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ecommerce.springbootecommerce.config.EncoderConfig;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.service.IAccountService;
 
@@ -32,10 +33,15 @@ public class AccountController {
         
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         
-        AccountDTO account = accountService.findAccountByUserName(userName);
+        boolean isOnlyBuyerRole = false;
+        if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().size() == 1 && SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString().contains(SystemConstant.ROLE_BUYER)) {
+            isOnlyBuyerRole = true;
+        }
+        AccountDTO account = accountService.findByUserName(userName);
         account.setPassword("");
          
         model.addAttribute("account" , account);
+        model.addAttribute("isOnlyBuyerRole", isOnlyBuyerRole);
         return "authenticate/profile";
     }
     
@@ -45,7 +51,7 @@ public class AccountController {
             RedirectAttributes redirectAttributes
     ) {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO preAccount = accountService.findAccountByUserName(userName);
+        AccountDTO preAccount = accountService.findByUserName(userName);
         if (account.getTypeEditProfile().equals("inforForm")) {
             account.setPassword(preAccount.getPassword());
             
@@ -81,4 +87,5 @@ public class AccountController {
         redirectAttributes.addFlashAttribute("alertMessage", "Success! Your profile was updated.");
         return "redirect:/profile";
     }
+
 }

@@ -32,20 +32,14 @@
                 <div th:replace="layout/buyerLayout/fragments/header::header"></div>
             </div>
         </header>
-        <sidebar class="row">
-            <div class="col-12">
+        <aside id="sidebar">
                 <div th:replace="layout/buyerLayout/fragments/sidebar::sidebar"></div>
-            </div>
-        </sidebar>
-        <section class="row">
-            <div class="col-12">
+        </aside>
+        <section>
                 <div layout:fragment="content"></div>
-            </div>
         </section>
-        <footer class="row">
-            <div class="col-12">
+        <footer>
                 <div th:replace="layout/buyerLayout/fragments/footer::footer"></div>
-            </div>
         </footer>
         
     </main>

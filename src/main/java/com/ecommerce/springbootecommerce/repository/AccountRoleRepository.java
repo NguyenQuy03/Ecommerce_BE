@@ -14,4 +14,8 @@ public interface AccountRoleRepository
     AccountRoleEntity findByAccountId(Long accountId);
     
     Set<AccountRoleEntity> findAllByRoleCode(String roleCode);
+
+    Set<AccountRoleEntity> findByAccountIdAndRoleCode(Long id, String roleSeller);
+
+    Set<AccountRoleEntity> findAllByAccountId(Long id);
 }

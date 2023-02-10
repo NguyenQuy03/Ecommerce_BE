@@ -115,7 +115,9 @@ checkAll.addEventListener('click', event => {
 	if (event.target.checked) {
 		$('tbody input[type=checkbox]').prop('checked', true);
 		getTotal();
-		purchaseBtn.removeAttribute("disabled");
+		if (checkBoxes.length > 0) {
+			purchaseBtn.removeAttribute("disabled");	
+		}
 	} else {
 		$('tbody input[type=checkbox]').prop('checked', false);
 		summaryPrice.innerText = "$0.00"

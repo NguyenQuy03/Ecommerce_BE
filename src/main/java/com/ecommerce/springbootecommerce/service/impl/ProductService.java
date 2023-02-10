@@ -145,4 +145,16 @@ public class ProductService implements IProductService {
         productRepository.save(product);
     }
 
+    @Override
+    public List<ProductDTO> findAllByStatus(String status, Pageable pageable) {
+        List<ProductEntity> productEntities = productRepository.findAllByStatus(status, pageable).getContent();
+        List<ProductDTO> productDTOs = productConverter.toListProductDTO(productEntities);
+        return productDTOs;
+    }
+
+    @Override
+    public long countAllByStatus(String status) {
+        return productRepository.countAllByStatus(status);
+    }
+
 }

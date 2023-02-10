@@ -38,7 +38,7 @@ public class ProductEntity extends BaseEntity{
     private String details;
     
     @Column(name = "stock")
-    private Integer stock;
+    private Long stock;
     
     @Column(name = "status")
     private String status;

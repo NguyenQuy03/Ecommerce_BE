@@ -26,4 +26,11 @@ public class AccountRoleConverter {
         }
         return dtos;
     }
+
+    public AccountRoleEntity toEntity(AccountRoleDTO accountRoleDTO) {
+        AccountRoleEntity accountRoleEntity = new AccountRoleEntity();
+        accountRoleEntity.setAccount(accountRoleDTO.getAccountEntity());
+        accountRoleEntity.setRole(accountRoleDTO.getRoleEntity());
+        return accountRoleEntity;
+    }
 }

@@ -5,6 +5,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.converter.AccountRoleConverter;
 import com.ecommerce.springbootecommerce.dto.AccountRoleDTO;
 import com.ecommerce.springbootecommerce.entity.AccountRoleEntity;
@@ -27,4 +28,24 @@ public class AccountRoleService implements IAccountRoleService{
         return accountRoleDTOs;
     }
 
+    @Override
+    public void save(AccountRoleDTO accountRoleDTO) {
+        AccountRoleEntity accountRoleEntity = accountRoleConverter.toEntity(accountRoleDTO);
+        accountRoleRepository.save(accountRoleEntity);
+        
+    }
+
+    @Override
+    public boolean findByAccountIdAndRoleCode(Long id, String roleSeller) {
+        Set<AccountRoleEntity> entities = accountRoleRepository.findByAccountIdAndRoleCode(id, roleSeller);
+        boolean isSeller = false;
+        for (AccountRoleEntity entity : entities) {
+            if (entity.getRole().getCode().contains(SystemConstant.ROLE_SELLER)) {
+                return isSeller = true;
+            }
+        }
+        return isSeller;
+    }
+
+    
 }

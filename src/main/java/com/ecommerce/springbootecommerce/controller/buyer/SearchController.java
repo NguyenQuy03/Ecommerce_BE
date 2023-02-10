@@ -1,5 +1,6 @@
 package com.ecommerce.springbootecommerce.controller.buyer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IProductService;
 import com.ecommerce.springbootecommerce.util.QuantityOrderUtil;
@@ -66,11 +68,19 @@ public class SearchController {
             size = 9;
         }
         Pageable pageable = PageRequest.of(page - 1, size);
+        long quantityProduct = 0L;
+        List<ProductDTO> products = new ArrayList<>();
+        if (keyword.contains("")) {
+            quantityProduct = productService.countAllByStatus(SystemConstant.STRING_ACTIVE_STATUS);
+            products = productService.findAllByStatus(SystemConstant.STRING_ACTIVE_STATUS, pageable);
 
-        long quantityProduct = productService.countByNameContains(keyword);
+        } else {
+            quantityProduct = productService.countByNameContains(keyword);
+            products = productService.findAllByNameContains(keyword, pageable);
+        }
+        
 
         Integer totalPage = (int) Math.ceil((double) quantityProduct / size);
-        List<ProductDTO> products = productService.findAllByNameContains(keyword, pageable);
 
         ProductDTO dto = new ProductDTO();
         dto.setTotalPage(totalPage);

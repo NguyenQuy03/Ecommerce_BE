@@ -52,7 +52,7 @@ public class OrderAPI {
             @RequestParam("quantity") Long quantity
     ) {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO accountDTO = accountService.findAccountByUserName(userName);
+        AccountDTO accountDTO = accountService.findByUserName(userName);
         CartDTO cartDTO = cartService.findByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
         
         boolean isOrderExist = orderService.isOrderExistByProductIdAndCartIdAndStatus(productId, cartDTO.getId(), SystemConstant.STRING_ACTIVE_STATUS);      
@@ -67,12 +67,16 @@ public class OrderAPI {
             
             orderDTO.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
             orderDTO.setQuantity(quantity);
-            
+                        
             orderService.save(orderDTO);
         
         } else {
             OrderDTO existedOrder = orderService.findOneByProductIdAndCartIdAndStatus(productId, cartDTO.getId(), SystemConstant.STRING_ACTIVE_STATUS);
-            existedOrder.setQuantity(quantity + existedOrder.getQuantity());
+            if (quantity + existedOrder.getQuantity() > existedOrder.getProduct().getStock()) {
+                existedOrder.setQuantity(existedOrder.getProduct().getStock());
+            } else {    
+                existedOrder.setQuantity(quantity + existedOrder.getQuantity());
+            }
             orderService.save(existedOrder);
         }
             

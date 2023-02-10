@@ -39,7 +39,7 @@ public class ProductDTO extends BaseDTO<ProductDTO>{
     private String details;
     
     @NotNull(message = "Please enter product's stock!")
-    private Integer stock;
+    private Long stock;
     private Long accountId;
     
     @NotNull(message = "Please enter product's category!")

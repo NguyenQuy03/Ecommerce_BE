@@ -6,4 +6,6 @@ import com.ecommerce.springbootecommerce.dto.AccountRoleDTO;
 
 public interface IAccountRoleService {
     Set<AccountRoleDTO> findAllByRole(String roleCode);
+    void save(AccountRoleDTO accountRoleDTO);
+    boolean findByAccountIdAndRoleCode(Long id, String roleSeller);
 }

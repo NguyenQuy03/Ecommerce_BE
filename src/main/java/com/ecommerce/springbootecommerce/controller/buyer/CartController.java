@@ -42,7 +42,7 @@ public class CartController {
             Model model
     ) {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO accountDTO = accountService.findAccountByUserName(userName);
+        AccountDTO accountDTO = accountService.findByUserName(userName);
         
         Boolean isCartExist = cartService.isExistByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
         CartDTO cartDTO = new CartDTO();
@@ -70,7 +70,7 @@ public class CartController {
             @RequestParam(value="size", required = false) Integer size
     ) {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO accountDTO = accountService.findAccountByUserName(userName);
+        AccountDTO accountDTO = accountService.findByUserName(userName);
         
         CartDTO cartDTO = cartService.findByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
         Long quantityOrder = orderService.countByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_DELIVERIED_ORDER);
@@ -103,20 +103,23 @@ public class CartController {
             Model model,
             @RequestParam("orderId") Long orderId,
             @RequestParam("cartId") Long cartId
+            
     ) {
         OrderDTO orderDTO = orderService.findOneById(orderId);
         
-        boolean isorderExisted = orderService.isOrderExistByProductIdAndCartIdAndStatus(orderDTO.getProduct().getId(), cartId, SystemConstant.STRING_ACTIVE_STATUS);
-        if (isorderExisted) {
+        boolean isOrderExisted = orderService.isOrderExistByProductIdAndCartIdAndStatus(orderDTO.getProduct().getId(), cartId, SystemConstant.STRING_ACTIVE_STATUS);
+        if (isOrderExisted) {
             OrderDTO existedDTO = orderService.findOneByProductIdAndCartIdAndStatus(orderDTO.getProduct().getId(), cartId, SystemConstant.STRING_ACTIVE_STATUS);
             existedDTO.setQuantity(1 + existedDTO.getQuantity());
             orderService.save(existedDTO);
         } else {
-            orderDTO.setId(null);
-            orderDTO.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
-            orderDTO.setQuantity(1L);
-            
-            orderService.save(orderDTO);
+            if (orderDTO.getProduct().getStock() > 0) {
+                orderDTO.setId(null);
+                orderDTO.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
+                orderDTO.setQuantity(1L);
+                
+                orderService.save(orderDTO);
+            }
         }
         return "redirect:/cart";
     }

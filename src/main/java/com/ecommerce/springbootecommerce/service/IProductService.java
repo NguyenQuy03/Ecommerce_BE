@@ -13,6 +13,7 @@ public interface IProductService {
     void delete(long[] ids);
     
     List<ProductDTO> findAll(Pageable pageable);
+    List<ProductDTO> findAllByStatus(String status, Pageable pageable);
     List<ProductDTO> findAllByAccountId(long accountId, Pageable pageable);
     List<ProductDTO> findAllByCategoryId(long categoryId, Pageable pageable);
     List<ProductDTO> findByStockGreaterThan(Integer stock, Pageable pageable);
@@ -24,9 +25,12 @@ public interface IProductService {
     long countByStockGreaterThan(Integer stock);
     long countByStockEquals(Integer stock);
     long countByNameContains(String keyword);
+    long countAllByStatus(String stringActiveStatus);
 
     ProductDTO findById(Long id);
 
     void save(ProductEntity product);
+
+
 
 }
