@@ -196,7 +196,9 @@
 										style="font-size: 14px;"></p>
 									<div class="d-flex justify-content-between">
 										<h6 class="text-primary" th:utext="${product.intPrice}"></h6>
-										<span style="font-size: 14px;">100 sold</span>
+										<div>
+											<span style="font-size: 14px;" th:text="${product.sold}"></span><span>&nbsp;sold</span>
+										</div>
 									</div>
 								</div>
 							</div>

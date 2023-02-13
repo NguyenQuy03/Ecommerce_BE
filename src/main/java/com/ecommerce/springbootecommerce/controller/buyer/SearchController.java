@@ -70,10 +70,9 @@ public class SearchController {
         Pageable pageable = PageRequest.of(page - 1, size);
         long quantityProduct = 0L;
         List<ProductDTO> products = new ArrayList<>();
-        if (keyword.contains("")) {
+        if (keyword == "") {
             quantityProduct = productService.countAllByStatus(SystemConstant.STRING_ACTIVE_STATUS);
             products = productService.findAllByStatus(SystemConstant.STRING_ACTIVE_STATUS, pageable);
-
         } else {
             quantityProduct = productService.countByNameContains(keyword);
             products = productService.findAllByNameContains(keyword, pageable);

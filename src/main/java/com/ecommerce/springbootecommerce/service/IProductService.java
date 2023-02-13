@@ -16,14 +16,15 @@ public interface IProductService {
     List<ProductDTO> findAllByStatus(String status, Pageable pageable);
     List<ProductDTO> findAllByAccountId(long accountId, Pageable pageable);
     List<ProductDTO> findAllByCategoryId(long categoryId, Pageable pageable);
-    List<ProductDTO> findByStockGreaterThan(Integer stock, Pageable pageable);
-    List<ProductDTO> findByStockEquals(Integer stock, Pageable pageable);
+    List<ProductDTO> findByStockGreaterThanAndAccountId(long stock, Long id, Pageable pageable);
+    List<ProductDTO> findByStockEqualsAndAccountId(long stock, Long id, Pageable pageable);
+    
     List<ProductDTO> findAllByNameContains(String keyword, Pageable pageable);
     
     long countAllByAccountId(long accountId);
     long countAllByCategoryId(Long categoryId);
-    long countByStockGreaterThan(Integer stock);
-    long countByStockEquals(Integer stock);
+    long countByStockGreaterThanAndAccountId(long stock, Long id);
+    long countByStockEqualsAndAccountId(long stock, Long id);
     long countByNameContains(String keyword);
     long countAllByStatus(String stringActiveStatus);
 
@@ -31,6 +32,6 @@ public interface IProductService {
 
     void save(ProductEntity product);
 
-
+    List<ProductDTO> findAllBySellerNameOrderBySoldDesc(String sellerName);
 
 }

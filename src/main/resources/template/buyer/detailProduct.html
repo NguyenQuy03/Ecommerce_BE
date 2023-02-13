@@ -135,7 +135,7 @@
 								</button>
 							</div>
 						</div>
-						<span th:text=*{stock}></span> <span>&nbsp;pieces available</span>
+						<span th:text=*{stock} id="stock"></span> <span>&nbsp;pieces available</span>
 					</div>
 					<div>
 						<button class="btn btn-primary px-3 add-btn" type="submit">
@@ -156,6 +156,18 @@
 							<i class="fas fa-check-circle model-icon"></i>
 							<div class="modal-body">Item has been added to your
 								shopping cart</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Modal Sold Out -->
+				<div class="modal fade" id="model-sold-out" tabindex="-1" role="dialog"
+					aria-labelledby="exampleModalLabel" aria-hidden="true"
+					style="display: none;">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content model-product ">
+							<i class="fas fa-times-circle model-icon" style="color: red!important"></i>
+							<div class="modal-body">The Product has been sold out</div>
 						</div>
 					</div>
 				</div>

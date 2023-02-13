@@ -73,7 +73,7 @@ public class CartController {
         AccountDTO accountDTO = accountService.findByUserName(userName);
         
         CartDTO cartDTO = cartService.findByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
-        Long quantityOrder = orderService.countByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_DELIVERIED_ORDER);
+        Long quantityOrder = orderService.countByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_DELIVERED_ORDER);
         
         if (page == null && size == null) {
             page = 1;
@@ -83,7 +83,7 @@ public class CartController {
         Pageable pageable = PageRequest.of(page - 1, size);
         Integer totalPage = (int) Math.ceil((double) quantityOrder / size);
         
-        List<OrderDTO> listOrder = orderService.findAllByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_DELIVERIED_ORDER, pageable);
+        List<OrderDTO> listOrder = orderService.findAllByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_DELIVERED_ORDER, pageable);
 
         OrderDTO dto = new OrderDTO();
         dto.setTotalPage(totalPage);

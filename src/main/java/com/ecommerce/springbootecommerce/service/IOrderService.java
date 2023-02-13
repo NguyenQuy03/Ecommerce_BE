@@ -18,4 +18,6 @@ public interface IOrderService {
     
     List<OrderDTO> findAllByStatus(String status, Pageable pageable);
     void delete(long id);
+    
+    List<OrderDTO> findAllByStatusAndSellerName(String status, String sellerName);
 }

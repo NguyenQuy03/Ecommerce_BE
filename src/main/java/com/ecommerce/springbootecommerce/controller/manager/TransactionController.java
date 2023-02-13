@@ -23,8 +23,8 @@ public class TransactionController {
 
     @GetMapping(value="/transaction")
     public String transactions(Model model) {
-        PageRequest sortedByDate = PageRequest.of(0, 20);
-        List<OrderDTO> dtos = orderService.findAllByStatus(SystemConstant.STRING_DELIVERIED_ORDER, sortedByDate);
+        PageRequest pageRequest = PageRequest.of(0, 20);
+        List<OrderDTO> dtos = orderService.findAllByStatus(SystemConstant.STRING_DELIVERED_ORDER, pageRequest);
         
         OrderDTO dto = new OrderDTO();
         dto.setListResult(dtos);

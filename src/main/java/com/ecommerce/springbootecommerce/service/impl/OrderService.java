@@ -77,5 +77,12 @@ public class OrderService implements IOrderService{
         return orderDTOs;
     }
 
+    @Override
+    public List<OrderDTO> findAllByStatusAndSellerName(String status, String sellerName) {
+        List<OrderEntity> orderEntities = orderRepository.findAllByStatusAndSellerName(status, sellerName).getContent();
+        List<OrderDTO> orderDTOs = orderConverter.toListOrderDTO(orderEntities);
+        return orderDTOs;
+    }
+
 
 }

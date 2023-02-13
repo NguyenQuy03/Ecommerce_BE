@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.converter.OrderConverter;
@@ -31,13 +32,15 @@ public class CartAPI {
     
     @PostMapping()
     public void purchase(
-            @RequestBody CartDTO cartDTO) {
+            @RequestBody CartDTO cartDTO,
+            RedirectAttributes redirectAttributes
+    ) {
 
         CartDTO preCart = cartService.findOneById(cartDTO.getId());
         preCart.getSetOrders().forEach(order -> {
             for (long id : cartDTO.getIds()) {
                 if (order.getId() == id){
-                    order.setStatus(SystemConstant.STRING_DELIVERIED_ORDER);
+                    order.setStatus(SystemConstant.STRING_DELIVERED_ORDER);
                     orderService.save(orderConverter.toDTO(order));
                     
                     Long remainingStock = order.getProduct().getStock() - order.getQuantity();

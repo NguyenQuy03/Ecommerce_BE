@@ -1,6 +1,5 @@
 package com.ecommerce.springbootecommerce.repository;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,11 +9,11 @@ import com.ecommerce.springbootecommerce.entity.ProductEntity;
 public interface ProductRepository extends JpaRepository<ProductEntity, Long>{
     ProductEntity findOneById(Long id);
     
-    Page<ProductEntity> findByStockGreaterThan(Integer stock, Pageable page);
-    long countByStockGreaterThan(Integer stock);
+    Slice<ProductEntity> findByStockGreaterThanAndAccountId(long stock, Long accountId, Pageable page);
+    long countByStockGreaterThanAndAccountId(long stock, Long accountId);
     
-    Page<ProductEntity> findByStockEquals(Integer stock, Pageable page);
-    long countByStockEquals(Integer stock);
+    Slice<ProductEntity> findByStockEqualsAndAccountId(long stock, Long accountId, Pageable page);
+    long countByStockEqualsAndAccountId(long stock, Long accountId);
 
     Slice<ProductEntity> findAllByStatus(String status, Pageable pageable);
     Slice<ProductEntity> findAllByAccountId(long accountId, Pageable pageable);
@@ -26,5 +25,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>{
     long countAllByStatus(String status);
     
     Slice<ProductEntity> findAllByNameContains(String keyword, Pageable pageable);
+
+    Slice<ProductEntity> findAllByCreatedByOrderBySoldDesc(String sellerName);
 
 }

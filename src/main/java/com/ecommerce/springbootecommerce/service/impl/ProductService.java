@@ -87,16 +87,16 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<ProductDTO> findByStockEquals(Integer stock, Pageable pageable) {
-        List<ProductEntity> listProductEntity = productRepository.findByStockEquals(stock, pageable).getContent();
+    public List<ProductDTO> findByStockEqualsAndAccountId(long stock, Long accountId, Pageable pageable) {
+        List<ProductEntity> listProductEntity = productRepository.findByStockEqualsAndAccountId(stock, accountId, pageable).getContent();
         List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
 
         return listProductDTO;
     }
 
     @Override
-    public List<ProductDTO> findByStockGreaterThan(Integer stock, Pageable pageable) {
-        List<ProductEntity> listProductEntity = productRepository.findByStockGreaterThan(stock, pageable).getContent();
+    public List<ProductDTO> findByStockGreaterThanAndAccountId(long stock, Long accountId, Pageable pageable) {
+        List<ProductEntity> listProductEntity = productRepository.findByStockGreaterThanAndAccountId(stock, accountId, pageable).getContent();
         List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
         return listProductDTO;
     }
@@ -107,13 +107,13 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public long countByStockGreaterThan(Integer stock){
-        return productRepository.countByStockGreaterThan(stock);
+    public long countByStockGreaterThanAndAccountId(long stock, Long accountId){
+        return productRepository.countByStockGreaterThanAndAccountId(stock, accountId);
     }
 
     @Override
-    public long countByStockEquals(Integer stock){
-        return productRepository.countByStockEquals(stock);
+    public long countByStockEqualsAndAccountId(long stock, Long accountId){
+        return productRepository.countByStockEqualsAndAccountId(stock, accountId);
     }
 
     @Override
@@ -155,6 +155,13 @@ public class ProductService implements IProductService {
     @Override
     public long countAllByStatus(String status) {
         return productRepository.countAllByStatus(status);
+    }
+
+    @Override
+    public List<ProductDTO> findAllBySellerNameOrderBySoldDesc(String sellerName) {
+        List<ProductEntity> productEntities = productRepository.findAllByCreatedByOrderBySoldDesc(sellerName).getContent();
+        List<ProductDTO> productDTOs = productConverter.toListProductDTO(productEntities);
+        return productDTOs;
     }
 
 }

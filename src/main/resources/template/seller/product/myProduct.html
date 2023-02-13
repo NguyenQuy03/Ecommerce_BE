@@ -18,17 +18,12 @@
 		<div class="card-body pt-3">
 			<ul class="nav nav-tabs nav-tabs-bordered">
 	
-				<li class="nav-item"><a th:href="@{/seller/product/list/all?page=1&size=2}" class="nav-link active"
-						data-bs-toggle="tab" data-bs-target="#all-product" aria-selected="true" role="tab">All
-					</a></li>
+				<li class="nav-item"><a th:href="@{/seller/product/list/all?page=1&size=2}" th:class="${tab == 'all'} ? 'nav-link active' : 'nav-link'">All</a></li>
 	
-				<li class="nav-item"><a th:href="@{/seller/product/list/live?page=1&size=2}" class="nav-link">Live</a></li>
-	
-				<li class="nav-item"><a th:href="@{/seller/product/list/soldout?page=1&size=2}" class="nav-link" role="tab">
+				<li class="nav-item"><a th:href="@{/seller/product/list/live?page=1&size=2}" th:class="${tab == 'live'} ? 'nav-link active' : 'nav-link'">Live</a></li>
+		
+				<li class="nav-item"><a th:href="@{/seller/product/list/soldout?page=1&size=2}" th:class="${tab == 'soldout'} ? 'nav-link active' : 'nav-link'">
 						Sold out </a></li>
-	
-				<li class="nav-item"><a th:href="@{/seller/product/list/reviewing?page=1&size=2}" class="nav-link"
-						role="tab"> Reviewing </a></li>
 	
 			</ul>
 			<div class="tab-pane fade show active">

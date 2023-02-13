@@ -36,8 +36,8 @@ public class AccountRoleService implements IAccountRoleService{
     }
 
     @Override
-    public boolean findByAccountIdAndRoleCode(Long id, String roleSeller) {
-        Set<AccountRoleEntity> entities = accountRoleRepository.findByAccountIdAndRoleCode(id, roleSeller);
+    public boolean findByAccountIdAndRoleCode(Long id, String roleCode) {
+        Set<AccountRoleEntity> entities = accountRoleRepository.findByAccountIdAndRoleCode(id, roleCode);
         boolean isSeller = false;
         for (AccountRoleEntity entity : entities) {
             if (entity.getRole().getCode().contains(SystemConstant.ROLE_SELLER)) {
