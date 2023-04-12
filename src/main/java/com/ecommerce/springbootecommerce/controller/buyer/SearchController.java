@@ -39,6 +39,10 @@ public class SearchController {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         long quantityProduct = productService.countAllByCategoryId(id);
+        
+        if (quantityProduct == 0) {
+            return "buyer/searchEmpty";
+        }
 
         Integer totalPage = (int) Math.ceil((double) quantityProduct / size);
         List<ProductDTO> products = productService.findAllByCategoryId(id, pageable);
@@ -75,7 +79,12 @@ public class SearchController {
             products = productService.findAllByStatus(SystemConstant.STRING_ACTIVE_STATUS, pageable);
         } else {
             quantityProduct = productService.countByNameContains(keyword);
-            products = productService.findAllByNameContains(keyword, pageable);
+            
+            if (quantityProduct == 0) {
+                return "buyer/searchEmpty";
+            } else {
+                products = productService.findAllByNameContains(keyword, pageable);
+            }
         }
         
 

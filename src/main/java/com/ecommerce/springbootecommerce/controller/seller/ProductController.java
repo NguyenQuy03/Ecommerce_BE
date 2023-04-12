@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IAccountService;
@@ -37,10 +38,10 @@ public class ProductController {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountDTO account = accountService.findByUserName(userName);
 
-        long quantityProduct = productService.countAllByAccountId(account.getId());
+        long quantityProduct = productService.countAllByAccountIdAndStatusNot(account.getId(), SystemConstant.REMOVED_PRODUCT);
 
         Pageable pageable = PageRequest.of(page - 1, size);
-        List<ProductDTO> listProduct = productService.findAllByAccountId(account.getId(), pageable);
+        List<ProductDTO> listProduct = productService.findAllByAccountIdAndStatusNot(account.getId(), SystemConstant.REMOVED_PRODUCT, pageable);
 
         genericDTO(model, listProduct, page, size, quantityProduct);
         
@@ -58,9 +59,9 @@ public class ProductController {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountDTO account = accountService.findByUserName(userName);
 
-        Long quantityLiveProduct = productService.countByStockGreaterThanAndAccountId(0L, account.getId());
+        Long quantityLiveProduct = productService.countByStockGreaterThanAndAccountIdAndStatusNot(0L, account.getId(), SystemConstant.REMOVED_PRODUCT);
         Pageable pageable = PageRequest.of(page - 1, size);
-        List<ProductDTO> listProduct = productService.findByStockGreaterThanAndAccountId(0L, account.getId(), pageable);
+        List<ProductDTO> listProduct = productService.findByStockGreaterThanAndAccountIdAndStatusNot(0L, account.getId(), SystemConstant.REMOVED_PRODUCT, pageable);
 
         genericDTO(model, listProduct, page, size, quantityLiveProduct);
         
@@ -78,10 +79,10 @@ public class ProductController {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountDTO account = accountService.findByUserName(userName);
         
-        long quantitySoldOutProduct = productService.countByStockEqualsAndAccountId(0, account.getId());
+        long quantitySoldOutProduct = productService.countByStockEqualsAndAccountIdAndStatusNot(0, account.getId(), SystemConstant.REMOVED_PRODUCT);
 
         Pageable pageable = PageRequest.of(page - 1, size);
-        List<ProductDTO> listSoldOutProduct = productService.findByStockEqualsAndAccountId(0, account.getId(), pageable);
+        List<ProductDTO> listSoldOutProduct = productService.findByStockEqualsAndAccountIdAndStatusNot(0, account.getId(), SystemConstant.REMOVED_PRODUCT, pageable);
         
         genericDTO(model, listSoldOutProduct, page, size, quantitySoldOutProduct);
         

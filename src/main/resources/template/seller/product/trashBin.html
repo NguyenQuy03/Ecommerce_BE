@@ -7,7 +7,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>All Product</title>
+	<title>Trash Bin</title>
 	<script defer src="/seller/js/delete&restore.js"></script>
 </head>
 
@@ -16,33 +16,21 @@
 		<div class="alert alert-info text-center" th:if="${message}" th:text="${message}"></div>
 
 		<div class="card-body pt-3">
-			<ul class="nav nav-tabs nav-tabs-bordered">
-	
-				<li class="nav-item"><a th:href="@{/seller/product/list/all?page=1&size=2}" th:class="${tab == 'all'} ? 'nav-link active' : 'nav-link'">All</a></li>
-	
-				<li class="nav-item"><a th:href="@{/seller/product/list/live?page=1&size=2}" th:class="${tab == 'live'} ? 'nav-link active' : 'nav-link'">Live</a></li>
-		
-				<li class="nav-item"><a th:href="@{/seller/product/list/soldout?page=1&size=2}" th:class="${tab == 'soldout'} ? 'nav-link active' : 'nav-link'">
-						Sold out </a></li>
-	
-			</ul>
 			<div class="tab-pane fade show active">
 				<div class="row justify-content-around align-items-center">
 					<div class="col-2 card-title d-flex align-item-center">
 						<h5 th:utext="${quantityProduct}  ? ${quantityProduct} : 0" class="d-inline-block"></h5>
 						<h5 th:utext="${quantityProduct} == 1L  ? _Products : _Product"  class="d-inline-block"></h5>
 					</div>
-
-					<a th:href="@{/seller/product}" class="col-3 btn btn-primary"
-						style="height: 40px; line-height: 1.8; width: 200px;"> Add a New Product </a>
-
-					<button class="btnDelete disabled col-3 btn btn-danger" data-toggle="tooltip"
-						title='Delete Product' style="height: 40px; line-height: 1.8; width: 200px;"> Delete Product
+					
+					<button class="btnDelete force disabled col-3 btn btn-danger" data-toggle="tooltip"
+						title='Delete Product' style="height: 40px; line-height: 1.8; width: 200px;"> Force Delete
 					</button>
 					
-					<a th:href="@{/seller/trashbin?page=1&size=2}" class="btn btn-warning" style="height: 40px; line-height: 1.8; width: 50px;">
-					 	<i class="bi bi-trash"></i>
-					</a>
+					<button class="btn btn-warning" onclick="history.back()"
+						style="height: 40px; line-height: 1.8; width: 50px;">
+					 	<i class="bi bi-arrow-return-left"></i>
+					</button>
 					
 				</div>
 			</div>
@@ -61,7 +49,6 @@
 										<th scope="col">Id</th>
 										<th scope="col">Name</th>
 										<th scope="col">Price</th>
-										<th scope="col">Stock</th>
 										<th scope="col">Description</th>
 										<th scope="col">Image</th>
 										<th scope="col">Action</th>
@@ -76,7 +63,6 @@
 										<td th:text="${product.id}"></td>
 										<td th:text="${product.name}"></td>
 										<td th:text="${product.intPrice}"></td>
-										<td th:text="${product.stock}"></td>
 										<td>
 											<p th:text="${product.description}"
 												style="max-width: 150px;max-height: 100px;white-space: nowrap;overflow:hidden;text-overflow: ellipsis">
@@ -84,11 +70,11 @@
 										</td>
 										<td><img style="max-width: 80px;" id="imagePreview"
 												th:src="'data:image/png;base64,' + ${product.imageBase64}"
-												alt="Background image" /></td>
+												alt="Background image" />
+										</td>
 										<td style="text-align: center;">
-											<a th:href="@{/seller/product/{id}(id=${product.id})}" title="Edit"
-												class="btn btn-success" style=" margin-top: 10px;">
-												<i class="bi bi-pencil-square"></i>
+											<a title="Restore" class="btn btn-success restore-btn" th:id="${product.id}" style=" margin-top: 10px;">
+												<i class="bi bi-arrow-clockwise"></i>
 											</a>
 										</td>
 									</tr>

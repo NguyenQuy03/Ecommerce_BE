@@ -11,4 +11,5 @@ public class SystemConstant {
     public static final String ROLE_SELLER = "SELLER";
     
     public static final String SOLD_OUT_PRODUCT = "SOLD OUT";
+    public static final String REMOVED_PRODUCT = "REMOVED";
 }

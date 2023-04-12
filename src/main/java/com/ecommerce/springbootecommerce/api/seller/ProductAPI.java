@@ -40,7 +40,7 @@ public class ProductAPI {
     }
     
     @PostMapping()
-    public void saveProduct(
+    public void save(
         ProductDTO product
     ) throws IOException{
         byte[] imageBytes = product.getImageFile().getBytes();
@@ -69,7 +69,7 @@ public class ProductAPI {
     }
     
     @PutMapping(value="/{id}")
-    public void updateProduct(
+    public void update(
             @RequestBody ProductDTO product,
             @PathVariable("id") Long id
     ) throws IOException {
@@ -95,6 +95,10 @@ public class ProductAPI {
                 product.setImage(imageBytes);
         }
         
+        if (product.getStock() > 0) {
+            product.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
+        }
+        
         product.setId(id);
         product.setModifiedBy(author);
         product.setModifiedDate(new Date());
@@ -102,8 +106,17 @@ public class ProductAPI {
     }
     
     @DeleteMapping()
-    public void deleteProduct(@RequestBody long[] ids) {
-        productService.delete(ids);
+    public void softDelete(@RequestBody long[] ids) {
+        productService.softDelete(ids);
     }
     
+    @DeleteMapping("/forceDelete")
+    public void forceDelete(@RequestBody long[] ids) {
+        productService.forceDelete(ids);
+    }
+    
+    @PostMapping("/restore")
+    public void restore(@RequestBody long id) {
+        productService.restore(id);
+    }
 }

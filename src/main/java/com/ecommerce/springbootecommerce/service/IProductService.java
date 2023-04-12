@@ -9,29 +9,35 @@ import com.ecommerce.springbootecommerce.entity.ProductEntity;
 
 public interface IProductService {
     void save(ProductDTO productDTO);
+    void save(ProductEntity entity);
 
-    void delete(long[] ids);
+    void softDelete(long[] ids);
+    void forceDelete(long[] ids);
     
+    void restore(long id);
+    
+    //FIND
+    ProductDTO findById(Long id);
     List<ProductDTO> findAll(Pageable pageable);
     List<ProductDTO> findAllByStatus(String status, Pageable pageable);
     List<ProductDTO> findAllByAccountId(long accountId, Pageable pageable);
     List<ProductDTO> findAllByCategoryId(long categoryId, Pageable pageable);
-    List<ProductDTO> findByStockGreaterThanAndAccountId(long stock, Long id, Pageable pageable);
-    List<ProductDTO> findByStockEqualsAndAccountId(long stock, Long id, Pageable pageable);
-    
+    List<ProductDTO> findByStockGreaterThanAndAccountIdAndStatusNot(long stock, Long id, String ignoreStatus, Pageable pageable);
+    List<ProductDTO> findByStockEqualsAndAccountIdAndStatusNot(long stock, Long id, String ignoreStatus, Pageable pageable);
+    List<ProductDTO> findAllByAccountIdAndStatus(Long id, String status, Pageable pageable);
+    List<ProductDTO> findAllByAccountIdAndStatusNot(long id, String ignoreStatus, Pageable pageable);
+    List<ProductDTO> findAllBySellerNameOrderBySoldDesc(String sellerName);
     List<ProductDTO> findAllByNameContains(String keyword, Pageable pageable);
     
+    
+    //COUNT
     long countAllByAccountId(long accountId);
     long countAllByCategoryId(Long categoryId);
-    long countByStockGreaterThanAndAccountId(long stock, Long id);
-    long countByStockEqualsAndAccountId(long stock, Long id);
+    long countByStockGreaterThanAndAccountIdAndStatusNot(long stock, Long id, String ignoreStatus);
+    long countByStockEqualsAndAccountIdAndStatusNot(long stock, Long id, String ignoreStatus);
     long countByNameContains(String keyword);
-    long countAllByStatus(String stringActiveStatus);
-
-    ProductDTO findById(Long id);
-
-    void save(ProductEntity product);
-
-    List<ProductDTO> findAllBySellerNameOrderBySoldDesc(String sellerName);
+    long countAllByStatus(String status);
+    long countAllByAccountIdAndStatus(long accountId, String status);
+    long countAllByAccountIdAndStatusNot(long id, String ignoreStatus);
 
 }

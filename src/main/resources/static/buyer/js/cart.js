@@ -149,7 +149,7 @@ function atLeastChecked() {
 	if (atleastChecked == false) {
 		purchaseBtn.setAttribute("disabled", "true");
 	} else {
-		purchaseBtn.removeAttribute("disabled");
+		purchaseBtn.removeAttribute("disabled", "false");
 	}
 }
 

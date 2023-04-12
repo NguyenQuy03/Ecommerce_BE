@@ -66,6 +66,18 @@ public class ProductService implements IProductService {
     }
     
     @Override
+    public void save(ProductEntity entity) {
+        productRepository.save(entity);
+    }
+    
+    @Override
+    public void restore(long id) {
+        productRepository.restore(id);
+
+    }
+    
+    //FIND
+    @Override
     public List<ProductDTO> findAll(Pageable pageable) {
         List<ProductEntity> listProductEntity = productRepository.findAll(pageable).getContent();
         List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
@@ -87,33 +99,18 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<ProductDTO> findByStockEqualsAndAccountId(long stock, Long accountId, Pageable pageable) {
-        List<ProductEntity> listProductEntity = productRepository.findByStockEqualsAndAccountId(stock, accountId, pageable).getContent();
+    public List<ProductDTO> findByStockEqualsAndAccountIdAndStatusNot(long stock, Long accountId, String ignoreStatus, Pageable pageable) {
+        List<ProductEntity> listProductEntity = productRepository.findByStockEqualsAndAccountIdAndStatusNot(stock, accountId, ignoreStatus, pageable).getContent();
         List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
 
         return listProductDTO;
     }
 
     @Override
-    public List<ProductDTO> findByStockGreaterThanAndAccountId(long stock, Long accountId, Pageable pageable) {
-        List<ProductEntity> listProductEntity = productRepository.findByStockGreaterThanAndAccountId(stock, accountId, pageable).getContent();
+    public List<ProductDTO> findByStockGreaterThanAndAccountIdAndStatusNot(long stock, Long accountId, String ignoreStatus, Pageable pageable) {
+        List<ProductEntity> listProductEntity = productRepository.findByStockGreaterThanAndAccountIdAndStatusNot(stock, accountId, ignoreStatus, pageable).getContent();
         List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
         return listProductDTO;
-    }
-
-    @Override
-    public long countAllByAccountId(long accountId) {
-        return productRepository.countAllByAccountId(accountId);
-    }
-
-    @Override
-    public long countByStockGreaterThanAndAccountId(long stock, Long accountId){
-        return productRepository.countByStockGreaterThanAndAccountId(stock, accountId);
-    }
-
-    @Override
-    public long countByStockEqualsAndAccountId(long stock, Long accountId){
-        return productRepository.countByStockEqualsAndAccountId(stock, accountId);
     }
 
     @Override
@@ -123,6 +120,54 @@ public class ProductService implements IProductService {
         return productDTO;
     }
 
+    @Override
+    public List<ProductDTO> findAllByNameContains(String keyword, Pageable pageable) {
+        List<ProductEntity> productEntities = productRepository.findAllByNameContains(keyword, pageable).getContent();
+        List<ProductDTO> productDTOs = productConverter.toListProductDTO(productEntities);
+        return productDTOs;
+    }
+
+    @Override
+    public List<ProductDTO> findAllByStatus(String status, Pageable pageable) {
+        List<ProductEntity> productEntities = productRepository.findAllByStatus(status, pageable).getContent();
+        List<ProductDTO> productDTOs = productConverter.toListProductDTO(productEntities);
+        return productDTOs;
+    }
+
+    
+    @Override
+    public List<ProductDTO> findAllBySellerNameOrderBySoldDesc(String sellerName) {
+        List<ProductEntity> productEntities = productRepository.findAllByCreatedByOrderBySoldDesc(sellerName).getContent();
+        List<ProductDTO> productDTOs = productConverter.toListProductDTO(productEntities);
+        return productDTOs;
+    }
+    
+    @Override
+    public List<ProductDTO> findAllByAccountIdAndStatus(Long id, String status, Pageable pageable) {
+        List<ProductEntity> productEntities = productRepository.findAllByAccountIdAndStatus(id, status).getContent();
+        List<ProductDTO> productDTOs = productConverter.toListProductDTO(productEntities);
+        return productDTOs;
+    }
+    
+    @Override
+    public List<ProductDTO> findAllByAccountIdAndStatusNot(long id, String ignoreStatus, Pageable pageable) {
+        List<ProductEntity> productEntities = productRepository.findAllByAccountIdAndStatusNot(id, ignoreStatus, pageable).getContent();
+        List<ProductDTO> productDTOs = productConverter.toListProductDTO(productEntities);
+        return productDTOs;
+    }
+    
+    //COUNT
+    @Override
+    public long countAllByStatus(String status) {
+        return productRepository.countAllByStatus(status);
+    }
+
+    @Override
+    public long countAllByAccountIdAndStatus(long accountId, String status) {
+        
+        return productRepository.countAllByAccountIdAndStatus(accountId, status);
+    }
+    
     @Override
     public long countAllByCategoryId(Long categoryId) {
         return productRepository.countAllByCategoryId(categoryId);
@@ -134,34 +179,23 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<ProductDTO> findAllByNameContains(String keyword, Pageable pageable) {
-        List<ProductEntity> productEntities = productRepository.findAllByNameContains(keyword, pageable).getContent();
-        List<ProductDTO> productDTOs = productConverter.toListProductDTO(productEntities);
-        return productDTOs;
+    public long countAllByAccountId(long accountId) {
+        return productRepository.countAllByAccountId(accountId);
     }
 
     @Override
-    public void save(ProductEntity product) {
-        productRepository.save(product);
+    public long countByStockGreaterThanAndAccountIdAndStatusNot(long stock, Long accountId, String ignoreStatus){
+        return productRepository.countByStockGreaterThanAndAccountIdAndStatusNot(stock, accountId, ignoreStatus);
     }
 
     @Override
-    public List<ProductDTO> findAllByStatus(String status, Pageable pageable) {
-        List<ProductEntity> productEntities = productRepository.findAllByStatus(status, pageable).getContent();
-        List<ProductDTO> productDTOs = productConverter.toListProductDTO(productEntities);
-        return productDTOs;
+    public long countByStockEqualsAndAccountIdAndStatusNot(long stock, Long accountId, String ignoreStatus){
+        return productRepository.countByStockEqualsAndAccountIdAndStatusNot(stock, accountId, ignoreStatus);
     }
 
     @Override
-    public long countAllByStatus(String status) {
-        return productRepository.countAllByStatus(status);
-    }
-
-    @Override
-    public List<ProductDTO> findAllBySellerNameOrderBySoldDesc(String sellerName) {
-        List<ProductEntity> productEntities = productRepository.findAllByCreatedByOrderBySoldDesc(sellerName).getContent();
-        List<ProductDTO> productDTOs = productConverter.toListProductDTO(productEntities);
-        return productDTOs;
+    public long countAllByAccountIdAndStatusNot(long id, String ignoreStatus) {
+        return productRepository.countAllByAccountIdAndStatusNot(id, ignoreStatus);
     }
 
 }

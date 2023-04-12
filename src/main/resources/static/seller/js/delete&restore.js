@@ -1,16 +1,16 @@
-var checkAll = document.getElementById('checkAll');
+const checkAll = document.getElementById('checkAll');
+const checkBoxes = $('tbody input[type=checkbox]');
+const restoreBtn = $(".restore-btn");
 
 checkAll.addEventListener('click', event => {
-	if (event.target.checked) {
+	if (event.target.checked && checkBoxes.length > 0) {
 		$('tbody input[type=checkbox]').prop('checked', true);
-		$("#btnDelete").removeClass("disabled");
+		$(".btnDelete").removeClass("disabled");
 	} else {
 		$('tbody input[type=checkbox]').prop('checked', false);
-		$("#btnDelete").addClass("disabled");
+		$(".btnDelete").addClass("disabled");
 	}
 });
-
-var checkBoxes = $('tbody input[type=checkbox]');
 
 function allCheckBoxChecked() {
 	var result = true;
@@ -38,10 +38,10 @@ if (checkBoxes.length >= 2) {
 			if (allCheckBoxChecked()) {
 				$("#checkAll").prop('checked', true);
 			} else if (leastOneCheckBoxChecked()) {
-				$("#btnDelete").removeClass("disabled");
+				$(".btnDelete").removeClass("disabled");
 				$("#checkAll").prop('checked', false);
 			} else {
-				$("#btnDelete").addClass("disabled");
+				$(".btnDelete").addClass("disabled");
 				$("#checkAll").prop('checked', false);
 			}
 		})
@@ -51,26 +51,35 @@ if (checkBoxes.length >= 2) {
 		item.addEventListener("click", e => {
 			if (e.target.checked) {
 				$("#checkAll").prop('checked', true);
-				$("#btnDelete").removeClass("disabled");
+				$(".btnDelete").removeClass("disabled");
 			} else {
 				$("#checkAll").prop('checked', false);
-				$("#btnDelete").addClass("disabled");
+				$(".btnDelete").addClass("disabled");
 			}
 		})
 	})
 }
 
-$("#btnDelete").click(function() {
-	if (!confirm("Do you want to delete")) {
-		return false;
-	} else {
-		var ids = [];
-		$('tbody input[type=checkbox]:checked').map((index, item) => {
-			ids.push(item.id);
-		})
-		deleteProduct(ids);
-	}
+$(".btnDelete.force").click(function() {
+	var ids = [];
+	$('tbody input[type=checkbox]:checked').map((index, item) => {
+		ids.push(item.id);
+	})
+	forceDeleteProduct(ids);
 
+});
+
+$(".btnDelete").click(function() {
+	var ids = [];
+	$('tbody input[type=checkbox]:checked').map((index, item) => {
+		ids.push(item.id);
+	})
+	deleteProduct(ids);
+
+});
+
+restoreBtn.click(function() {
+	restoreProduct(this.id);
 });
 
 function deleteProduct(data) {
@@ -84,6 +93,36 @@ function deleteProduct(data) {
 		},
 		error: function(e) {
 			console.log("error")
+		}
+	})
+}
+
+function forceDeleteProduct(data) {
+	$.ajax({
+		url: "/api/seller/product/forceDelete",
+		type: "DELETE",
+		data: JSON.stringify(data),
+		contentType: "application/json",
+		success: function() {
+			window.location.href = "/seller/trashbin?page=1&size=2";
+		},
+		error: function(e) {
+			console.log("error")
+		}
+	})
+}
+
+function restoreProduct(data) {
+	$.ajax({
+		url: "/api/seller/product/restore",
+		type: "POST",
+		data: JSON.stringify(data),
+		contentType: "application/json",
+		success: function() {
+			window.location.href = "/seller/product/list/all?page=1&size=2";
+		},
+		error: function(e) {
+			console.log("error" + e)
 		}
 	})
 }

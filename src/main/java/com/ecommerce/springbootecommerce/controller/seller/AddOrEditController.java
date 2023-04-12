@@ -8,6 +8,7 @@ import javax.sql.rowset.serial.SerialException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ecommerce.springbootecommerce.api.seller.ProductAPI;
@@ -54,10 +56,10 @@ public class AddOrEditController {
         
         if (product.getId() != null) {
             redirectAttributes.addFlashAttribute("message", "Success! Your product was updated.");
-            productAPI.updateProduct(product, product.getId());
+            productAPI.update(product, product.getId());
         } else {
             redirectAttributes.addFlashAttribute("message", "Success! Your product was published.");
-            productAPI.saveProduct(product);
+            productAPI.save(product);
         }
 
         return "redirect:/seller/product/list/all?page=1&size=2";
@@ -77,11 +79,16 @@ public class AddOrEditController {
             @PathVariable("id") Long id, Model model
     ) throws IOException, SerialException, SQLException {
 
-        ProductDTO productDTO = productService.findById(id);
+        ProductDTO product = productService.findById(id);
+        
+        byte[] inputArray = product.getImage();
+        MultipartFile multipartFile = new MockMultipartFile("tempFileName", inputArray);
+        
+        product.setImageFile(multipartFile);
 
         List<CategoryDTO> categories = categoryService.findAll();
         model.addAttribute("categories", categories);
-        model.addAttribute("product", productDTO);
+        model.addAttribute("product", product);
 
         return "/seller/product/addOrEdit";
     }
