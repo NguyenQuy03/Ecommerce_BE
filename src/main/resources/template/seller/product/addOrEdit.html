@@ -1,4 +1,4 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
     xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
     layout:decorate="~{layout/dashboardLayout/dashboardLayout}">
@@ -64,7 +64,8 @@
                                 <label for="description" class="col-sm-2 col-form-label">Product Description</label>
                                 <div class="col-sm-10">
                                   <input th:field="*{description}" class="form-control" type="text" th:errorClass="is-invalid"
-                                        th:attr="${#fields.hasErrors('description')} ? required : id='description'"/>
+                                        th:attr="${#fields.hasErrors('description')} ? required : id='description'"
+                                   />
                                     <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}"
                                         class="invalid-feedback">
                                     </div>
@@ -152,6 +153,8 @@
                             </div>
 
                             <input type="hidden" th:field="*{id}" />
+                            <input type="hidden" th:field="*{sold}" />
+                            <input type="hidden" th:name="isFileEmpty" th:value="${isFileEmpty}"/>
                         </form>
 
                     </div>

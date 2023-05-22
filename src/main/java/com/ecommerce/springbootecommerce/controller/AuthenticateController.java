@@ -57,8 +57,10 @@ public class AuthenticateController {
     }
 	
     @PostMapping("/register")
-    public String save(@Valid @ModelAttribute("account") AccountDTO account,
-            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public String save(
+            @Valid @ModelAttribute("account") AccountDTO account,
+            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes
+    ){
         
         if (account.getPassword() != null && account.getRePassword() != null) {
             if (!account.getPassword().equals(account.getRePassword())) {

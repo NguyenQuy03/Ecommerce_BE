@@ -1,6 +1,7 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -59,9 +60,16 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public void delete(long[] ids) {
+    public void softDelete(String status, long[] ids) {
         for (long id : ids) {
-            productRepository.deleteById(id);
+            productRepository.softDelete(status, id);
+        }
+    }
+    
+    @Override
+    public void forceDelete(String status, long[] ids) {
+        for (long id : ids) {
+            productRepository.softDelete(status, id);
         }
     }
     
@@ -77,6 +85,19 @@ public class ProductService implements IProductService {
     }
     
     //FIND
+    
+    @Override
+    public ProductDTO findByAccountIdAndId(long accountId, long id) {
+        Optional<ProductEntity> res = productRepository.findByAccountIdAndId(accountId, id);
+        boolean isExist = res.isPresent();
+        ProductDTO productDTO = null;
+        if (isExist) {
+            ProductEntity productEntity = res.get();
+            productDTO = productConverter.toDTO(productEntity);
+        }
+        return productDTO;
+    }
+    
     @Override
     public List<ProductDTO> findAll(Pageable pageable) {
         List<ProductEntity> listProductEntity = productRepository.findAll(pageable).getContent();
@@ -99,16 +120,16 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<ProductDTO> findByStockEqualsAndAccountIdAndStatusNot(long stock, Long accountId, String ignoreStatus, Pageable pageable) {
-        List<ProductEntity> listProductEntity = productRepository.findByStockEqualsAndAccountIdAndStatusNot(stock, accountId, ignoreStatus, pageable).getContent();
+    public List<ProductDTO> findByStockEqualsAndAccountIdAndStatusNotAndStatusNot(long stock, Long accountId, String ignoreStatus1, String ignoreStatus2, Pageable pageable) {
+        List<ProductEntity> listProductEntity = productRepository.findByStockEqualsAndAccountIdAndStatusNotAndStatusNot(stock, accountId, ignoreStatus1, ignoreStatus2, pageable).getContent();
         List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
 
         return listProductDTO;
     }
 
     @Override
-    public List<ProductDTO> findByStockGreaterThanAndAccountIdAndStatusNot(long stock, Long accountId, String ignoreStatus, Pageable pageable) {
-        List<ProductEntity> listProductEntity = productRepository.findByStockGreaterThanAndAccountIdAndStatusNot(stock, accountId, ignoreStatus, pageable).getContent();
+    public List<ProductDTO> findByStockGreaterThanAndAccountIdAndStatusNotAndStatusNot(long stock, Long accountId, String ignoreStatus1, String ignoreStatus2, Pageable pageable) {
+        List<ProductEntity> listProductEntity = productRepository.findByStockGreaterThanAndAccountIdAndStatusNotAndStatusNot(stock, accountId, ignoreStatus1, ignoreStatus2, pageable).getContent();
         List<ProductDTO> listProductDTO = productConverter.toListProductDTO(listProductEntity);
         return listProductDTO;
     }
@@ -150,8 +171,8 @@ public class ProductService implements IProductService {
     }
     
     @Override
-    public List<ProductDTO> findAllByAccountIdAndStatusNot(long id, String ignoreStatus, Pageable pageable) {
-        List<ProductEntity> productEntities = productRepository.findAllByAccountIdAndStatusNot(id, ignoreStatus, pageable).getContent();
+    public List<ProductDTO> findAllByAccountIdAndStatusNotAndStatusNot(long id, String ignoreStatus1, String ignoreStatus2, Pageable pageable) {
+        List<ProductEntity> productEntities = productRepository.findAllByAccountIdAndStatusNotAndStatusNot(id, ignoreStatus1, ignoreStatus2, pageable).getContent();
         List<ProductDTO> productDTOs = productConverter.toListProductDTO(productEntities);
         return productDTOs;
     }
@@ -184,18 +205,25 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public long countByStockGreaterThanAndAccountIdAndStatusNot(long stock, Long accountId, String ignoreStatus){
-        return productRepository.countByStockGreaterThanAndAccountIdAndStatusNot(stock, accountId, ignoreStatus);
+    public long countByStockGreaterThanAndAccountIdAndStatusNotAndStatusNot(long stock, Long accountId, String ignoreStatus1, String ignoreStatus2){
+        return productRepository.countByStockGreaterThanAndAccountIdAndStatusNotAndStatusNot(stock, accountId, ignoreStatus1, ignoreStatus2);
     }
 
     @Override
-    public long countByStockEqualsAndAccountIdAndStatusNot(long stock, Long accountId, String ignoreStatus){
-        return productRepository.countByStockEqualsAndAccountIdAndStatusNot(stock, accountId, ignoreStatus);
+    public long countByStockEqualsAndAccountIdAndStatusNotAndStatusNot(long stock, Long accountId, String ignoreStatus1, String ignoreStatus2){
+        return productRepository.countByStockEqualsAndAccountIdAndStatusNotAndStatusNot(stock, accountId, ignoreStatus1, ignoreStatus2);
     }
 
     @Override
-    public long countAllByAccountIdAndStatusNot(long id, String ignoreStatus) {
-        return productRepository.countAllByAccountIdAndStatusNot(id, ignoreStatus);
+    public long countAllByAccountIdAndStatusNotAndStatusNot(long id, String ignoreStatus1, String ignoreStatus2) {
+        return productRepository.countAllByAccountIdAndStatusNotAndStatusNot(id, ignoreStatus1, ignoreStatus2);
+    }
+
+    
+    //EXIST
+    @Override
+    public boolean isProductExistByIdAndStatusNot(Long id, String ignoreStatus) {
+        return productRepository.findOneByIdAndStatusNot(id, ignoreStatus).isPresent();
     }
 
 }

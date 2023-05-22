@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
@@ -51,11 +52,35 @@ public class CartController {
             cartDTO = cartService.findByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
         } else {
             cartDTO.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
-            
             cartService.save(cartDTO);
         }
                 
         List<OrderDTO> listOrder = orderService.findAllByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_ACTIVE_STATUS);
+        
+        StringBuilder productNotAvailable = new StringBuilder();
+        
+        if(!listOrder.isEmpty()) {
+            int n = listOrder.size();
+            for (int i = 0; i < n; i++) {
+                OrderDTO order = listOrder.get(i);
+                String productStatus = order.getProduct().getStatus();
+                
+                if (productStatus.equals(SystemConstant.REMOVED_PRODUCT) 
+                        || productStatus.equals(SystemConstant.DELETED_PRODUCT)
+                        || productStatus.equals(SystemConstant.SOLD_OUT_PRODUCT))
+                {
+                    productNotAvailable.append(order.getProduct().getName() + ", ");
+                    listOrder.remove(order);
+                    orderService.delete(order.getId());
+                }
+            }
+        }
+        
+        if (!productNotAvailable.isEmpty()) {
+            String s = SystemConstant.PRODUCT_NOT_AVAILABLE + ": " + productNotAvailable.substring(0, productNotAvailable.length() - 2);
+            model.addAttribute("message", s);
+        }
+        
         model.addAttribute("quantityOrder",quantityOrderUtil.getQuantityOrder());
         model.addAttribute("listOrder", listOrder);
         model.addAttribute("cartId", cartDTO.getId());
@@ -102,12 +127,20 @@ public class CartController {
     public String redirectToCart(
             Model model,
             @RequestParam("orderId") Long orderId,
-            @RequestParam("cartId") Long cartId
+            @RequestParam("cartId") Long cartId,
+            RedirectAttributes redirectAttributes
             
     ) {
         OrderDTO orderDTO = orderService.findOneById(orderId);
         
         boolean isOrderExisted = orderService.isOrderExistByProductIdAndCartIdAndStatus(orderDTO.getProduct().getId(), cartId, SystemConstant.STRING_ACTIVE_STATUS);
+        
+        String productStatus = orderDTO.getProduct().getStatus();
+        if (productStatus.equals(SystemConstant.DELETED_PRODUCT) || productStatus.equals(SystemConstant.REMOVED_PRODUCT)) {
+            redirectAttributes.addFlashAttribute("message", SystemConstant.PRODUCT_NOT_AVAILABLE);
+            return "redirect:/purchase";
+        }
+        
         if (isOrderExisted) {
             OrderDTO existedDTO = orderService.findOneByProductIdAndCartIdAndStatus(orderDTO.getProduct().getId(), cartId, SystemConstant.STRING_ACTIVE_STATUS);
             existedDTO.setQuantity(1 + existedDTO.getQuantity());

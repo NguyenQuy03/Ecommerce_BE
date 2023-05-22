@@ -12,4 +12,9 @@ public class SystemConstant {
     
     public static final String SOLD_OUT_PRODUCT = "SOLD OUT";
     public static final String REMOVED_PRODUCT = "REMOVED";
+    public static final String DELETED_PRODUCT = "DELETED";
+    
+    public static final String ACCESS_EXCEPTION = "You do not have permission to perform this action";
+    
+    public static final String PRODUCT_NOT_AVAILABLE = "This product was no longer available";
 }

@@ -8,7 +8,7 @@ import javax.sql.rowset.serial.SerialException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,12 +18,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ecommerce.springbootecommerce.api.seller.ProductAPI;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
+import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.IProductService;
 
@@ -39,13 +42,23 @@ public class AddOrEditController {
 
     @Autowired
     private IProductService productService;
+    
+    @Autowired
+    private IAccountService accountService;
 
     @PostMapping()
-    public String createProduct(@Valid @ModelAttribute("product") ProductDTO product,
-            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) throws IOException {
+    public String createProduct(
+            @Valid @ModelAttribute("product") ProductDTO product,
+            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes,
+            @RequestParam("isFileEmpty") String isFileEmpty
+    ) throws IOException {
         
-        if (product.getImageFile().isEmpty()) {
+        if (product.getImageFile().isEmpty() && !isFileEmpty.equals("False")) {
             bindingResult.addError(new FieldError("product", "imageFile", "Please choose an image"));
+        }
+        
+        if (product.getDescription().length() > 144) {
+            bindingResult.addError(new FieldError("product", "description", "The maximum number of characters allowed is 144"));
         }
         
         if (bindingResult.hasErrors()) {
@@ -76,19 +89,23 @@ public class AddOrEditController {
 
     @GetMapping("/{id}")
     public String editProduct(
-            @PathVariable("id") Long id, Model model
+            @PathVariable("id") Long id,
+            Model model
     ) throws IOException, SerialException, SQLException {
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountDTO accountDTO = accountService.findByUserName(userName);
 
-        ProductDTO product = productService.findById(id);
+        ProductDTO product = productService.findByAccountIdAndId(accountDTO.getId(), id);
         
-        byte[] inputArray = product.getImage();
-        MultipartFile multipartFile = new MockMultipartFile("tempFileName", inputArray);
+        if (product == null) {
+            model.addAttribute("message", SystemConstant.ACCESS_EXCEPTION);
+            return "error/error";
+        }
         
-        product.setImageFile(multipartFile);
-
         List<CategoryDTO> categories = categoryService.findAll();
         model.addAttribute("categories", categories);
         model.addAttribute("product", product);
+        model.addAttribute("isFileEmpty", "False");
 
         return "/seller/product/addOrEdit";
     }

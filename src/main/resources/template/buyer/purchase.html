@@ -55,11 +55,30 @@
 									<input type="hidden" th:value="${cartId}" th:name="cartId" />
 									<button class="btn btn-sm btn-primary" type="submit" style="padding: 8px;">Buy
 										Again</button>
-								</form>
+					 			</form>
 							</td>
 						</tr>
 					</tbody>
 				</table>
+				
+				<!-- Modal Announcement-->
+				<div th:if="${message}" class="modal modal-announce fade align-items-center show fade" id="modal"
+					tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+					aria-hidden="true" style="display:flex; background-color: rgba(0, 0, 0, 0.6)">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel" style="
+    								user-select: none;" th:text="${message}"></h5>
+							</div>
+							<div class="col-12 modal-footer d-flex justify-content-between">
+								<button type="button" class="btn btn-secondary close-btn"
+									data-dismiss="modal" style="width: 100%">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				
 			</div>
 		</div>
 			<form id="formSubmit">

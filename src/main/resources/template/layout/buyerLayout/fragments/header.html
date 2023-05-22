@@ -14,7 +14,7 @@
 				<div class="col-lg-3 d-none d-lg-block">
 					<a href="/home" class="text-decoration-none">
 						<h1 class="m-0 display-5 font-weight-semi-bold">
-							<span class="text-primary font-weight-bold border px-3 mr-1">Z</span>Ecommerce
+							<span class="text-primary font-weight-bold border mr-2">Z</span>Ecommerce
 						</h1>
 					</a>
 				</div>
@@ -51,15 +51,17 @@
 								<a class="dropdown-item" th:href="@{/profile}">My Profile</a>
 								<a class="dropdown-item" th:href="@{/purchase}">My Purchase</a>																
 								<a sec:authorize="hasRole('SELLER')" class="dropdown-item" th:href="@{/seller/recentSales}">My Shop</a>
-								<a th:if="${NOT #authorization.expression('hasRole(''ROLE_SELLER'')')}" class="dropdown-item" th:href="@{/register-seller}">Register Seller</a>
+								<a th:if="${NOT #authorization.expression('hasRole(''ROLE_SELLER'')')}"
+								 class="dropdown-item" th:href="@{/register-seller}"
+								>Register Seller</a>
 								<a class="dropdown-item" href="/logout">Sign Out</a>
 							</div>
 						</div>
 					</div>
 
 					<div sec:authorize="isAnonymous()" class="d-flex">
-						<a th:href="@{/login}" class="nav-item nav-link">Login</a> <a
-							th:href="@{/register}" class="nav-item nav-link">Register</a>
+						<a th:href="@{/login}" class="nav-item nav-link">Login</a>
+						<a th:href="@{/register}" class="nav-item nav-link" style="color: #551A8B !important">Register</a>
 					</div>
 
 				</div>

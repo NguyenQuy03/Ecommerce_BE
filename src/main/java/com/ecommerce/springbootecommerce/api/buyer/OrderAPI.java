@@ -47,7 +47,7 @@ public class OrderAPI {
     private CartConverter cartConverter;
     
     @PostMapping()
-    public RedirectView addOrder(
+    public RedirectView add(
             @RequestParam("id") Long productId,
             @RequestParam("quantity") Long quantity
     ) {
@@ -84,7 +84,7 @@ public class OrderAPI {
     }
     
     @DeleteMapping
-    public void deleteProduct(@RequestBody long id) {
+    public void delete(@RequestBody long id) {
         orderService.delete(id);
     }
 }

@@ -38,10 +38,10 @@ public class ProductController {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountDTO account = accountService.findByUserName(userName);
 
-        long quantityProduct = productService.countAllByAccountIdAndStatusNot(account.getId(), SystemConstant.REMOVED_PRODUCT);
+        long quantityProduct = productService.countAllByAccountIdAndStatusNotAndStatusNot(account.getId(), SystemConstant.REMOVED_PRODUCT, SystemConstant.DELETED_PRODUCT);
 
         Pageable pageable = PageRequest.of(page - 1, size);
-        List<ProductDTO> listProduct = productService.findAllByAccountIdAndStatusNot(account.getId(), SystemConstant.REMOVED_PRODUCT, pageable);
+        List<ProductDTO> listProduct = productService.findAllByAccountIdAndStatusNotAndStatusNot(account.getId(), SystemConstant.REMOVED_PRODUCT, SystemConstant.DELETED_PRODUCT, pageable);
 
         genericDTO(model, listProduct, page, size, quantityProduct);
         
@@ -59,9 +59,9 @@ public class ProductController {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountDTO account = accountService.findByUserName(userName);
 
-        Long quantityLiveProduct = productService.countByStockGreaterThanAndAccountIdAndStatusNot(0L, account.getId(), SystemConstant.REMOVED_PRODUCT);
+        Long quantityLiveProduct = productService.countByStockGreaterThanAndAccountIdAndStatusNotAndStatusNot(0L, account.getId(), SystemConstant.REMOVED_PRODUCT, SystemConstant.DELETED_PRODUCT);
         Pageable pageable = PageRequest.of(page - 1, size);
-        List<ProductDTO> listProduct = productService.findByStockGreaterThanAndAccountIdAndStatusNot(0L, account.getId(), SystemConstant.REMOVED_PRODUCT, pageable);
+        List<ProductDTO> listProduct = productService.findByStockGreaterThanAndAccountIdAndStatusNotAndStatusNot(0L, account.getId(), SystemConstant.REMOVED_PRODUCT, SystemConstant.DELETED_PRODUCT, pageable);
 
         genericDTO(model, listProduct, page, size, quantityLiveProduct);
         
@@ -79,10 +79,10 @@ public class ProductController {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountDTO account = accountService.findByUserName(userName);
         
-        long quantitySoldOutProduct = productService.countByStockEqualsAndAccountIdAndStatusNot(0, account.getId(), SystemConstant.REMOVED_PRODUCT);
+        long quantitySoldOutProduct = productService.countByStockEqualsAndAccountIdAndStatusNotAndStatusNot(0, account.getId(), SystemConstant.REMOVED_PRODUCT, SystemConstant.DELETED_PRODUCT);
 
         Pageable pageable = PageRequest.of(page - 1, size);
-        List<ProductDTO> listSoldOutProduct = productService.findByStockEqualsAndAccountIdAndStatusNot(0, account.getId(), SystemConstant.REMOVED_PRODUCT, pageable);
+        List<ProductDTO> listSoldOutProduct = productService.findByStockEqualsAndAccountIdAndStatusNotAndStatusNot(0, account.getId(), SystemConstant.REMOVED_PRODUCT, SystemConstant.DELETED_PRODUCT, pageable);
         
         genericDTO(model, listSoldOutProduct, page, size, quantitySoldOutProduct);
         

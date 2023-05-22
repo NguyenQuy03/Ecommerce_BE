@@ -4,16 +4,17 @@ const totalPriceEls = document.querySelectorAll("#total-price-el");
 const quantityEls = document.querySelectorAll("#quantity-el")
 const minusBtns = document.querySelectorAll(".btn-minus")
 const plusBtns = document.querySelectorAll(".btn-plus")
-const deleteBtns = document.querySelectorAll(".delete-btn")
-const modal = document.querySelector(".modal");
+const modalPermission = document.querySelector(".modal-check-permission");
+const modalAnnounce = document.querySelector(".modal-announce");
 const closeBtn = document.querySelector(".close-btn");
+const closeAnnounceBtn = document.querySelector(".close-announce-btn");
 const acceptBtn = document.querySelector(".accept-btn");
 const checkAll = document.querySelector("#check-all");
 const checkBoxes = document.querySelectorAll(".check-box-item");
 const tableResponsive = document.querySelector(".table-responsive");
 const cartCheckout = document.querySelector(".cart-checkout");
-
 const purchaseBtn = document.querySelector(".purchase-btn");
+
 const cartId = document.querySelector("#cartId");
 
 let summaryPrice = document.querySelector("#summary-price");
@@ -38,14 +39,14 @@ $(document).ready(function() {
 			}
 
 			if (+item.value == 0) {
-				modal.classList.add("fade");
-				modal.classList.add("show");
-				modal.style.display = "flex";
+				modalPermission.classList.add("fade");
+				modalPermission.classList.add("show");
+				modalPermission.style.display = "flex";
 				item.setAttribute("disabled", "true");
 
 				closeBtn.onclick = () => {
-					modal.classList.remove("show");
-					modal.style.display = "none";
+					modalPermission.classList.remove("show");
+					modalPermission.style.display = "none";
 					quantityEls[index].value = 1;
 					item.removeAttribute("disabled");
 
@@ -60,6 +61,13 @@ $(document).ready(function() {
 	window.onscroll = function() { changeDisplayCartCheckOut() };
 
 })
+
+if (closeAnnounceBtn) {
+	closeAnnounceBtn.onclick = () => {
+		modalAnnounce.classList.remove("show");
+		modalAnnounce.style.display = "none";
+	}				
+}
 
 function getTotalOrderPrice() {
 	totalPriceEls.forEach((item, i) => {
@@ -86,13 +94,13 @@ plusBtns.forEach((item, index) => {
 minusBtns.forEach((item, index) => {
 	item.onclick = () => {
 		if (quantityEls[index].value == 0) {
-			modal.classList.add("fade");
-			modal.classList.add("show");
-			modal.style.display = "flex";
+			modalPermission.classList.add("fade");
+			modalPermission.classList.add("show");
+			modalPermission.style.display = "flex";
 
 			closeBtn.onclick = () => {
-				modal.classList.remove("show");
-				modal.style.display = "none";
+				modalPermission.classList.remove("show");
+				modalPermission.style.display = "none";
 				quantityEls[index].value = 1;
 
 			}
@@ -116,7 +124,7 @@ checkAll.addEventListener('click', event => {
 		$('tbody input[type=checkbox]').prop('checked', true);
 		getTotal();
 		if (checkBoxes.length > 0) {
-			purchaseBtn.removeAttribute("disabled");	
+			purchaseBtn.removeAttribute("disabled");
 		}
 	} else {
 		$('tbody input[type=checkbox]').prop('checked', false);
@@ -172,52 +180,3 @@ function changeDisplayCartCheckOut() {
 	}
 }
 
-//HANDLE DELETE ORDER
-deleteBtns.forEach((item) => {
-	item.onclick = () => { deleteOrder(item.id); }
-})
-
-function deleteOrder(data) {
-	$.ajax({
-		url: "/api/buyer/order",
-		type: "DELETE",
-		data: JSON.stringify(data),
-		contentType: "application/json",
-		success: function() {
-			window.location.href = "/cart";
-		},
-		error: function() {
-			console.log("error")
-		}
-	})
-}
-
-//HANDLE PURCHASE
-purchaseBtn.addEventListener("click", () => {
-	var data = {};
-	var orders = [];
-	checkBoxes.forEach(item => {
-		if (item.checked == true) {
-			orders.push(item.id);
-			data["ids"] = orders;
-		}
-	})
-	data["id"] = cartId.value;
-	
-	postCart(data);
-})
-
-function postCart(data) {
-	$.ajax({
-		url: "/api/buyer/cart",
-		type: "POST",
-		data: JSON.stringify(data),
-		contentType: "application/json",
-		success: function() {
-			window.location.href = "/home";
-		},
-		error: function() {
-			console.log("error")
-		}
-	})
-}

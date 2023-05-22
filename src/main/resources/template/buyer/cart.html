@@ -9,6 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cart</title>
 <script defer src="/buyer/js/cart.js"></script>
+<script defer src="/buyer/js/handleActionCart.js"></script>
 <link rel="stylesheet" href="/buyer/css/cart.css">
 </head>
 <body>
@@ -70,14 +71,22 @@
 						</tr>
 					</tbody>
 				</table>
-				<!-- Modal -->
-				<div class="modal fade align-items-center" id="exampleModal"
-					tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+				
+				<!-- Cart empty-->
+				<div th:if="${quantityOrder == 0}" class="d-flex justify-content-center align-items-center flex-column">
+					<h3 class="mt-5 ">Your shoping cart is empty</h3>
+					<a href="/home">
+						<button class="btn btn-primary rounded mt-3">Go shoping now</button>
+					</a>
+				</div>
+				<!-- Modal Check Permission -->
+				<div class="modal modal-check-permission fade align-items-center" id="modal"
+					tabindex="-1" role="dialog" aria-labelledby="modalLabel"
 					aria-hidden="true" style="background-color: rgba(0, 0, 0, 0.6)">
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h5 class="modal-title" id="exampleModalLabel" style="
+								<h5 class="modal-title" id="modalLabel" style="
     								user-select: none;">Do you want to remove this item?</h5>
 							</div>
 							<div class="col-12 modal-footer d-flex justify-content-between">
@@ -88,6 +97,25 @@
 						</div>
 					</div>
 				</div>
+				
+				<!-- Modal Announcement-->
+				<div th:if="${message}" class="modal modal-announce fade align-items-center show fade" id="modal"
+					tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+					aria-hidden="true" style="display:flex; background-color: rgba(0, 0, 0, 0.6)">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel" style="
+    								user-select: none;" th:text="${message}"></h5>
+							</div>
+							<div class="col-12 modal-footer d-flex justify-content-between">
+								<button type="button" class="btn btn-secondary close-announce-btn"
+									data-dismiss="modal" style="width: 100%">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+								
 			</div>
 			<div class="cart-checkout col-12">
 				<div class="card">

@@ -107,12 +107,12 @@ public class ProductAPI {
     
     @DeleteMapping()
     public void softDelete(@RequestBody long[] ids) {
-        productService.softDelete(ids);
+        productService.softDelete(SystemConstant.REMOVED_PRODUCT, ids);
     }
     
     @DeleteMapping("/forceDelete")
     public void forceDelete(@RequestBody long[] ids) {
-        productService.forceDelete(ids);
+        productService.forceDelete(SystemConstant.DELETED_PRODUCT, ids);
     }
     
     @PostMapping("/restore")

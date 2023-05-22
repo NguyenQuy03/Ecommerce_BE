@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.ecommerce.springbootecommerce.api.buyer.OrderAPI;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IProductService;
 import com.ecommerce.springbootecommerce.util.QuantityOrderUtil;
@@ -35,6 +36,9 @@ public class BuyerProductController {
           Model model
     ) {
         ProductDTO productDTO = productService.findById(id);
+        if (!productDTO.getStatus().equals(SystemConstant.STRING_ACTIVE_STATUS)) {
+            return "redirect:/error";
+        }
         productDTO.setQuantity(1L);
                 
         model.addAttribute("product", productDTO);
@@ -49,7 +53,7 @@ public class BuyerProductController {
             @RequestParam("id") Long id,
             @RequestParam("quantity") Long quantity
     ) {
-        orderAPI.addOrder(id, quantity);
+        orderAPI.add(id, quantity);
         
         redirectAttributes.addFlashAttribute("showModal", "show");
         

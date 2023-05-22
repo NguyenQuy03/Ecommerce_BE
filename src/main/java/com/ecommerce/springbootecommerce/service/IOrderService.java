@@ -8,16 +8,18 @@ import com.ecommerce.springbootecommerce.dto.OrderDTO;
 
 public interface IOrderService {
     void save(OrderDTO dto);
+    void delete(long id);
+    
     OrderDTO findOneByProductIdAndCartIdAndStatus(Long productId, Long cartId, String status);
     OrderDTO findOneById(Long id);
-    boolean isOrderExistByProductIdAndCartIdAndStatus(Long productId, Long cartId, String status);
-    Long countByCartIdAndStatus(Long cartId, String status);
     
     List<OrderDTO> findAllByCartIdAndStatus(Long cartId, String status, Pageable pageable);
     List<OrderDTO> findAllByCartIdAndStatus(Long cartId, String status);
-    
     List<OrderDTO> findAllByStatus(String status, Pageable pageable);
-    void delete(long id);
-    
     List<OrderDTO> findAllByStatusAndSellerName(String status, String sellerName);
+    
+    Long countByCartIdAndStatus(Long cartId, String status);
+    
+    boolean isOrderExistByProductIdAndCartIdAndStatus(Long productId, Long cartId, String status);
+    
 }

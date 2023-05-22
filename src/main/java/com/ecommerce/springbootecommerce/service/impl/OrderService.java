@@ -28,13 +28,22 @@ public class OrderService implements IOrderService{
     }
 
     @Override
-    public Long countByCartIdAndStatus(Long cartId, String status) {
-        return orderRepository.countByCartIdAndStatus(cartId, status);
+    public void delete(long id) {
+        orderRepository.deleteById(id);
     }
-
+    
     @Override
-    public boolean isOrderExistByProductIdAndCartIdAndStatus(Long productID, Long cartId, String status) {
-        return orderRepository.findOneByProductIdAndCartIdAndStatus(productID, cartId, status).isPresent();
+    public OrderDTO findOneById(Long id) {
+        OrderEntity orderEntity = orderRepository.findOneById(id);
+        OrderDTO orderDTO = orderConverter.toDTO(orderEntity);
+        return orderDTO;
+    }
+    
+    @Override
+    public OrderDTO findOneByProductIdAndCartIdAndStatus(Long productId, Long cartId, String status) {
+        OrderEntity orderEntity = orderRepository.findOneByProductIdAndCartIdAndStatus(productId, cartId, status).get();
+        OrderDTO orderDTO = orderConverter.toDTO(orderEntity);
+        return orderDTO;
     }
 
     @Override
@@ -52,25 +61,6 @@ public class OrderService implements IOrderService{
     }
 
     @Override
-    public void delete(long id) {
-        orderRepository.deleteById(id);
-    }
-
-    @Override
-    public OrderDTO findOneById(Long id) {
-        OrderEntity orderEntity = orderRepository.findOneById(id);
-        OrderDTO orderDTO = orderConverter.toDTO(orderEntity);
-        return orderDTO;
-    }
-
-    @Override
-    public OrderDTO findOneByProductIdAndCartIdAndStatus(Long productId, Long cartId, String status) {
-        OrderEntity orderEntity = orderRepository.findOneByProductIdAndCartIdAndStatus(productId, cartId, status).get();
-        OrderDTO orderDTO = orderConverter.toDTO(orderEntity);
-        return orderDTO;
-    }
-
-    @Override
     public List<OrderDTO> findAllByStatus(String status, Pageable pageable) {
         List<OrderEntity> orderEntities = orderRepository.findAllByStatus(status, pageable).getContent();
         List<OrderDTO> orderDTOs = orderConverter.toListOrderDTO(orderEntities);
@@ -84,5 +74,13 @@ public class OrderService implements IOrderService{
         return orderDTOs;
     }
 
+    @Override
+    public Long countByCartIdAndStatus(Long cartId, String status) {
+        return orderRepository.countByCartIdAndStatus(cartId, status);
+    }
 
+    @Override
+    public boolean isOrderExistByProductIdAndCartIdAndStatus(Long productID, Long cartId, String status) {
+        return orderRepository.findOneByProductIdAndCartIdAndStatus(productID, cartId, status).isPresent();
+    }
 }
