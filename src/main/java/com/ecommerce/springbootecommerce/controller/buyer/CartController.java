@@ -42,8 +42,8 @@ public class CartController {
     public String cart(
             Model model
     ) {
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO accountDTO = accountService.findByUserName(userName);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountDTO accountDTO = accountService.findByUsername(username);
         
         Boolean isCartExist = cartService.isExistByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
         CartDTO cartDTO = new CartDTO();
@@ -94,8 +94,8 @@ public class CartController {
             @RequestParam(value="page", required = false) Integer page,
             @RequestParam(value="size", required = false) Integer size
     ) {
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO accountDTO = accountService.findByUserName(userName);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountDTO accountDTO = accountService.findByUsername(username);
         
         CartDTO cartDTO = cartService.findByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
         Long quantityOrder = orderService.countByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_DELIVERED_ORDER);

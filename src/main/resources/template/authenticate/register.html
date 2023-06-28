@@ -15,7 +15,7 @@
   <!-- Vendor CSS Files -->
   <link href="/admin/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/admin/vendor/bootstrap/css/bootstrap.css">
-	<script defer src="/admin/js/main.js"></script>
+  <script defer src="/admin/js/main.js"></script>
 </head>
 
 <body>
@@ -38,7 +38,7 @@
                     <p class="text-center small">Enter your personal details to create account</p>
                   </div> 
 
-                  <form th:action="@{/register}" method="POST" th:object="${account}" style="width: 400px;"
+                  <form method="POST" th:action="@{/register}" th:object="${account}" style="width: 400px;"
                   		class="row g-3" th:classappend="${#fields.hasErrors('*')} ? was-validated : d-block">
                     <div class="col-12">
                       <label for="fullName" class="form-label">Full Name</label>

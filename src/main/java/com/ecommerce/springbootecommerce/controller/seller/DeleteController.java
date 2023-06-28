@@ -34,8 +34,8 @@ public class DeleteController {
             @RequestParam("page") int page,
             @RequestParam("size") int size
     ) {
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO account = accountService.findByUserName(userName);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountDTO account = accountService.findByUsername(username);
 
         long quantityProduct = productService.countAllByAccountIdAndStatus(account.getId(), SystemConstant.REMOVED_PRODUCT);
 

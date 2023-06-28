@@ -35,8 +35,8 @@ public class ProductController {
             @RequestParam("page") int page,
             @RequestParam("size") int size
     ) {
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO account = accountService.findByUserName(userName);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountDTO account = accountService.findByUsername(username);
 
         long quantityProduct = productService.countAllByAccountIdAndStatusNotAndStatusNot(account.getId(), SystemConstant.REMOVED_PRODUCT, SystemConstant.DELETED_PRODUCT);
 
@@ -56,8 +56,8 @@ public class ProductController {
             @RequestParam("page") int page,
             @RequestParam("size") int size) {
 
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO account = accountService.findByUserName(userName);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountDTO account = accountService.findByUsername(username);
 
         Long quantityLiveProduct = productService.countByStockGreaterThanAndAccountIdAndStatusNotAndStatusNot(0L, account.getId(), SystemConstant.REMOVED_PRODUCT, SystemConstant.DELETED_PRODUCT);
         Pageable pageable = PageRequest.of(page - 1, size);
@@ -76,8 +76,8 @@ public class ProductController {
             @RequestParam("page") int page,
             @RequestParam("size") int size
     ){
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO account = accountService.findByUserName(userName);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountDTO account = accountService.findByUsername(username);
         
         long quantitySoldOutProduct = productService.countByStockEqualsAndAccountIdAndStatusNotAndStatusNot(0, account.getId(), SystemConstant.REMOVED_PRODUCT, SystemConstant.DELETED_PRODUCT);
 

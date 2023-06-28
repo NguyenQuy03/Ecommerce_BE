@@ -51,8 +51,8 @@ public class OrderAPI {
             @RequestParam("id") Long productId,
             @RequestParam("quantity") Long quantity
     ) {
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO accountDTO = accountService.findByUserName(userName);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountDTO accountDTO = accountService.findByUsername(username);
         CartDTO cartDTO = cartService.findByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
         
         boolean isOrderExist = orderService.isOrderExistByProductIdAndCartIdAndStatus(productId, cartDTO.getId(), SystemConstant.STRING_ACTIVE_STATUS);      

@@ -9,8 +9,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
 
+
 @Entity
-@Table(name = "accounts_roles")
+@Table(name = "ACCOUNT_ROLE")
 public class AccountRoleEntity {
 
     @EmbeddedId

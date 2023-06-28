@@ -17,4 +17,11 @@ public class SystemConstant {
     public static final String ACCESS_EXCEPTION = "You do not have permission to perform this action";
     
     public static final String PRODUCT_NOT_AVAILABLE = "This product was no longer available";
+    
+    //JWT Constant
+
+    public static final String JWT_SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
+    public static final long JWT_ACCESS_TOKEN_EXPIRATION = 60000; //1mins (millisecond)
+    public static final long JWT_REFRESH_TOKEN_EXPIRATION = 259200; //3days (second)
+    
 }

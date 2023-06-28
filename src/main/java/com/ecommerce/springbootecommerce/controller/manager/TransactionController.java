@@ -29,6 +29,6 @@ public class TransactionController {
         OrderDTO dto = new OrderDTO();
         dto.setListResult(dtos);
         model.addAttribute("dto", dto);
-        return "manager/transactions";
+        return "manager/transaction";
     }
 }

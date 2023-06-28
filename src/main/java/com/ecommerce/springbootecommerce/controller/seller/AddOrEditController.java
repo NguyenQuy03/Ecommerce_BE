@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.rowset.serial.SerialException;
-import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +28,8 @@ import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.IProductService;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("seller/product")
@@ -92,8 +93,8 @@ public class AddOrEditController {
             @PathVariable("id") Long id,
             Model model
     ) throws IOException, SerialException, SQLException {
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO accountDTO = accountService.findByUserName(userName);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountDTO accountDTO = accountService.findByUsername(username);
 
         ProductDTO product = productService.findByAccountIdAndId(accountDTO.getId(), id);
         

@@ -15,7 +15,7 @@ public class AccountConverter {
         entity.setAddress(dto.getAddress());
         entity.setEmail(dto.getEmail());
         entity.setFullName(dto.getFullName());
-        entity.setUserName(dto.getUserName());
+        entity.setUsername(dto.getUsername());
         entity.setPhoneNumber(dto.getPhoneNumber());
         entity.setStatus(true);
         return entity;
@@ -42,7 +42,7 @@ public class AccountConverter {
         dto.setAddress(entity.getAddress());
         dto.setEmail(entity.getEmail());
         dto.setFullName(entity.getFullName());
-        dto.setUserName(entity.getUserName());
+        dto.setUsername(entity.getUsername());
         dto.setPassword(entity.getPassword());
         dto.setPhoneNumber(entity.getPhoneNumber());
         

@@ -3,6 +3,8 @@ package com.ecommerce.springbootecommerce.controller.seller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,8 +19,8 @@ import com.ecommerce.springbootecommerce.service.IProductService;
 
 @Controller(value = "homeControllerOfSeller")
 @RequestMapping("seller")
+@PreAuthorize("hasRole('SELLER')")
 public class HomeController {
-    
     @Autowired
     private IOrderService orderService;
     
@@ -26,7 +28,7 @@ public class HomeController {
     private IProductService productService;
 	
 	@GetMapping("recentSales")
-	public String recentSalesPage(Model model) {
+    public String recentSalesPage(Model model) {
 	    	    
 	    String sellerName = SecurityContextHolder.getContext().getAuthentication().getName();
         List<OrderDTO> dtos = orderService.findAllByStatusAndSellerName(SystemConstant.STRING_DELIVERED_ORDER, sellerName);

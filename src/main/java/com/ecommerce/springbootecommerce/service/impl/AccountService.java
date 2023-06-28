@@ -3,7 +3,7 @@ package com.ecommerce.springbootecommerce.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.springbootecommerce.config.EncoderConfig;
+import com.ecommerce.springbootecommerce.config.AuthenticationConfig;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.converter.AccountConverter;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
@@ -25,7 +25,7 @@ public class AccountService implements IAccountService{
     private AccountConverter accountConverter;
     
     @Autowired
-    private EncoderConfig encoderConfig;
+    private AuthenticationConfig authenticationConfig;
 
     @Autowired
     private AccountRoleRepository accountRoleRepository;
@@ -34,8 +34,8 @@ public class AccountService implements IAccountService{
     private RoleRepository roleRepository;
 
     @Override
-    public AccountDTO findByUserName(String userName) {
-        AccountEntity account = accountRepository.findOneByUserName(userName);
+    public AccountDTO findByUsername(String username) {
+        AccountEntity account = accountRepository.findByUsername(username).get();
         return accountConverter.toDTO(account);
     }
 
@@ -45,8 +45,8 @@ public class AccountService implements IAccountService{
     }
 
     @Override
-    public boolean isAccountExistByUserName(String userName) {      
-        return accountRepository.findByUserName(userName).isPresent();
+    public boolean isAccountExistByUsername(String username) {
+        return accountRepository.findByUsername(username).isPresent();
     }
     
     @Override
@@ -55,7 +55,7 @@ public class AccountService implements IAccountService{
         
         if (accountDTO.getId() != null) {
             
-            AccountEntity preAccountEntity = accountRepository.findOneById(accountDTO.getId());
+            AccountEntity preAccountEntity = accountRepository.findById(accountDTO.getId()).get();
             
             if (preAccountEntity.getPassword().equals(accountDTO.getPassword())) {
                 accountEntity = accountConverter.toInfoEntity(accountDTO, preAccountEntity);
@@ -64,7 +64,7 @@ public class AccountService implements IAccountService{
             }
         } else {
             
-            String passwordEncode = encoderConfig.passwordEncoder().encode(accountDTO.getPassword());
+            String passwordEncode = authenticationConfig.passwordEncoder().encode(accountDTO.getPassword());
             accountEntity = accountConverter.toEntity(accountDTO);
             accountEntity.setPassword(passwordEncode);
         }
@@ -83,7 +83,7 @@ public class AccountService implements IAccountService{
 
     @Override
     public AccountDTO findOneById(long id) {
-        AccountDTO accountDTO = accountConverter.toDTO(accountRepository.findOneById(id));
+        AccountDTO accountDTO = accountConverter.toDTO(accountRepository.findById(id).get());
         return accountDTO;
     }
 

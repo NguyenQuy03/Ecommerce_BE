@@ -1,29 +1,24 @@
 package com.ecommerce.springbootecommerce.entity;
 
-import java.util.Set;
+import lombok.*;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.Set;
 
 @Entity
-@Table(name = "account")
+@Table(name = "ACCOUNT")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountEntity extends BaseEntity {
 
     @Column(name = "username")
-    private String userName;
+    private String username;
 
     @Column(name = "fullname")
     private String fullName;
@@ -44,10 +39,11 @@ public class AccountEntity extends BaseEntity {
     private boolean status;
 
     // BUYER
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account")
     private Set<CartEntity> carts;
 
     // SELLER
-    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account")
     private Set<ProductEntity> products;
+
 }

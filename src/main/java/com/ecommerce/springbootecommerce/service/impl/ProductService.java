@@ -49,7 +49,7 @@ public class ProductService implements IProductService {
 
             productEntity = productConverter.toEntity(productDTO);
             CategoryEntity categoryEntity = categoryRepository.findOneById(productDTO.getCategoryId());
-            AccountEntity accountEntity = accountRepository.findOneByUserName(currentPrincipalName);
+            AccountEntity accountEntity = accountRepository.findByUsername(currentPrincipalName).get();
 
             productEntity.setCategory(categoryEntity);
             productEntity.setAccount(accountEntity);

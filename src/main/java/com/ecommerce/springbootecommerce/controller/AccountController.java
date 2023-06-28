@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.ecommerce.springbootecommerce.config.EncoderConfig;
+import com.ecommerce.springbootecommerce.config.AuthenticationConfig;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.service.IAccountService;
@@ -26,18 +26,18 @@ public class AccountController {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     
     @Autowired
-    private EncoderConfig encoderConfig;
+    private AuthenticationConfig authenticationConfig;
 
     @GetMapping()
     public String profile(Model model) {
         
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         
         boolean isOnlyBuyerRole = false;
         if (SecurityContextHolder.getContext().getAuthentication().getAuthorities().size() == 1 && SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString().contains(SystemConstant.ROLE_BUYER)) {
             isOnlyBuyerRole = true;
         }
-        AccountDTO account = accountService.findByUserName(userName);
+        AccountDTO account = accountService.findByUsername(username);
         account.setPassword("");
          
         model.addAttribute("account" , account);
@@ -50,13 +50,13 @@ public class AccountController {
             Model model, AccountDTO account,
             RedirectAttributes redirectAttributes
     ) {
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO preAccount = accountService.findByUserName(userName);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        AccountDTO preAccount = accountService.findByUsername(username);
         if (account.getTypeEditProfile().equals("inforForm")) {
             account.setPassword(preAccount.getPassword());
             
         } else if (account.getTypeEditProfile().equals("passwordForm")) {
-            String passwordEncode = encoderConfig.passwordEncoder().encode(account.getPassword());
+            String passwordEncode = authenticationConfig.passwordEncoder().encode(account.getPassword());
             
             if (!bCryptPasswordEncoder.matches(account.getPassword(), preAccount.getPassword())) {
                 redirectAttributes.addFlashAttribute("alertType", "danger");

@@ -27,16 +27,20 @@ public class CustomUserDetailsService implements UserDetailsService{
     private AccountRoleRepository accountRoleRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AccountEntity accountEntity = accountRepository.findOneByUserNameAndStatus(username, SystemConstant.ACTIVE_STATUS);
-        Set<AccountRoleEntity> accountRoleEntities = accountRoleRepository.findAllByAccountId(accountEntity.getId());
+    public UserDetails loadUserByUsername(String username) {
+        AccountEntity account = accountRepository.findByUsernameAndStatus(username, SystemConstant.ACTIVE_STATUS).get();
+        Set<AccountRoleEntity> accountRoles = accountRoleRepository.findAllByAccountId(account.getId());
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        for (AccountRoleEntity accountRoleEntity : accountRoleEntities) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + accountRoleEntity.getRole().getCode()));
+        for (AccountRoleEntity entity : accountRoles) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + entity.getRole().getCode()));
         }
-        
-        MyAccount myAccount = new MyAccount(accountEntity.getUserName(), accountEntity.getFullName(), accountEntity.getPassword(), authorities);
+        MyAccount myAccount = new MyAccount(
+                account.getUsername(),
+                account.getFullName(),
+                account.getPassword(),
+                authorities
+        );
+
         return (UserDetails) myAccount;
-    }
-    
+    }  
 }
