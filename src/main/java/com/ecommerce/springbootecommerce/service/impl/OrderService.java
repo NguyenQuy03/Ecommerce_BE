@@ -1,16 +1,15 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import com.ecommerce.springbootecommerce.converter.OrderConverter;
 import com.ecommerce.springbootecommerce.dto.OrderDTO;
 import com.ecommerce.springbootecommerce.entity.OrderEntity;
 import com.ecommerce.springbootecommerce.repository.OrderRepository;
 import com.ecommerce.springbootecommerce.service.IOrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class OrderService implements IOrderService{
@@ -35,43 +34,40 @@ public class OrderService implements IOrderService{
     @Override
     public OrderDTO findOneById(Long id) {
         OrderEntity orderEntity = orderRepository.findOneById(id);
-        OrderDTO orderDTO = orderConverter.toDTO(orderEntity);
-        return orderDTO;
+        return orderConverter.toDTO(orderEntity);
     }
     
     @Override
     public OrderDTO findOneByProductIdAndCartIdAndStatus(Long productId, Long cartId, String status) {
-        OrderEntity orderEntity = orderRepository.findOneByProductIdAndCartIdAndStatus(productId, cartId, status).get();
-        OrderDTO orderDTO = orderConverter.toDTO(orderEntity);
-        return orderDTO;
+        if(orderRepository.findOneByProductIdAndCartIdAndStatus(productId, cartId, status).isPresent()) {
+            OrderEntity orderEntity = orderRepository.findOneByProductIdAndCartIdAndStatus(productId, cartId, status).get();
+            return orderConverter.toDTO(orderEntity);
+        }
+        return null;
     }
 
     @Override
     public List<OrderDTO> findAllByCartIdAndStatus(Long cartId, String status, Pageable pageable) {
         List<OrderEntity> orderEntities = orderRepository.findAllByCartIdAndStatus(cartId, status, pageable).getContent();
-        List<OrderDTO> orderDTOs = orderConverter.toListOrderDTO(orderEntities);
-        return orderDTOs;
+        return orderConverter.toListOrderDTO(orderEntities);
     }
     
     @Override
     public List<OrderDTO> findAllByCartIdAndStatus(Long cartId, String status) {
         List<OrderEntity> orderEntities = orderRepository.findAllByCartIdAndStatus(cartId, status);
-        List<OrderDTO> orderDTOs = orderConverter.toListOrderDTO(orderEntities);
-        return orderDTOs;
+        return orderConverter.toListOrderDTO(orderEntities);
     }
 
     @Override
     public List<OrderDTO> findAllByStatus(String status, Pageable pageable) {
         List<OrderEntity> orderEntities = orderRepository.findAllByStatus(status, pageable).getContent();
-        List<OrderDTO> orderDTOs = orderConverter.toListOrderDTO(orderEntities);
-        return orderDTOs;
+        return orderConverter.toListOrderDTO(orderEntities);
     }
 
     @Override
     public List<OrderDTO> findAllByStatusAndSellerName(String status, String sellerName) {
         List<OrderEntity> orderEntities = orderRepository.findAllByStatusAndSellerName(status, sellerName).getContent();
-        List<OrderDTO> orderDTOs = orderConverter.toListOrderDTO(orderEntities);
-        return orderDTOs;
+        return orderConverter.toListOrderDTO(orderEntities);
     }
 
     @Override

@@ -1,9 +1,9 @@
 
 // PAGINATION
-var totalPage = $("#totalPage").val();
-var currPage = $("#currPage").val();
-var intPage = +currPage;
-var size = $("#size").val();
+const totalPage = $("#totalPage").val();
+const currPage = $("#currPage").val();
+const intPage = +currPage;
+const size = $("#size").val();
 $(function () {
 	window.pagObj = $('#pagination').twbsPagination({
 		totalPages: totalPage,

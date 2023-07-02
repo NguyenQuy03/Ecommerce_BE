@@ -38,7 +38,6 @@ public class HomeController {
         Pageable pageable = PageRequest.of(0, 12);
         List<ProductDTO> products = productService.findAllByStatus(SystemConstant.STRING_ACTIVE_STATUS, pageable);
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         if (!userName.contains("anonymousUser")) {
             model.addAttribute("quantityOrder", quantityOrder.getQuantityOrder());

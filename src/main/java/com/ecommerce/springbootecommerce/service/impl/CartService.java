@@ -35,8 +35,7 @@ public class CartService implements ICartService{
     @Override
     public CartDTO findByStatusAndAccountId(String status, Long id) {
         CartEntity cartEntity = cartRepository.findOneByStatusAndAccountId(status, id);
-        CartDTO cartDTO = cartConverter.toDTO(cartEntity);
-        return cartDTO;
+        return cartConverter.toDTO(cartEntity);
     }
 
     @Override
@@ -47,9 +46,6 @@ public class CartService implements ICartService{
     @Override
     public CartDTO findOneById(Long id) {
         CartEntity cartEntity = cartRepository.findOneById(id);
-        CartDTO cartDTO = cartConverter.toDTO(cartEntity);
-        return cartDTO;
+        return cartConverter.toDTO(cartEntity);
     }
-    
-    
 }

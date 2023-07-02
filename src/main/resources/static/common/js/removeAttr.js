@@ -1,5 +1,6 @@
 
-var alertElement = document.querySelector(".alert");
+const alertElement = document.querySelector(".alert");
+
 if (alertElement) {
 	setTimeout(() => {
 		alertElement.remove();

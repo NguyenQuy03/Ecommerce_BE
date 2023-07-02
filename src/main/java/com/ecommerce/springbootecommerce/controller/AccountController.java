@@ -59,20 +59,14 @@ public class AccountController {
             String passwordEncode = authenticationConfig.passwordEncoder().encode(account.getPassword());
             
             if (!bCryptPasswordEncoder.matches(account.getPassword(), preAccount.getPassword())) {
-                redirectAttributes.addFlashAttribute("alertType", "danger");
-                redirectAttributes.addFlashAttribute("alertMessage", "Failue! Your password is incorrect.");
-                return "redirect:/profile";
+                return handle(redirectAttributes, "Failure! Your password is incorrect.", SystemConstant.ALERT_DANGER);
             }
             if (account.getPassword().equals(account.getNewPassword())) {
-                redirectAttributes.addFlashAttribute("alertType", "danger");
-                redirectAttributes.addFlashAttribute("alertMessage", "Failue! Your new password must be different from your old password.");
-                return "redirect:/profile";
+                return handle(redirectAttributes, "Failure! Your new password must be different from your old password.", SystemConstant.ALERT_DANGER);
             }
             if (account.getNewPassword() != null && account.getReNewPassword() != null) {
                 if (!account.getNewPassword().equals(account.getReNewPassword())) {
-                    redirectAttributes.addFlashAttribute("alertType", "danger");
-                    redirectAttributes.addFlashAttribute("alertMessage", "Failue! Your new password must match.");
-                    return "redirect:/profile";
+                    return handle(redirectAttributes,"Failure! Your new password must match.", SystemConstant.ALERT_DANGER);
                 }
             }
             
@@ -80,11 +74,14 @@ public class AccountController {
         }
             
         account.setId(preAccount.getId());
-        
         accountService.register(account);
-        
-        redirectAttributes.addFlashAttribute("alertType", "info");
-        redirectAttributes.addFlashAttribute("alertMessage", "Success! Your profile was updated.");
+
+        return handle(redirectAttributes, "Success! Your profile was updated.", SystemConstant.ALERT_INFO);
+    }
+
+    private String handle(RedirectAttributes redirectAttributes, String message, String alertType) {
+        redirectAttributes.addFlashAttribute("alertType", alertType);
+        redirectAttributes.addFlashAttribute("alertMessage", message);
         return "redirect:/profile";
     }
 

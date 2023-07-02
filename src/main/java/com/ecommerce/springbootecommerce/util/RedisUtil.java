@@ -12,7 +12,7 @@ import com.ecommerce.springbootecommerce.constant.SystemConstant;
 @Component
 public class RedisUtil {
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
     
 //    public void setHashField(String key, String field, Object value) {
 //        HashOperations<String, String, Object> hashOps = redisTemplate.opsForHash();
@@ -38,9 +38,6 @@ public class RedisUtil {
     }
 
     public void removeKey(String key) {
-        if(key.equals(null)) {
-            return;
-        }
         redisTemplate.delete(key);
     }
 

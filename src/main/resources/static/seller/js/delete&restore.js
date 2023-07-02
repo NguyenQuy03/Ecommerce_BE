@@ -13,23 +13,21 @@ checkAll.addEventListener('click', event => {
 });
 
 function allCheckBoxChecked() {
-	var result = true;
-	for (var i = 0; i < checkBoxes.length; i++) {
-		if (checkBoxes[i].checked == false) {
-			result = false;
+	for (let checkbox of checkBoxes) {
+		if (checkbox.checked == false) {
+			return false;
 		}
 	}
-	return result;
+	return true;
 }
 
 function leastOneCheckBoxChecked() {
-	var result = false;
-	for (var i = 0; i < checkBoxes.length; i++) {
-		if (checkBoxes[i].checked == true) {
-			result = true;
+	for (let checkbox of checkBoxes) {
+		if (checkbox.checked == true) {
+			return true;
 		}
 	}
-	return result;
+	return false;
 }
 
 if (checkBoxes.length >= 2) {

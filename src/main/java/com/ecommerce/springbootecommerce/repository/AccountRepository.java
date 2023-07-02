@@ -12,6 +12,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     Optional<AccountEntity> findById(Long id);
     
     Optional<AccountEntity> findByEmail(String email);
+
     @Query(value = "SELECT * FROM ACCOUNT WHERE BINARY username = :username", nativeQuery = true)
     Optional<AccountEntity> findByUsername(String username);
 }

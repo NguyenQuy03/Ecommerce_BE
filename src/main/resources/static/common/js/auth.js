@@ -3,7 +3,7 @@ const submitBtn = $(".submit-btn")
 
 submitBtn.click(function(e) {
     e.preventDefault()
-	var data = {};
+	let data = {};
 	let userName = document.getElementById("userName").value;
 	let password = document.getElementById("password").value;
 

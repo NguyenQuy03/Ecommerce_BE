@@ -1,6 +1,7 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 import javax.servlet.http.Cookie;
@@ -82,15 +83,18 @@ public class AuthenticationService {
 
       public String authenticate(LogInRequest request, HttpServletRequest httpServletRequest) {
           String username = request.getUsername();
-          authenticationManager.authenticate(
-                  new UsernamePasswordAuthenticationToken(
-                          username,
-                          request.getPassword()
-                  )
-          );
+          try {
+              authenticationManager.authenticate(
+                      new UsernamePasswordAuthenticationToken(
+                              username,
+                              request.getPassword()
+                      )
+              );
+          } catch (Exception e) {
+              return null;
+          }
 
-          AccountEntity account = accountRepository.findByUsername(username)
-                          .orElseThrow();
+          AccountEntity account = accountRepository.findByUsername(username).get();
           UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
           UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                   userDetails, null,
@@ -110,27 +114,27 @@ public class AuthenticationService {
         redisUtil.removeKey("Jwt:" + account.getUsername());
 
       }
-      public void refreshToken(
-              HttpServletRequest request,
-              HttpServletResponse response
-      ) throws StreamWriteException, DatabindException, IOException  {
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-          return;
-        }
-        
-        String refreshToken = authHeader.substring(7);
-        String username = jwtUtil.extractUsername(refreshToken);
-        if (username != null) {
-          var account = accountRepository.findByUsername(username)
-                  .orElseThrow();
-          if (jwtUtil.isTokenValid(refreshToken, account)) {
-            var jwt = jwtUtil.generateAccessToken(account);
-            revokeAllUserTokens(account);
-
-            Cookie cookie = new Cookie("Jwt", jwt);
-            response.addCookie(cookie);
-          }
-        }
-      }
+//      public void refreshToken(
+//              HttpServletRequest request,
+//              HttpServletResponse response
+//      ) {
+//        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//          return;
+//        }
+//
+//        String refreshToken = authHeader.substring(7);
+//        String username = jwtUtil.extractUsername(refreshToken);
+//        if (username != null) {
+//          var account = accountRepository.findByUsername(username)
+//                  .orElseThrow();
+//          if (jwtUtil.isTokenValid(refreshToken, account)) {
+//            var jwt = jwtUtil.generateAccessToken(account);
+//            revokeAllUserTokens(account);
+//
+//            Cookie cookie = new Cookie("Jwt", jwt);
+//            response.addCookie(cookie);
+//          }
+//        }
+//      }
 }

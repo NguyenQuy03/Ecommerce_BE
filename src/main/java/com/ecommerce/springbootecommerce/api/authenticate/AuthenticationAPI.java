@@ -2,21 +2,23 @@ package com.ecommerce.springbootecommerce.api.authenticate;
 
 import com.ecommerce.springbootecommerce.api.authenticate.payload.request.LogInRequest;
 import com.ecommerce.springbootecommerce.api.authenticate.payload.request.RegisterRequest;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.service.impl.AuthenticationService;
 import com.ecommerce.springbootecommerce.util.CookieUtil;
 import com.ecommerce.springbootecommerce.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.List;
 
 @RestController
-@CrossOrigin()
 @RequestMapping("/api/auth")
 public class AuthenticationAPI {
     
@@ -40,16 +42,19 @@ public class AuthenticationAPI {
             HttpServletResponse httpServletResponse
     ) throws IOException {
         String jwt = authenticationService.authenticate(request, httpServletRequest);
-        if(jwt.isEmpty()) httpServletResponse.sendRedirect("/login?result=failure");
+        if(jwt == null){
+            Cookie cookie = cookieUtil.setCookie("loginFailure", "Your username or password is incorrect", 5);
+            httpServletResponse.addCookie(cookie);
+            httpServletResponse.sendRedirect("/login");
+        }
         else {
             List<String> roles = SecurityUtil.getAuthorities();
             String route = handleRoute(roles);
-            Cookie cookie = cookieUtil.setCookie("Jwt","Bearer " + jwt, route);
+            Cookie cookie = cookieUtil.setCookie("Jwt","Bearer " + jwt, SystemConstant.JWT_COOKIE_ACCESS_TOKEN_EXPIRATION);
 
             httpServletResponse.addCookie(cookie);
             httpServletResponse.sendRedirect(route);
         }
-
     }
 
     private String handleRoute(List<String> roles) {
@@ -60,6 +65,7 @@ public class AuthenticationAPI {
         } else if(roles.contains("ROLE_BUYER")) {
             return "/home";
         }
-        return "";
+        return "redirect:/error";
     }
+
 }

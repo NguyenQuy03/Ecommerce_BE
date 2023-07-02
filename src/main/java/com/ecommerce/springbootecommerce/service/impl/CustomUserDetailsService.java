@@ -28,19 +28,24 @@ public class CustomUserDetailsService implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        AccountEntity account = accountRepository.findByUsernameAndStatus(username, SystemConstant.ACTIVE_STATUS).get();
-        Set<AccountRoleEntity> accountRoles = accountRoleRepository.findAllByAccountId(account.getId());
-        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        for (AccountRoleEntity entity : accountRoles) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + entity.getRole().getCode()));
-        }
-        MyAccount myAccount = new MyAccount(
-                account.getUsername(),
-                account.getFullName(),
-                account.getPassword(),
-                authorities
-        );
+        if(accountRepository.findByUsernameAndStatus(username, SystemConstant.ACTIVE_STATUS).isPresent()){
+            AccountEntity account = accountRepository.findByUsernameAndStatus(username, SystemConstant.ACTIVE_STATUS).get();
+            Set<AccountRoleEntity> accountRoles = accountRoleRepository.findAllByAccountId(account.getId());
+            Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+            for (AccountRoleEntity entity : accountRoles) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + entity.getRole().getCode()));
+            }
+            MyAccount myAccount = new MyAccount(
+                    account.getUsername(),
+                    account.getFullName(),
+                    account.getPassword(),
+                    authorities
+            );
 
-        return (UserDetails) myAccount;
+            return myAccount;
+        } else {
+            throw new UsernameNotFoundException("User not found");
+        }
+
     }  
 }

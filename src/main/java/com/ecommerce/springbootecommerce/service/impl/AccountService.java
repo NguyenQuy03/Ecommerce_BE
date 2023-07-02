@@ -35,8 +35,12 @@ public class AccountService implements IAccountService{
 
     @Override
     public AccountDTO findByUsername(String username) {
-        AccountEntity account = accountRepository.findByUsername(username).get();
-        return accountConverter.toDTO(account);
+        if(accountRepository.findByUsername(username).isPresent()) {
+            AccountEntity account = accountRepository.findByUsername(username).get();
+            return accountConverter.toDTO(account);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -83,8 +87,10 @@ public class AccountService implements IAccountService{
 
     @Override
     public AccountDTO findOneById(long id) {
-        AccountDTO accountDTO = accountConverter.toDTO(accountRepository.findById(id).get());
-        return accountDTO;
+        if(accountRepository.findById(id).isPresent())
+            return accountConverter.toDTO(accountRepository.findById(id).get());
+        else
+            return null;
     }
 
 }

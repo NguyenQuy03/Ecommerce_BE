@@ -1,14 +1,16 @@
 package com.ecommerce.springbootecommerce.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.ecommerce.springbootecommerce.dto.MyAccount;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.ecommerce.springbootecommerce.dto.MyAccount;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SecurityUtil {
+    private SecurityUtil() throws IllegalAccessException {
+        throw new IllegalAccessException();
+    }
 
     public static MyAccount getPrincipal() {
         MyAccount myAccount = (MyAccount) (SecurityContextHolder.getContext()).getAuthentication().getPrincipal();

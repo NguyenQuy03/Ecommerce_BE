@@ -48,11 +48,11 @@
                       <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="invalid-feedback"></div>                      
                     </div>
                     <div class="col-12">
-                      <label for="userName" class="form-label">User Name</label>
-                      <input type="text" class="form-control" th:field="*{userName}" th:errorClass="is-invalid" 
-                         th:attr="${#fields.hasErrors('userName')} ? required : id='userName'"
+                      <label for="username" class="form-label">User Name</label>
+                      <input type="text" class="form-control" th:field="*{username}" th:errorClass="is-invalid"
+                         th:attr="${#fields.hasErrors('username')} ? required : id='username'"
                       >
-                      <div th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}" class="invalid-feedback"></div>
+                      <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="invalid-feedback"></div>
                     </div>
                     
                     <div class="col-12">

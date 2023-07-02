@@ -1,25 +1,5 @@
 package com.ecommerce.springbootecommerce.controller.seller;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-
-import javax.sql.rowset.serial.SerialException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import com.ecommerce.springbootecommerce.api.seller.ProductAPI;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
@@ -28,8 +8,20 @@ import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.IProductService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.sql.rowset.serial.SerialException;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
 @Controller
 @RequestMapping("seller/product")
@@ -92,7 +84,7 @@ public class AddOrEditController {
     public String editProduct(
             @PathVariable("id") Long id,
             Model model
-    ) throws IOException, SerialException, SQLException {
+    ) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         AccountDTO accountDTO = accountService.findByUsername(username);
 

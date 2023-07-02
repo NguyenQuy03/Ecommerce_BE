@@ -1,32 +1,33 @@
 package com.ecommerce.springbootecommerce.util;
 
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.entity.AccountEntity;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.springframework.stereotype.Component;
-
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.entity.AccountEntity;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-
 
 @Component  
-public class JwtUtil {
+public class JwtUtil{
+
+    @Value("${security.secret.key}")
+    private String SECRET_KEY;
     
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-      final Claims claims = extractAllClaims(token);
+      Claims claims = extractAllClaims(token);
       return claimsResolver.apply(claims);
     }
 
@@ -44,12 +45,16 @@ public class JwtUtil {
     public String generateRefreshToken(
         AccountEntity accountEntity
     ) {
-      return buildToken(new HashMap<>(), accountEntity, SystemConstant.JWT_REFRESH_TOKEN_EXPIRATION);
+      return buildToken(new HashMap<>(), accountEntity, SystemConstant.JWT_REFRESH_TOKEN_EXPIRATION * 1000);
     }
-    
+
     public boolean isTokenValid(String token, AccountEntity account) {
-        String username = extractUsername(token);
-        return (username.equals(account.getUsername())) && !isTokenExpired(token);
+        try {
+            String username = extractUsername(token);
+            return username.equals(account.getUsername()) && !isTokenExpired(token);
+        } catch (JwtException jwtException) {
+            return false;
+        }
     }
 
     private String buildToken(
@@ -68,7 +73,11 @@ public class JwtUtil {
     }
 
     private boolean isTokenExpired(String token) {
-      return extractExpiration(token).before(new Date());
+        try {
+            return extractExpiration(token).before(new Date());
+        } catch(ExpiredJwtException e) {
+            return true;
+        }
     }
 
     private Date extractExpiration(String token) {
@@ -85,7 +94,7 @@ public class JwtUtil {
     }
 
     private Key getSignInKey() {
-      byte[] keyBytes = Decoders.BASE64.decode(SystemConstant.JWT_SECRET_KEY);
+      byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
       return Keys.hmacShaKeyFor(keyBytes);
     }
 

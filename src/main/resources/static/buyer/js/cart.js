@@ -137,28 +137,26 @@ checkBoxes.forEach((item) => {
 	item.onchange = () => {
 		getTotal();
 		isCheckAll() ? checkAll.checked = true : checkAll.checked = false;
-		atLeastChecked();
+		if(leastChecked()) {
+        	purchaseBtn.removeAttribute("disabled", "false");
+		} else{
+        	purchaseBtn.setAttribute("disabled", "true");
+		}
 	}
 })
 
 function isCheckAll() {
-	var result = true;
 	checkBoxes.forEach(item => {
-		if (item.checked == false) { return result = false; }
+		if (!item.checked) { return false }
 	})
-	return result;
+	return true;
 }
 
-function atLeastChecked() {
-	var atleastChecked = false;
+function leastChecked() {
 	checkBoxes.forEach(item => {
-		if (item.checked == true) { return atleastChecked = true; }
+		if (item.checked == true) { return true }
 	})
-	if (atleastChecked == false) {
-		purchaseBtn.setAttribute("disabled", "true");
-	} else {
-		purchaseBtn.removeAttribute("disabled", "false");
-	}
+	return false;
 }
 
 function getTotal() {

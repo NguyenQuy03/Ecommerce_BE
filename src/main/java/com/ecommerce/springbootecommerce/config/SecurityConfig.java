@@ -53,19 +53,16 @@ public class SecurityConfig {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-                .authenticationProvider(authenticationConfig.authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 //LOGIN
                 .formLogin().loginPage("/login").permitAll()
-                .failureUrl("/login?result=failure")
-
             .and()
                 //LOGOUT
                 .logout()
                 .logoutUrl("/logout")
                 .addLogoutHandler(customLogoutHandle)
                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
-        ;
+
         http
                 .securityContext()
                 .securityContextRepository(httpSessionSecurityContextRepository());

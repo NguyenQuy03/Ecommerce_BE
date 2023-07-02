@@ -48,7 +48,7 @@ public class CartController {
         Boolean isCartExist = cartService.isExistByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
         CartDTO cartDTO = new CartDTO();
         
-        if (isCartExist) {
+        if (Boolean.TRUE.equals(isCartExist)) {
             cartDTO = cartService.findByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
         } else {
             cartDTO.setStatus(SystemConstant.STRING_ACTIVE_STATUS);

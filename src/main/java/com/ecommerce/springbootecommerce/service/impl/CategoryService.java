@@ -22,9 +22,8 @@ public class CategoryService implements ICategoryService {
     private CategoryConverter categoryConverter;
 
     public List<CategoryDTO> findAll() {
-        List<CategoryEntity> listCategorieEntity = categoryRepository.findAll();
-        List<CategoryDTO> listCategory = categoryConverter.toListCategoryDTO(listCategorieEntity);
-        return listCategory;
+        List<CategoryEntity> listCategoriesEntity = categoryRepository.findAll();
+        return categoryConverter.toListCategoryDTO(listCategoriesEntity);
     }
 
     @Override
@@ -59,8 +58,7 @@ public class CategoryService implements ICategoryService {
     @Override
     public List<CategoryDTO> findAll(Pageable pageable) {
         List<CategoryEntity> listCategoryEntity = categoryRepository.findAll(pageable).getContent();
-        List<CategoryDTO> listProductDTO = categoryConverter.toListCategoryDTO(listCategoryEntity);
-        return listProductDTO;
+        return categoryConverter.toListCategoryDTO(listCategoryEntity);
     }
 
 }

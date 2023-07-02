@@ -58,12 +58,12 @@ public class ProductDTO extends BaseDTO<ProductDTO>{
     
     public String getIntPrice() {
         Locale moneyType = new Locale("en", "US");
-        NumberFormat $Format = NumberFormat.getCurrencyInstance(moneyType);
-        $Format.format(this.getPrice());
-        return $Format.format(this.getPrice());
+        NumberFormat Format = NumberFormat.getCurrencyInstance(moneyType);
+        Format.format(this.getPrice());
+        return Format.format(this.getPrice());
     }
     
     public void setIntPrice(String intPrice) {
         this.intPrice = intPrice;
     }
-};
+}

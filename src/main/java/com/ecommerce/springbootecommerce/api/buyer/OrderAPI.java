@@ -63,7 +63,7 @@ public class OrderAPI {
             ProductEntity productEntity = productConverter.toEntity(productDTO);
             CartEntity cartEntity = cartConverter.toEntity(cartDTO); 
             orderDTO.setProduct(productEntity);
-            orderDTO.setCart(cartEntity);;
+            orderDTO.setCart(cartEntity);
             
             orderDTO.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
             orderDTO.setQuantity(quantity);

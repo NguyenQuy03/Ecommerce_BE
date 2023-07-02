@@ -31,7 +31,7 @@ public class ProductAPI {
     @Autowired  
     private IProductService productService;
 
-    public static String uploadDirectory = System.getProperty("user.dir") + "/src/main/resources/imagedata/seller";
+    public static final String uploadDirectory = System.getProperty("user.dir") + "/src/main/resources/imagedata/seller";
     
     @InitBinder
     public void initBinder(WebDataBinder dataBinder) {

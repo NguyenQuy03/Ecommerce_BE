@@ -1,23 +1,19 @@
 package com.ecommerce.springbootecommerce.api.manager;
 
+import com.ecommerce.springbootecommerce.dto.CategoryDTO;
+import com.ecommerce.springbootecommerce.service.ICategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.view.RedirectView;
-
-import com.ecommerce.springbootecommerce.dto.CategoryDTO;
-import com.ecommerce.springbootecommerce.service.ICategoryService;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping(value = "/api/manager")
@@ -54,7 +50,7 @@ public class CategoryAPI {
         }
 
         category.setThumbnail(imageBytes);
-        category.setThumbnailBase64(imageBytes.toString());
+        category.setThumbnailBase64(Arrays.toString(imageBytes));
         categoryService.save(category);
         
         return new RedirectView("/manager/category?page=1&size=2");

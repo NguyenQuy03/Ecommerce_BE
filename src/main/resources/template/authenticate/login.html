@@ -39,11 +39,7 @@
                     <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
                     <p class="text-center small">Enter your username & password to login</p>
                     
-                    <div class="alert alert-info text-center" th:if="${message}" th:text="${message}"></div>
-                    
-                    <div class="alert alert-danger text-center" th:if="${param.result}">
-                    	Your username or password is invalid!
-                    </div>
+                    <div class="alert text-center" th:classappend="alert+'-'+${alertType}" th:if="${message}" th:text="${message}"></div>
                     
                   </div>
 
@@ -61,7 +57,7 @@
                     </div>
 
                     <div class="col-12">
-                      <button type="submit" class="btn btn-primary w-100 submit-btn">Login</button>
+                      <button type="submit" style="padding: 10px;" class="btn btn-primary w-100 submit-btn">Login</button>
                     </div>
                     <div class="col-12">
                       <p class="small mb-0">Don't have account? <a href="/register">Create an account</a></p>
