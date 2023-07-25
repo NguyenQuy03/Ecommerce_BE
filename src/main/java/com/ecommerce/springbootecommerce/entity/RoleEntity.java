@@ -1,32 +1,26 @@
 package com.ecommerce.springbootecommerce.entity;
 
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "ROLE")
-@Getter
-@Setter
+import java.util.List;
+
+@Document(collection = "ROLE")
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleEntity {
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @Column(name = "code")
+    private String id;
     private String code;
 
-    @Column(name = "name")
-    private String name;
-
+    @DBRef
+    private List<AccountEntity> accounts;
 }

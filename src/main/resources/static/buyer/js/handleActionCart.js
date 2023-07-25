@@ -3,7 +3,7 @@ const deleteBtns = document.querySelectorAll(".delete-btn")
 
 //HANDLE DELETE ORDER
 deleteBtns.forEach((item) => {
-	item.onclick = () => { deleteOrder(item.id); }
+	item.onclick = () => { deleteOrder(item.id) }
 })
 
 function deleteOrder(data) {
@@ -25,15 +25,20 @@ function deleteOrder(data) {
 //HANDLE PURCHASE
 purchaseBtn.addEventListener("click", () => {
 	var data = {};
-	var orders = [];
+	var ids = [];
+	var setOrders = [];
+
 	checkBoxes.forEach(item => {
+	    var orders = {};
 		if (item.checked == true) {
-			orders.push(item.id);
-			data["ids"] = orders;
+			orders["id"] = item.id;
+			orders["quantity"] = item.parentElement.parentElement.querySelector("#quantity-el").value;
 		}
-	})
+		setOrders.push(orders);
+   	})
+	data["setOrders"] = setOrders;
 	data["id"] = cartId.value;
-	
+
 	postCart(data);
 })
 

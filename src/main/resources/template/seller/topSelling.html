@@ -38,7 +38,8 @@
 								</a>
 							</th>
 							<td><a th:href="@{/product/detail/{id}(id=${item.id})}"
-								class="text-primary fw-bold" th:text="${item.name}"></a></td>
+								class="fw-bold" th:text="${item.name}"></a></td>
+
 							<td th:text="${item.price}"></td>
 							<td class="fw-bold" th:text="${item.sold}"></td>
 							<td th:text="'$' + ${item.sold} * ${item.price}"></td>

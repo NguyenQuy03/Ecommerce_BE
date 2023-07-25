@@ -2,17 +2,14 @@ package com.ecommerce.springbootecommerce.api.manager;
 
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 @RestController
@@ -22,37 +19,18 @@ public class CategoryAPI {
     @Autowired
     private ICategoryService categoryService;
     
-    public static String uploadDirectory = System.getProperty("user.dir") + "/src/main/resources/imagedata/manager";
-
-    
     @PostMapping(value = "/category")
     public RedirectView createCategory(
             @ModelAttribute(name = "category") CategoryDTO category,
             @RequestParam(value = "imageField") MultipartFile file
         ) throws IOException {
-        byte[] imageBytes = file.getBytes();
-        
-        String author = SecurityContextHolder.getContext().getAuthentication().getName();
-        
-        String fileName= file.getOriginalFilename();
-        Path storePath = Paths.get(uploadDirectory, author);
-        Path fileNameAndPath = Paths.get(uploadDirectory + "/" + author, fileName);
-        
-        File directoryStorePath = new File(String.valueOf(storePath));
-        File directoryFileNamePath = new File(String.valueOf(fileNameAndPath));
-                
-        if(!directoryStorePath.exists()) {    
-            Files.createDirectories(storePath);
-        }
-        
-        if(!directoryFileNamePath.exists()) {    
-            Files.write(fileNameAndPath, imageBytes);
-        }
 
-        category.setThumbnail(imageBytes);
+        byte[] imageBytes = file.getBytes();
+
+        category.setThumbnail(new Binary(BsonBinarySubType.BINARY, imageBytes));
         category.setThumbnailBase64(Arrays.toString(imageBytes));
+        category.setId(null);
         categoryService.save(category);
-        
         return new RedirectView("/manager/category?page=1&size=2");
     }
 

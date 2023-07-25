@@ -1,14 +1,13 @@
 package com.ecommerce.springbootecommerce.service;
 
-import java.util.List;
-
+import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import org.springframework.data.domain.Pageable;
 
-import com.ecommerce.springbootecommerce.dto.CategoryDTO;
+import java.util.List;
 
 public interface ICategoryService {
     CategoryDTO save(CategoryDTO categoryDTO);
-    void delete(long[] ids);
+    void delete(String[] ids);
     List<CategoryDTO> findAll();
     long count();
     List<CategoryDTO> findAll(Pageable pageable);

@@ -1,15 +1,15 @@
 package com.ecommerce.springbootecommerce.controller.buyer;
 
+import com.ecommerce.springbootecommerce.constant.RedisConstant;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.IProductService;
-import com.ecommerce.springbootecommerce.util.QuantityOrderUtil;
+import com.ecommerce.springbootecommerce.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,9 +26,9 @@ public class HomeController {
 
     @Autowired
     private IProductService productService;
-    
+
     @Autowired
-    private QuantityOrderUtil quantityOrder;
+    private RedisUtil redisUtil;
 
     @GetMapping("/home")
     public String homePage(
@@ -38,9 +38,9 @@ public class HomeController {
         Pageable pageable = PageRequest.of(0, 12);
         List<ProductDTO> products = productService.findAllByStatus(SystemConstant.STRING_ACTIVE_STATUS, pageable);
 
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (!userName.contains("anonymousUser")) {
-            model.addAttribute("quantityOrder", quantityOrder.getQuantityOrder());
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!username.contains("anonymousUser")) {
+            model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER));
         }
         model.addAttribute("categories", categories);
         model.addAttribute("products", products);

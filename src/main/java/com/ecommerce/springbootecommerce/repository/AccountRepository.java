@@ -1,18 +1,16 @@
 package com.ecommerce.springbootecommerce.repository;
 
+import com.ecommerce.springbootecommerce.entity.AccountEntity;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
 import java.util.Optional;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.ecommerce.springbootecommerce.entity.AccountEntity;
-import org.springframework.data.jpa.repository.Query;
-
-public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
+public interface AccountRepository extends MongoRepository<AccountEntity, String> {
     Optional<AccountEntity> findByUsernameAndStatus(String username, Boolean status);
-    Optional<AccountEntity> findById(Long id);
+    Optional<AccountEntity> findOneById(String id);
     
-    Optional<AccountEntity> findByEmail(String email);
+    Optional<AccountEntity> findOneByEmail(String email);
 
-    @Query(value = "SELECT * FROM ACCOUNT WHERE BINARY username = :username", nativeQuery = true)
     Optional<AccountEntity> findByUsername(String username);
 }

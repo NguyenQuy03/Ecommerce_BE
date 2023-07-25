@@ -1,5 +1,6 @@
 package com.ecommerce.springbootecommerce.util;
 
+import com.ecommerce.springbootecommerce.constant.JWTConstant;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.entity.AccountEntity;
 import io.jsonwebtoken.*;
@@ -7,6 +8,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -31,24 +33,24 @@ public class JwtUtil{
       return claimsResolver.apply(claims);
     }
 
-    public String generateAccessToken(AccountEntity accountEntity) {
+    public String generateAccessToken(UserDetails accountEntity) {
       return generateAccessToken(new HashMap<>(), accountEntity);
     }
 
     public String generateAccessToken(
         Map<String, Object> extraClaims,
-        AccountEntity accountEntity
+        UserDetails account
     ) {
-      return buildToken(extraClaims, accountEntity, SystemConstant.JWT_ACCESS_TOKEN_EXPIRATION);
+      return buildToken(extraClaims, account, JWTConstant.JWT_ACCESS_TOKEN_EXPIRATION);
     }
 
     public String generateRefreshToken(
-        AccountEntity accountEntity
+            UserDetails account
     ) {
-      return buildToken(new HashMap<>(), accountEntity, SystemConstant.JWT_REFRESH_TOKEN_EXPIRATION * 1000);
+      return buildToken(new HashMap<>(), account, JWTConstant.JWT_REFRESH_TOKEN_EXPIRATION * 1000);
     }
 
-    public boolean isTokenValid(String token, AccountEntity account) {
+    public boolean isTokenValid(String token, UserDetails account) {
         try {
             String username = extractUsername(token);
             return username.equals(account.getUsername()) && !isTokenExpired(token);
@@ -59,13 +61,13 @@ public class JwtUtil{
 
     private String buildToken(
             Map<String, Object> extraClaims,
-            AccountEntity accountEntity,
+            UserDetails account,
             long expiration
     ) {
       return Jwts
               .builder()
               .setClaims(extraClaims)
-              .setSubject(accountEntity.getUsername())
+              .setSubject(account.getUsername())
               .setIssuedAt(new Date(System.currentTimeMillis()))
               .setExpiration(new Date(System.currentTimeMillis() + expiration))
               .signWith(getSignInKey(), SignatureAlgorithm.HS256)

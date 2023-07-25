@@ -1,17 +1,16 @@
 package com.ecommerce.springbootecommerce.api.buyer;
 
+import com.ecommerce.springbootecommerce.dto.CartDTO;
+import com.ecommerce.springbootecommerce.dto.OrderDTO;
+import com.ecommerce.springbootecommerce.service.IAccountService;
+import com.ecommerce.springbootecommerce.service.ICartService;
+import com.ecommerce.springbootecommerce.service.IOrderService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.converter.OrderConverter;
-import com.ecommerce.springbootecommerce.dto.CartDTO;
-import com.ecommerce.springbootecommerce.service.ICartService;
-import com.ecommerce.springbootecommerce.service.IOrderService;
-import com.ecommerce.springbootecommerce.service.IProductService;
 
 @RestController
 @RequestMapping("/api/buyer/cart")
@@ -24,34 +23,21 @@ public class CartAPI {
     private IOrderService orderService;
     
     @Autowired
-    private OrderConverter orderConverter;
-    
+    private ModelMapper modelMapper;
+
     @Autowired
-    private IProductService productService;
+    private IAccountService accountService;
     
     @PostMapping()
     public void purchase(
-            @RequestBody CartDTO cartDTO
+            @RequestBody CartDTO dto
     ) {
-        CartDTO preCart = cartService.findOneById(cartDTO.getId());
-        preCart.getSetOrders().forEach(order -> {
-            for (long id : cartDTO.getIds()) {
-                if (order.getId() == id){
-                    
-                    order.setStatus(SystemConstant.STRING_DELIVERED_ORDER);
-                    orderService.save(orderConverter.toDTO(order));
-                    
-                    Long remainingStock = order.getProduct().getStock() - order.getQuantity();
-                    
-                    order.getProduct().setSold(order.getProduct().getSold() + order.getQuantity());
-                    order.getProduct().setStock(remainingStock);
-                    if (remainingStock == 0) {
-                        order.getProduct().setStatus(SystemConstant.SOLD_OUT_PRODUCT);
-                    }
-                    productService.save(order.getProduct());
-                }
-            }
-        });
-        
+        CartDTO cart = cartService.findOneById(dto.getId());
+
+        for(OrderDTO order : dto.getSetOrders()) {
+            orderService.purchase(order);
+            cart.getSetOrders().removeIf(element -> element.getId().equals(order.getId()));
+        }
+        cartService.save(cart);
     }
 }

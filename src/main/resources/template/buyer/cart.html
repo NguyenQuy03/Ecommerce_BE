@@ -41,7 +41,7 @@
 									alt="Background image" /> <span th:text="${item.product.name}">
 								</span>
 							</a></td>
-							<td class="align-middle " th:text="${item.intPrice}"></td>
+							<td class="align-middle " th:text="${item.curPrice}"></td>
 							<td class="align-middle"><input id="price-el" type="hidden"
 								th:value="${item.product.price}" />
 								<div class="input-group quantity mx-auto" style="width: 130px;">
@@ -71,16 +71,15 @@
 						</tr>
 					</tbody>
 				</table>
-				
 				<!-- Cart empty-->
 				<div th:if="${quantityOrder == 0}" class="d-flex justify-content-center align-items-center flex-column">
-					<h3 class="mt-5 ">Your shoping cart is empty</h3>
+					<h3 class="mt-5 ">Your shopping cart is empty</h3>
 					<a href="/home">
-						<button class="btn btn-primary rounded mt-3">Go shoping now</button>
+						<button class="btn btn-primary rounded mt-3">Go shopping now</button>
 					</a>
 				</div>
 				<!-- Modal Check Permission -->
-				<div class="modal modal-check-permission fade align-items-center" id="modal"
+				<div class="modal modal-check-permission fade align-items-center"
 					tabindex="-1" role="dialog" aria-labelledby="modalLabel"
 					aria-hidden="true" style="background-color: rgba(0, 0, 0, 0.6)">
 					<div class="modal-dialog" role="document">
@@ -99,7 +98,7 @@
 				</div>
 				
 				<!-- Modal Announcement-->
-				<div th:if="${message}" class="modal modal-announce fade align-items-center show fade" id="modal"
+				<div th:if="${message}" class="modal modal-announce fade align-items-center show fade"
 					tabindex="-1" role="dialog" aria-labelledby="modalLabel"
 					aria-hidden="true" style="display:flex; background-color: rgba(0, 0, 0, 0.6)">
 					<div class="modal-dialog" role="document">

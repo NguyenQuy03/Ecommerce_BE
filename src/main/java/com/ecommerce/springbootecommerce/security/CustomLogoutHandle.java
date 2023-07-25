@@ -2,6 +2,8 @@ package com.ecommerce.springbootecommerce.security;
 
 import java.io.IOException;
 
+import com.ecommerce.springbootecommerce.constant.RedisConstant;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.util.CookieUtil;
 import com.ecommerce.springbootecommerce.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +30,9 @@ public class CustomLogoutHandle implements LogoutHandler{
 					   Authentication authentication) {
 		try {
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
-			redisUtil.removeKey("Jwt:" + username);
-			Cookie Jwt = cookieUtil.setCookie("Jwt", "", 0);
-			Cookie JSESSIONID = cookieUtil.setCookie("JSESSIONID", "", 0);
+			redisUtil.removeKey(RedisConstant.REDIS_JWT_BRANCH + username);
+			Cookie Jwt = cookieUtil.initCookie("Jwt", "", 0);
+			Cookie JSESSIONID = cookieUtil.initCookie("JSESSIONID", "", 0);
 			response.addCookie(Jwt);
 			response.addCookie(JSESSIONID);
 

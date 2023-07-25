@@ -1,15 +1,13 @@
 package com.ecommerce.springbootecommerce.dto;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import lombok.Data;
 
 @Data
 public class BaseDTO<T> {
-    private Long id;
-    private long[] ids;
+    private String id;
+    private String[] ids;
 	private List<T> listResult = new ArrayList<>();
 	private Integer page;
 	private Integer size;

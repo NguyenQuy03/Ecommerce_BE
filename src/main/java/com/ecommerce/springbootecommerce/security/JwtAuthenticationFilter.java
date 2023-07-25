@@ -1,14 +1,15 @@
 package com.ecommerce.springbootecommerce.security;
 
+import com.ecommerce.springbootecommerce.constant.AlertConstant;
+import com.ecommerce.springbootecommerce.constant.JWTConstant;
+import com.ecommerce.springbootecommerce.constant.RedisConstant;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.entity.AccountEntity;
-import com.ecommerce.springbootecommerce.repository.AccountRepository;
-import com.ecommerce.springbootecommerce.service.impl.CustomUserDetailsService;
 import com.ecommerce.springbootecommerce.util.CookieUtil;
 import com.ecommerce.springbootecommerce.util.JwtUtil;
 import com.ecommerce.springbootecommerce.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,12 +29,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
     @Autowired
     private RedisUtil redisUtil;
-    
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
-    private AccountRepository accountRepository;
 
     @Autowired
     private CookieUtil cookieUtil;
@@ -53,12 +48,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         Cookie[] cookies = request.getCookies();
         String token = null;
         String jwt = "", username = "";
+        UserDetails account = null;
         if(cookies == null || SecurityContextHolder.getContext().getAuthentication() == null) {
             filterChain.doFilter(request, response);
             return;
         } else {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("Jwt")) {
+                if (cookie.getName().equals(SystemConstant.COOKIE_JWT_HEADER)) {
                     token = cookie.getValue();
                     if ( token == null || !token.startsWith("Bearer") ) {
                         filterChain.doFilter(request, response);
@@ -70,7 +66,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                         username = SecurityContextHolder.getContext().getAuthentication().getName();
                     }
 
-                    var account = AccountEntity.builder().username(username).build();
+                    account = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
                     if(jwtUtil.isTokenValid(jwt, account)) {
                         filterChain.doFilter(request, response);
                         return;
@@ -81,14 +78,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         }
 
         /* Handle if token is expired */
-        String refreshToken = (String) redisUtil.getKey("Jwt:" + username);
+        String refreshToken = (String) redisUtil.getKey(RedisConstant.REDIS_JWT_BRANCH + username);
         if(refreshToken == null) {
+            Cookie cookie = cookieUtil.initCookie("loginFailure", AlertConstant.ALERT_MESSAGE_TOKEN_EXPIRED, AlertConstant.ALERT_MESSAGE_LOGIN_EXPIRATION);
+            response.addCookie(cookie);
             response.sendRedirect("/login");
         } else {
-            var account = AccountEntity.builder()
-                    .username(username).build();
             jwt = jwtUtil.generateAccessToken(account);
-            Cookie cookie = cookieUtil.setCookie("Jwt", "Bearer " + jwt, SystemConstant.JWT_COOKIE_ACCESS_TOKEN_EXPIRATION);
+            Cookie cookie = cookieUtil.initCookie(SystemConstant.COOKIE_JWT_HEADER, SystemConstant.TOKEN_TYPE + jwt, JWTConstant.JWT_COOKIE_ACCESS_TOKEN_EXPIRATION);
             response.addCookie(cookie);
         }
 

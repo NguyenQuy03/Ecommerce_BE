@@ -1,39 +1,29 @@
 package com.ecommerce.springbootecommerce.entity;
 
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Lob;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.Binary;
+import org.springframework.data.annotation.ReadOnlyProperty;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
-@Entity
-@Table(name = "CATEGORY")
+import java.util.Set;
+
+@Document(collection = "CATEGORY")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryEntity extends BaseEntity{
-    
-    @Column(name = "name")
-    private String name;
 
-    @Column(name = "code")
     private String code;
 
-    @Column(name = "thumbnail")
-    @Lob
-    private byte[] thumbnail;
+    private Binary thumbnail;
 
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
+    @ReadOnlyProperty
+    @DocumentReference(lazy = true)
     private Set<ProductEntity> products;
 
 }

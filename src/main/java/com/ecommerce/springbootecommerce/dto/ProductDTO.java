@@ -1,59 +1,56 @@
 package com.ecommerce.springbootecommerce.dto;
 
-import java.text.NumberFormat;
-import java.util.Base64;
-import java.util.Locale;
-
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.bson.types.Binary;
+
+import java.text.NumberFormat;
+import java.util.Base64;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Getter
 @Setter
 public class ProductDTO extends BaseDTO<ProductDTO>{
-
-    @NotBlank(message = "Please enter product's name!")
     private String name;
+
+    private String brand;
     
-    @NotNull(message = "Please enter product's price!")
     private Double price;
     
-    @SuppressWarnings("unused")
     private String intPrice;
     
-    private byte[] image;
+    private Binary image;
     
     private Long sold;
-    
-    private MultipartFile imageFile;
+
     private String imageBase64;
-    
-    @NotBlank(message = "Please enter product's description!")
+
     private String description;
-    
-    @NotBlank(message = "Please enter product's details!")
     private String details;
     
-    @NotNull(message = "Please enter product's stock!")
     private Long stock;
-    private Long accountId;
-    
-    @NotNull(message = "Please enter product's category!")
-    private Long categoryId;
+    private String accountId;
+
+    private String categoryId;
     
     private String status;
-    private Long quantity;
+    private long quantity;
 
+    private List<Map<String, String>> specifications;
+
+//    public ProductDTO putSpecial(String key, String value) {
+//        specials.put(key, value);
+//        return this;
+//    }
     public String getImageBase64() {
-        imageBase64 = Base64.getEncoder().encodeToString(this.image);
-        return imageBase64;
+        if(image == null) return "";
+        return Base64.getEncoder().encodeToString(image.getData());
     }
-    
-    public void setImageBase64(String imageBase64) {
-        this.imageBase64 = imageBase64;
+
+    public String getImageBase64Data() {
+        return this.imageBase64;
     }
     
     public String getIntPrice() {
@@ -61,9 +58,5 @@ public class ProductDTO extends BaseDTO<ProductDTO>{
         NumberFormat Format = NumberFormat.getCurrencyInstance(moneyType);
         Format.format(this.getPrice());
         return Format.format(this.getPrice());
-    }
-    
-    public void setIntPrice(String intPrice) {
-        this.intPrice = intPrice;
     }
 }

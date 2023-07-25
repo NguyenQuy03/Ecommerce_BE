@@ -1,6 +1,9 @@
 package com.ecommerce.springbootecommerce.controller.buyer;
 
+import com.ecommerce.springbootecommerce.constant.RedisConstant;
+import com.ecommerce.springbootecommerce.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +18,6 @@ import com.ecommerce.springbootecommerce.api.buyer.OrderAPI;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IProductService;
-import com.ecommerce.springbootecommerce.util.QuantityOrderUtil;
 
 @Controller
 @RequestMapping("/product")
@@ -28,21 +30,22 @@ public class BuyerProductController {
     private OrderAPI orderAPI;
     
     @Autowired
-    private QuantityOrderUtil quantityOrderUtil;
+    private RedisUtil redisUtil;
     
     @GetMapping("/detail/{id}")
     public String displayProduct(
-          @PathVariable("id") Long id,
+          @PathVariable("id") String id,
           Model model
     ) {
-        ProductDTO productDTO = productService.findById(id);
+        ProductDTO productDTO = productService.findOneById(id);
         if (!productDTO.getStatus().equals(SystemConstant.STRING_ACTIVE_STATUS)) {
             return "redirect:/error";
         }
         productDTO.setQuantity(1L);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
                 
         model.addAttribute("product", productDTO);
-        model.addAttribute("quantityOrder", quantityOrderUtil.getQuantityOrder());
+        model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER));
         return "/buyer/detailProduct";
     }
     
@@ -50,7 +53,7 @@ public class BuyerProductController {
     public RedirectView addOrderToCart(
             Model model,
             RedirectAttributes redirectAttributes,
-            @RequestParam("id") Long id,
+            @RequestParam("id") String id,
             @RequestParam("quantity") Long quantity
     ) {
         orderAPI.add(id, quantity);

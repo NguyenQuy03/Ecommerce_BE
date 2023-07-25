@@ -87,7 +87,7 @@ function deleteProduct(data) {
 		data: JSON.stringify(data),
 		contentType: "application/json",
 		success: function() {
-			window.location.href = "/seller/product/list/all?page=1&size=2";
+			window.location.href = "/seller/product/list/all?page=1&size=2&message=deleteSucceed";
 		},
 		error: function(e) {
 			console.log("error")
@@ -102,7 +102,7 @@ function forceDeleteProduct(data) {
 		data: JSON.stringify(data),
 		contentType: "application/json",
 		success: function() {
-			window.location.href = "/seller/trashbin?page=1&size=2";
+			window.location.href = "/seller/product/trashbin?page=1&size=2&message=fdeleteSucceed";
 		},
 		error: function(e) {
 			console.log("error")
@@ -117,7 +117,7 @@ function restoreProduct(data) {
 		data: JSON.stringify(data),
 		contentType: "application/json",
 		success: function() {
-			window.location.href = "/seller/product/list/all?page=1&size=2";
+			window.location.href = "/seller/product/list/all?page=1&size=2&message=restoreSucceed";
 		},
 		error: function(e) {
 			console.log("error" + e)

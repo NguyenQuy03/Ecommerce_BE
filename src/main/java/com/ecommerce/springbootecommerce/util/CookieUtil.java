@@ -3,12 +3,13 @@ package com.ecommerce.springbootecommerce.util;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @Component
 public class CookieUtil {
-    public Cookie setCookie(String key, String value, int maxAge) {
+    public Cookie initCookie(String key, String value, int maxAge) {
         Cookie cookie = new Cookie(key, URLEncoder.encode(value, StandardCharsets.UTF_8));
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
@@ -33,5 +34,14 @@ public class CookieUtil {
             }
         }
         return res;
+    }
+
+    public void removeAll(Cookie[] cookies, HttpServletResponse response) {
+        if(cookies != null) {
+            for(Cookie cookie : cookies) {
+                cookie.setMaxAge(0);
+                response.addCookie(cookie);
+            }
+        }
     }
 }

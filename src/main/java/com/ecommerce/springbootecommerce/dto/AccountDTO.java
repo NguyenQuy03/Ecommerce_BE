@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,13 +18,11 @@ public class AccountDTO extends BaseDTO<AccountDTO> {
     private String phoneNumber;
     
     private String username;
-    
     private String fullName;
-    
     private String email;
+    private Set<String> roleCodes;
     
-    private String password;    
-    
+    private String password;
     private String rePassword;
     
     private String newPassword;

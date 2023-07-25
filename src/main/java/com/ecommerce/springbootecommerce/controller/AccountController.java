@@ -1,5 +1,6 @@
 package com.ecommerce.springbootecommerce.controller;
 
+import com.ecommerce.springbootecommerce.constant.AlertConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -56,30 +57,29 @@ public class AccountController {
             account.setPassword(preAccount.getPassword());
             
         } else if (account.getTypeEditProfile().equals("passwordForm")) {
-            String passwordEncode = authenticationConfig.passwordEncoder().encode(account.getPassword());
-            
+            String passwordEncoded = authenticationConfig.passwordEncoder().encode(account.getNewPassword());
             if (!bCryptPasswordEncoder.matches(account.getPassword(), preAccount.getPassword())) {
-                return handle(redirectAttributes, "Failure! Your password is incorrect.", SystemConstant.ALERT_DANGER);
+                return handleRedirectError(redirectAttributes, "Failure! Your password is incorrect.", AlertConstant.ALERT_DANGER);
             }
             if (account.getPassword().equals(account.getNewPassword())) {
-                return handle(redirectAttributes, "Failure! Your new password must be different from your old password.", SystemConstant.ALERT_DANGER);
+                return handleRedirectError(redirectAttributes, "Failure! Your new password must be different from your old password.", AlertConstant.ALERT_DANGER);
             }
             if (account.getNewPassword() != null && account.getReNewPassword() != null) {
                 if (!account.getNewPassword().equals(account.getReNewPassword())) {
-                    return handle(redirectAttributes,"Failure! Your new password must match.", SystemConstant.ALERT_DANGER);
+                    return handleRedirectError(redirectAttributes,"Failure! Your new password must match.", AlertConstant.ALERT_DANGER);
                 }
             }
-            
-            account.setPassword(passwordEncode);
-        }
-            
-        account.setId(preAccount.getId());
-        accountService.register(account);
 
-        return handle(redirectAttributes, "Success! Your profile was updated.", SystemConstant.ALERT_INFO);
+            account.setPassword(passwordEncoded);
+        }
+
+        account.setId(preAccount.getId());
+        accountService.update(account);
+
+        return handleRedirectError(redirectAttributes, "Success! Your profile was updated.", AlertConstant.ALERT_INFO);
     }
 
-    private String handle(RedirectAttributes redirectAttributes, String message, String alertType) {
+    private String handleRedirectError(RedirectAttributes redirectAttributes, String message, String alertType) {
         redirectAttributes.addFlashAttribute("alertType", alertType);
         redirectAttributes.addFlashAttribute("alertMessage", message);
         return "redirect:/profile";

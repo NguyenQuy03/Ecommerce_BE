@@ -48,12 +48,12 @@
                     <tbody>
                       <tr th:each="order : *{listResult}">
                         <th scope="row" th:text="${order.id}"><a href="#"></a></th>
-                        <td th:text="${order.cart.account.userName}"></td>
+                        <td th:text="${order.cart.account.username}"></td>
                         <td>
                         <a th:href="@{/product/detail/{id}(id=${order.product.id})}" class="text-primary"
                         	th:text="${order.product.name}"
                         ></a></td>
-                        <td th:text="${order.product.account.userName}"><span class="badge bg-success"></span></td>
+                        <td th:text="${order.product.accountId}"><span class="badge bg-success"></span></td>
                         <td th:text="'$' + ${order.quantity} * ${order.product.price}"></td>
                         <td th:text="${order.createdDate}"></td>
                       </tr>

@@ -1,7 +1,8 @@
 package com.ecommerce.springbootecommerce.controller.manager;
 
-import java.util.List;
-
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.dto.OrderDTO;
+import com.ecommerce.springbootecommerce.service.IOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -9,9 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.OrderDTO;
-import com.ecommerce.springbootecommerce.service.IOrderService;
+import java.util.List;
 
 
 @Controller

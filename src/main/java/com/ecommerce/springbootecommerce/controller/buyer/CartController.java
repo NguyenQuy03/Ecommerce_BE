@@ -1,7 +1,14 @@
 package com.ecommerce.springbootecommerce.controller.buyer;
 
-import java.util.List;
-
+import com.ecommerce.springbootecommerce.constant.RedisConstant;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.dto.AccountDTO;
+import com.ecommerce.springbootecommerce.dto.CartDTO;
+import com.ecommerce.springbootecommerce.dto.OrderDTO;
+import com.ecommerce.springbootecommerce.service.IAccountService;
+import com.ecommerce.springbootecommerce.service.ICartService;
+import com.ecommerce.springbootecommerce.service.IOrderService;
+import com.ecommerce.springbootecommerce.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,14 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.AccountDTO;
-import com.ecommerce.springbootecommerce.dto.CartDTO;
-import com.ecommerce.springbootecommerce.dto.OrderDTO;
-import com.ecommerce.springbootecommerce.service.IAccountService;
-import com.ecommerce.springbootecommerce.service.ICartService;
-import com.ecommerce.springbootecommerce.service.IOrderService;
-import com.ecommerce.springbootecommerce.util.QuantityOrderUtil;
+import java.util.List;
 
 
 @Controller
@@ -34,9 +34,9 @@ public class CartController {
     
     @Autowired
     private IAccountService accountService;
-    
+
     @Autowired
-    private QuantityOrderUtil quantityOrderUtil;
+    private RedisUtil redisUtil;
     
     @GetMapping(value="cart")
     public String cart(
@@ -55,18 +55,16 @@ public class CartController {
             cartService.save(cartDTO);
         }
                 
-        List<OrderDTO> listOrder = orderService.findAllByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_ACTIVE_STATUS);
+        List<OrderDTO> listOrder = cartDTO.getSetOrders();
         
         StringBuilder productNotAvailable = new StringBuilder();
         
-        if(!listOrder.isEmpty()) {
-            int n = listOrder.size();
-            for (int i = 0; i < n; i++) {
-                OrderDTO order = listOrder.get(i);
+        if(listOrder != null) {
+            for(OrderDTO order : listOrder) {
                 String productStatus = order.getProduct().getStatus();
-                
-                if (productStatus.equals(SystemConstant.REMOVED_PRODUCT) 
-                        || productStatus.equals(SystemConstant.DELETED_PRODUCT)
+
+                if (productStatus.equals(SystemConstant.REMOVED_PRODUCT)
+                        || productStatus.equals(SystemConstant.INACTIVE_PRODUCT)
                         || productStatus.equals(SystemConstant.SOLD_OUT_PRODUCT))
                 {
                     productNotAvailable.append(order.getProduct().getName() + ", ");
@@ -80,8 +78,8 @@ public class CartController {
             String s = SystemConstant.PRODUCT_NOT_AVAILABLE + ": " + productNotAvailable.substring(0, productNotAvailable.length() - 2);
             model.addAttribute("message", s);
         }
-        
-        model.addAttribute("quantityOrder",quantityOrderUtil.getQuantityOrder());
+
+        model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, Integer.parseInt((String) redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER)) );
         model.addAttribute("listOrder", listOrder);
         model.addAttribute("cartId", cartDTO.getId());
         
@@ -98,7 +96,7 @@ public class CartController {
         AccountDTO accountDTO = accountService.findByUsername(username);
         
         CartDTO cartDTO = cartService.findByStatusAndAccountId(SystemConstant.STRING_ACTIVE_STATUS, accountDTO.getId());
-        Long quantityOrder = orderService.countByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_DELIVERED_ORDER);
+        long quantityOrder = orderService.countByCartIdAndStatus(cartDTO.getId(), SystemConstant.STRING_DELIVERED_ORDER);
         
         if (page == null && size == null) {
             page = 1;
@@ -117,7 +115,7 @@ public class CartController {
         dto.setSize(size);
 
         model.addAttribute("dto", dto);
-        model.addAttribute("quantityOrder", quantityOrderUtil.getQuantityOrder());
+        model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, Integer.parseInt((String) redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER)) );
         model.addAttribute("cartId", cartDTO.getId());
                 
         return "buyer/purchase";
@@ -126,8 +124,8 @@ public class CartController {
     @PostMapping("/buy-again")
     public String redirectToCart(
             Model model,
-            @RequestParam("orderId") Long orderId,
-            @RequestParam("cartId") Long cartId,
+            @RequestParam("orderId") String orderId,
+            @RequestParam("cartId") String cartId,
             RedirectAttributes redirectAttributes
             
     ) {
@@ -136,7 +134,7 @@ public class CartController {
         boolean isOrderExisted = orderService.isOrderExistByProductIdAndCartIdAndStatus(orderDTO.getProduct().getId(), cartId, SystemConstant.STRING_ACTIVE_STATUS);
         
         String productStatus = orderDTO.getProduct().getStatus();
-        if (productStatus.equals(SystemConstant.DELETED_PRODUCT) || productStatus.equals(SystemConstant.REMOVED_PRODUCT)) {
+        if (productStatus.equals(SystemConstant.INACTIVE_PRODUCT) || productStatus.equals(SystemConstant.REMOVED_PRODUCT)) {
             redirectAttributes.addFlashAttribute("message", SystemConstant.PRODUCT_NOT_AVAILABLE);
             return "redirect:/purchase";
         }

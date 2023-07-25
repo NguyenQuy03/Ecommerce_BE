@@ -57,9 +57,6 @@ $(document).ready(function() {
 
 		});
 	})
-
-	window.onscroll = function() { changeDisplayCartCheckOut() };
-
 })
 
 if (closeAnnounceBtn) {
@@ -136,6 +133,7 @@ checkAll.addEventListener('click', event => {
 checkBoxes.forEach((item) => {
 	item.onchange = () => {
 		getTotal();
+
 		isCheckAll() ? checkAll.checked = true : checkAll.checked = false;
 		if(leastChecked()) {
         	purchaseBtn.removeAttribute("disabled", "false");
@@ -146,17 +144,19 @@ checkBoxes.forEach((item) => {
 })
 
 function isCheckAll() {
+    let res = true;
 	checkBoxes.forEach(item => {
-		if (!item.checked) { return false }
+		if (!item.checked) { return res = false }
 	})
-	return true;
+	return res;
 }
 
 function leastChecked() {
+    var res = false;
 	checkBoxes.forEach(item => {
-		if (item.checked == true) { return true }
+		if (item.checked) { return res = true }
 	})
-	return false;
+	return res;
 }
 
 function getTotal() {
@@ -169,12 +169,3 @@ function getTotal() {
 	})
 	summaryPrice.innerText = formatter.format(total)
 }
-
-function changeDisplayCartCheckOut() {
-	if (document.documentElement.scrollTop > tableResponsive.clientHeight - cartCheckout.clientHeight - 80) {
-		cartCheckout.classList.remove("cart-checkout-fixed");
-	} else {
-		cartCheckout.classList.add("cart-checkout-fixed");
-	}
-}
-

@@ -34,7 +34,6 @@
 								<thead>
 									<tr>
 										<th scope="col">Id</th>
-										<th scope="col">Name</th>
 										<th scope="col">Code</th>
 										<th scope="col">Image</th>
                     					<th scope="col">Action</th>
@@ -43,7 +42,6 @@
 								<tbody>
 									<tr th:each="category : *{listResult}">
 										<td th:utext="${category.id}"></td>
-										<td th:utext="${category.name}"></td>
 										<td th:utext="${category.code}"></td>
 					                    <td><img style="max-width: 80px;" id="imagePreview"
 					                      th:src="'data:image/png;base64,' + ${category.thumbnailBase64}"
