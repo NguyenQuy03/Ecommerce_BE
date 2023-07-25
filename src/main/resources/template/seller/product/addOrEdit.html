@@ -10,6 +10,21 @@
     <title>Add Or Edit Product</title>
 
     <script defer src="/seller/js/addOrEdit.js"></script>
+    <script defer src="/seller/js/checkingValidProduct.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/38.1.1/classic/ckeditor.js"></script>
+
+    <style>
+        .spec-fit {
+            margin-left: auto;
+            margin-bottom: 6px;
+            order: 2;
+            max-height: 40px;
+        }
+
+        .ck .ck-content {
+            min-height: 300px;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,35 +34,29 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Basic Information</h5>
-                        <form enctype="multipart/form-data" th:object="${product}" id="formSubmit"
-                            th:action="@{/seller/product}" method="POST"
-                            th:classappend="${#fields.hasErrors('*')} ? was-validated : d-block">
+                        <form th:object="${product}" id="formSubmit" class="needs-validation" novalidate>
                             <div class="row mb-3">
                                 <label for="name" class="col-sm-2 col-form-label">Product Name</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" th:field="*{name}"
-                                        th:errorClass="is-invalid"
-                                        th:attr="${#fields.hasErrors('name')} ? required : id='name'" />
-                                        
-	                                <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="invalid-feedback">
+                                    <input type="text" class="form-control" th:field="*{name}" id="name" required/>
+	                                <div id="nameError" class="invalid-feedback">
+                                        <span> Please enter product's name! </span>
 	                                </div>
                                 </div>
 
                             </div>
                             <div class="row mb-3">
-                                <label for="categoryId" class="col-sm-2 col-form-label">Category</label>
+                                <label class="col-sm-2 col-form-label">Category</label>
                                 <div class="col-sm-10">
-                                	<select th:if="${categoryId == null}" class="form-control" th:field="*{categoryId}" th:errorClass="is-invalid"
-                                        th:attr="${#fields.hasErrors('categoryId')} ? required : id='categoryId'">
+                                	<select th:if="${categoryId == null}" class="form-control" th:field="*{categoryId}" required>
                                         <option selected value="" hidden='true'>
                                         </option>
-                                        <option th:each="item : ${categories}" th:utext="${item.name}"
+                                        <option th:each="item : ${categories}" th:utext="${item.code}"
                                             th:value="${item.id}" th:attr="${product.categoryId == item.id} ? selected : id='categoryId'">
                                         </option>
                                     </select>
-                                    
-                                    <select th:if="${categoryId != null}" class="form-control" th:field="*{categoryId}" th:errorClass="is-invalid"
-                                        th:attr="${#fields.hasErrors('categoryId')} ? required : id='categoryId'">
+
+                                    <select th:if="${categoryId != null}" class="form-control" th:field="*{categoryId}" required>
                                         <option selected value="" hidden='true'>
                                         </option>
                                         <option th:each="item : ${categories}" th:utext="${item.name}"
@@ -55,32 +64,57 @@
                                         </option>
                                     </select>
 
-                                    <div th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"
-                                        class="invalid-feedback">
+                                    <div id="categoryIdError"class="invalid-feedback">
+                                        <span> Please enter product's category! </span>
                                     </div>
                                 </div>
                             </div>
+
+
+                            <div class="row mb-3">
+                                <label for="specifications" class="col-sm-2 col-form-label">Specifications</label>
+
+                                <div class="col-sm-5">
+                                    <span class="input-group-text">Key</span>
+                                </div>
+                                <div class="col-sm-5">
+                                    <span class="input-group-text">Value</span>
+                                </div>
+
+                                <div id="specifications" class="m-1 mt-2">
+                                    <div th:each="item : *{specifications}">
+                                        <div class="spec-el col-sm-10 d-flex spec-fit">
+                                            <input type="text" th:value="${item.k}" aria-label="Key" class="input-group-text" required>
+                                            <input type="text" th:value="${item.v}" aria-label="Value" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div id="new-input"></div>
+                                </div>
+
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-10"></div>
+                                <div class="col-sm-2">
+                                    <button type="button" id="row-adder" name="row-adder" class="btn btn-primary">Add More</button>
+                                </div>
+                            </div>
+
                             <div class="row mb-3">
                                 <label for="description" class="col-sm-2 col-form-label">Product Description</label>
                                 <div class="col-sm-10">
-                                  <input th:field="*{description}" class="form-control" type="text" th:errorClass="is-invalid"
-                                        th:attr="${#fields.hasErrors('description')} ? required : id='description'"
-                                   />
-                                    <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}"
-                                        class="invalid-feedback">
+                                  <textarea th:field="*{description}" class="form-control" type="text" id='description' required></textarea>
+                                    <div id="descriptionError" class="invalid-feedback">
+                                        <span> Please enter product's description! </span>
                                     </div>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <label for="details" class="col-sm-2 col-form-label">Product Details</label>
                                 <div class="col-sm-10">
-                                    <textarea th:field="*{details}" class="form-control" style="height: 100px"
-                                        th:errorClass="is-invalid"
-                                        th:attr="${#fields.hasErrors('details')} ? required : id='details'"
-                                    >
-                                  </textarea>
-                                    <div th:if="${#fields.hasErrors('details')}" th:errors="*{details}"
-                                        class="invalid-feedback">
+                                    <textarea id="details" th:field="*{details}" class="form-control" required></textarea>
+                                    <div id="detailsError" class="invalid-feedback">
+                                        <span> Please enter product's details! </span>
                                     </div>
                                 </div>
                             </div>
@@ -89,48 +123,45 @@
                                 <div class="col-sm-10">
                                     <input class="form-control" th:field="*{price}"
                                         style="width: 30%; display: inline-block;" type="number"
-                                        min="1" max="9999" th:errorClass="is-invalid" step="any"
-                                        th:attr="${#fields.hasErrors('price')} ? required : id='price'" />
+                                        min="1" max="9999"  step="any" required  id='price'/>
                                     <span>$</span>
 
-                                    <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}"
-                                        class="invalid-feedback">
+                                    <div id="priceError" class="invalid-feedback">
+                                        <span> Please enter product's price! </span>
                                     </div>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <label for="stock" class="col-sm-2 col-form-label">Stock</label>
                                 <div class="col-sm-10">
-                                    <input type="number" th:field="*{stock}" style="width: 30%;" class="form-control"
-                                        min="1" max="1000" th:errorClass="is-invalid"
-                                        th:attr="${#fields.hasErrors('stock')} ? required : id='stock'" />
-                                        
-	                                <div th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"
-	                                    class="invalid-feedback">
-	                                </div>
+                                    <input id="stock" type="number" th:field="*{stock}" style="width: 30%;" class="form-control"
+                                        min="1" max="1000" required />
+
+	                                <div id="stockError" class="invalid-feedback">
+                                        <span> Please enter product's stock! </span>
+                                    </div>
                                 </div>
 
                             </div>
                             <div class="row mb-4">
-                                <label for="imageFile" class="col-sm-2 col-form-label">Product Image</label>
+                                <label for="imageBase64" class="col-sm-2 col-form-label">Product Image</label>
                                 <div class="col-sm-10">
-                                    <input class="form-control" th:field="*{imageFile}" type="file"
-                                        accept="image/png, image/jpeg" th:errorClass="is-invalid"
-                                        th:attr="${#fields.hasErrors('imageFile')} ? required : id='imageFile'">
-                                        
-	                                <div th:if="${#fields.hasErrors('imageFile')}" th:errors="*{imageFile}"
-	                                    class="invalid-feedback">
-	                                </div>
+                                    <input id="imageBase64" class="form-control" th:field="*{imageBase64}" type="file"
+                                        accept="image/png, image/jpeg" required >
+
+	                                <div id="imageBase64Error" class="invalid-feedback">
+                                        <span> Please enter product's image! </span>
+                                    </div>
                                 </div>
 
                             </div>
                             <div class="row mb-3">
                                 <div class="col-sm-12" >
-                                    <img th:if="${product.image}" class="img-fluid" id="previewImage" alt="Preview Image" 
+                                    <img th:if="${product.image}" class="img-fluid previewImage" alt="Preview Image"
 										th:src="'data:image/png;base64,' + ${product.imageBase64}"
-										style="max-width: 200px" 
+										style="max-width: 200px"
 									>
-                                    <img th:unless="${product.image}" class="img-fluid" id="previewImage" src=""
+                                    <img th:unless="${product.image}" class="img-fluid previewImage" src=""
 										style="max-width: 200px" alt=""
 									>
                                 </div>
@@ -142,7 +173,7 @@
                                 </div>
                                 <div class="col-8 d-flex">
                                     <div class="col-sm-10 col-lg-3">
-                                        <a th:href="@{/seller/product/list}" class="btn btn-danger">Cancel</a>
+                                        <a th:href="@{/seller/product/list/all?page=1&size=2}" class="btn btn-danger">Cancel</a>
                                     </div>
                                     <div class="col-sm-10 col-lg-3">
                                         <button id="saveBtn" type="submit" class="button-update btn btn-primary">Save
@@ -154,15 +185,14 @@
 
                             <input type="hidden" th:field="*{id}" />
                             <input type="hidden" th:field="*{sold}" />
-                            <input type="hidden" th:name="isFileEmpty" th:value="${isFileEmpty}"/>
                         </form>
-
                     </div>
                 </div>
             </div>
         </div>
 
     </div>
+
 
 </body>
 
