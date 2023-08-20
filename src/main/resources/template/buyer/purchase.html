@@ -78,6 +78,13 @@
 						</div>
 					</div>
 				</div>
+
+				<div th:if="${noOrderYet}" class="d-flex justify-content-center align-items-center flex-column">
+					<h3 class="mt-5 ">No orders yet</h3>
+					<a href="/home">
+						<button class="btn btn-primary rounded mt-3">Go shopping now</button>
+					</a>
+				</div>
 				
 			</div>
 		</div>

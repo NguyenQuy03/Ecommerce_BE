@@ -14,34 +14,27 @@
 </head>
 <body>
 	<!-- Shop Detail Start -->
-	<div class="container-fluid py-5" layout:fragment="content"
-		th:object=${product}>
+	<div class="container-fluid py-5" layout:fragment="content" th:object=${product}>
 		<div class="row px-xl-5">
 			<div class="col-lg-5 pb-5">
-				<div class="carousel-item active">
-					<img class="w-100 h-100"
-						th:src="'data:image/png;base64,' + ${product.imageBase64}"
-						alt="Image">
-				</div>
-				<!-- <div id="product-carousel" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner border">
-                        <div class="carousel-item">
-                            <img class="w-100 h-100" src="img/product-2.jpg" alt="Image">
-                        </div>
-                        <div class="carousel-item">
-                            <img class="w-100 h-100" src="img/product-3.jpg" alt="Image">
-                        </div>
-                        <div class="carousel-item">
-                            <img class="w-100 h-100" src="img/product-4.jpg" alt="Image">
-                        </div>
-                    </div>
-                    <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
-                        <i class="fa fa-2x fa-angle-left text-dark"></i>
-                    </a>
-                    <a class="carousel-control-next" href="#product-carousel" data-slide="next">
-                        <i class="fa fa-2x fa-angle-right text-dark"></i>
-                    </a>
-                </div> -->
+				<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+					<div class="carousel-inner">
+					  <div class="carousel-item active">
+						<img class="d-block w-100" th:src="${product.image}" alt="First slide">
+					  </div>
+					  	<div th:if="${product.productItems[0].image} != null" th:each="productItem : ${product.productItems}" class="carousel-item">
+							<img class="w-100 h-100" th:src="${productItem.image}" alt="Image">
+						</div>
+					</div>
+					<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+					  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					  <span class="sr-only">Previous</span>
+					</a>
+					<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+					  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+					  <span class="sr-only">Next</span>
+					</a>
+				  </div>
 			</div>
 
 			<div class="col-lg-7 pb-5">
@@ -54,67 +47,23 @@
 					</div>
 					<small class="pt-1">(50 Reviews)</small>
 				</div>
-				<h3 th:text=*{intPrice} class="font-weight-semi-bold mb-4"></h3>
-				<div class="d-flex mb-3">
-					<p class="text-dark font-weight-medium mb-0 mr-3">Sizes:</p>
-					<form>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input type="radio" class="custom-control-input" id="size-1"
-								name="size"> <label class="custom-control-label"
-								for="size-1">XS</label>
+				<h3 th:text=*{avgPrice} id="price" class="font-weight-semi-bold mb-4"></h3>
+				<div th:if="${product.variations != null}">
+					<div class="d-flex mb-4" th:each="instance : ${product.variations}">
+						<p class="text-dark font-weight-medium mb-0 mr-3" th:utext="(${#strings.capitalize(instance.key)}) + ': '"></p>
+						<div class="custom-control custom-radio custom-control-inline"
+							th:classappend="'variation-'+${instanceStat.index}" th:each="item : ${instance.value}">
+							<input type="radio" class="custom-control-input" th:id="${instance.key}+'-'+${item}" th:name="${instance.key}">
+							<label class="custom-control-label" th:text="${item}" th:for="${instance.key}+'-'+${item}"></label>
 						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input type="radio" class="custom-control-input" id="size-2"
-								name="size"> <label class="custom-control-label"
-								for="size-2">S</label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input type="radio" class="custom-control-input" id="size-3"
-								name="size"> <label class="custom-control-label"
-								for="size-3">M</label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input type="radio" class="custom-control-input" id="size-4"
-								name="size"> <label class="custom-control-label"
-								for="size-4">L</label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input type="radio" class="custom-control-input" id="size-5"
-								name="size"> <label class="custom-control-label"
-								for="size-5">XL</label>
-						</div>
-					</form>
+					</div>
 				</div>
-				<div class="d-flex mb-4">
-					<p class="text-dark font-weight-medium mb-0 mr-3">Colors:</p>
-					<form>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input type="radio" class="custom-control-input" id="color-1"
-								name="color"> <label class="custom-control-label"
-								for="color-1">Black</label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input type="radio" class="custom-control-input" id="color-2"
-								name="color"> <label class="custom-control-label"
-								for="color-2">White</label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input type="radio" class="custom-control-input" id="color-3"
-								name="color"> <label class="custom-control-label"
-								for="color-3">Red</label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input type="radio" class="custom-control-input" id="color-4"
-								name="color"> <label class="custom-control-label"
-								for="color-4">Blue</label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input type="radio" class="custom-control-input" id="color-5"
-								name="color"> <label class="custom-control-label"
-								for="color-5">Green</label>
-						</div>
-					</form>
+
+				<div th:each="productItem : ${product.productItems}">
+					<input type="hidden" class="product-item-price" th:value="${productItem.price}">
+					<input type="hidden" class="product-item-stock" th:value="${productItem.stock}">
 				</div>
+				
 
 				<!-- ADD PRODUCT TO CART-->
 				<form th:action="@{/product}" method="POST">
@@ -126,16 +75,17 @@
 									<i class="fa fa-minus"></i>
 								</button>
 							</div>
-							<input type="number" th:field=*{quantity}
-								class="form-control bg-secondary text-center amount-product"
-								min="1" th:max=*{stock} th:aria-valuemax=*{stock}>
+							<input type="number" class="form-control bg-secondary text-center quantity-product" min="1" 
+								value="1" id="quantity" name="quantity" th:max=*{totalStock} th:aria-valuemax=*{totalStock}
+							>
 							<div class="input-group-btn">
 								<button class="btn btn-primary btn-plus">
 									<i class="fa fa-plus"></i>
 								</button>
 							</div>
+
 						</div>
-						<span th:text=*{stock} id="stock"></span> <span>&nbsp;pieces available</span>
+						<span th:text=*{totalStock} id="stock"></span> <span>&nbsp;pieces available</span>
 					</div>
 					<div>
 						<button class="btn btn-primary px-3 add-btn" type="submit">
@@ -154,8 +104,7 @@
 					<div class="modal-dialog modal-dialog-centered" role="document">
 						<div class="modal-content model-product ">
 							<i class="fas fa-check-circle model-icon"></i>
-							<div class="modal-body">Item has been added to your
-								shopping cart</div>
+							<div class="modal-body">Item has been added to your shopping cart</div>
 						</div>
 					</div>
 				</div>
@@ -186,12 +135,19 @@
 				<div class="tab-content">
 					<div class="tab-pane fade show active" id="tab-pane-1">
 						<h4 class="mb-3">Product Description</h4>
-						<p th:text=*{description}></p>
+						<p th:utext=*{description}></p>
 					</div>
-					<div class="tab-pane fade" id="tab-pane-2">
-						<h4 class="mb-3">Product Details</h4>
-						<p th:text=*{details}></p>
+
+					<div class="tab-pane fade show" id="tab-pane-2">
+						<h4 class="mb-3">Product Information</h4>
+						<div th:each="spec : ${product.specification}">
+							<div class="d-flex" th:each="instance : ${spec}">
+								<label class="mr-3" th:utext="${instance.key} + ': '"></label>
+								<p th:utext="${instance.value}"></p>
+							</div>
+						</div>
 					</div>
+
 					<div class="tab-pane fade" id="tab-pane-3">
 						<div class="row">
 							<div class="col-md-6">

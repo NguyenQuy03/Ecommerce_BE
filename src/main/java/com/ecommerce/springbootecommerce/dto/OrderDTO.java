@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.text.NumberFormat;
-import java.util.Base64;
+import java.util.List;
 import java.util.Locale;
 
 @Getter
@@ -14,22 +14,17 @@ import java.util.Locale;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderDTO extends BaseDTO<OrderDTO>{
-    
+
+    private AccountDTO account;
+
     private String status;
-    private long quantity;
-    private String imageBase64;
-    private String curPrice;
-    private ProductDTO product;
-    private CartDTO cart;
+    private double totalPrice;
+
+    private List<OrderItemDTO> orderItems;
     
-    public String getImageBase64() {
-        imageBase64 = Base64.getEncoder().encodeToString(this.product.getImage().getData());
-        return imageBase64;
-    }
-    
-    public String getCurPrice() {
+    public String getTotalPrice() {
         Locale moneyType = new Locale("en", "US");
         NumberFormat $Format = NumberFormat.getCurrencyInstance(moneyType);
-        return $Format.format(this.product.getPrice());
+        return $Format.format(this.totalPrice);
     }
 }

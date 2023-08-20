@@ -85,7 +85,10 @@ public class AccountService implements IAccountService{
     
     @Override
     public void register(RegisterRequest request) {
-        AccountEntity account = AccountEntity.builder()
+        CartEntity cart = cartRepository.save(new CartEntity());
+
+        var account = AccountEntity.builder()
+                .cartId(cart.getId())
                 .username(request.getUsername())
                 .fullName(request.getFullName())
                 .email(request.getEmail())
@@ -103,10 +106,8 @@ public class AccountService implements IAccountService{
         roleRepository.save(roleEntity);
 
     /* Add new cart */
-        CartEntity cartEntity = new CartEntity();
-        cartEntity.setAccount(newAcc);
-        cartEntity.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
-        cartRepository.save(cartEntity);
+        cart.setAccountId(newAcc.getId());
+        cartRepository.save(cart);
 
         redisUtil.setHashField(RedisConstant.REDIS_USER_INFO + request.getUsername(), RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, String.valueOf(0));
     }

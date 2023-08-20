@@ -33,30 +33,25 @@ public class CartService implements ICartService{
                 CartEntity preCartEntity = cart.get();
                 modelMapper.map(cartDTO, preCartEntity);
                 List<OrderEntity> orderEntities = new ArrayList<>();
-                for(OrderDTO order : cartDTO.getSetOrders()) {
-                    orderEntities.add(modelMapper.map(order, OrderEntity.class));
-                }
-
-                preCartEntity.setSetOrders(orderEntities);
+//                for(OrderDTO order : cartDTO.getSetOrders()) {
+//                    orderEntities.add(modelMapper.map(order, OrderEntity.class));
+//                }
+//
+//                preCartEntity.setSetOrders(orderEntities);
                 cartRepository.save(modelMapper.map(preCartEntity, CartEntity.class));
             }
         }
     }
 
     @Override
-    public CartDTO findByStatusAndAccountId(String status, String id) {
-        Optional<CartEntity> cart = cartRepository.findOneByStatusAndAccountId(status, id);
+    public CartDTO findOneById(String id) {
+        Optional<CartEntity> cart = cartRepository.findOneById(id);
         return cart.map(cartEntity -> modelMapper.map(cartEntity, CartDTO.class)).orElse(null);
     }
 
     @Override
-    public boolean isExistByStatusAndAccountId(String status, String id) {
-        return cartRepository.findOneByStatusAndAccountId(status, id).isPresent();
-    }
-
-    @Override
-    public CartDTO findOneById(String id) {
-        Optional<CartEntity> cart = cartRepository.findOneById(id);
+    public CartDTO findOneByAccountId(String accountId) {
+        Optional<CartEntity> cart = cartRepository.findOneByAccountId(accountId);
         return cart.map(cartEntity -> modelMapper.map(cartEntity, CartDTO.class)).orElse(null);
     }
 }

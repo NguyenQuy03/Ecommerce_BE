@@ -1,16 +1,16 @@
 package com.ecommerce.springbootecommerce.controller.manager;
 
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.OrderDTO;
-import com.ecommerce.springbootecommerce.service.IOrderService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.dto.OrderDTO;
+import com.ecommerce.springbootecommerce.service.IOrderService;
 
 
 @Controller
@@ -22,8 +22,7 @@ public class TransactionController {
 
     @GetMapping(value="/transaction")
     public String transactions(Model model) {
-        PageRequest pageRequest = PageRequest.of(0, 20);
-        List<OrderDTO> dtos = orderService.findAllByStatus(SystemConstant.STRING_DELIVERED_ORDER, pageRequest);
+        List<OrderDTO> dtos = orderService.findAllByStatus(SystemConstant.STRING_DELIVERED_ORDER);
         
         OrderDTO dto = new OrderDTO();
         dto.setListResult(dtos);

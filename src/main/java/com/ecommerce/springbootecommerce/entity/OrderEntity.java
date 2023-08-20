@@ -4,7 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @Document(collection = "ORDERS")
 @Getter
@@ -15,9 +18,10 @@ public class OrderEntity extends BaseEntity {
 
     private String status;
 
-    private long quantity;
+    private double totalPrice;
 
-    private ProductEntity product;
+    @DBRef
+    private AccountEntity account;
 
-    private CartEntity cart;
+    private List<OrderItemEntity> orderItems;
 }

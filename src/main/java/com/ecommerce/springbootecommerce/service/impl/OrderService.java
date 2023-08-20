@@ -47,14 +47,14 @@ public class OrderService implements IOrderService{
     @Override
     public void save(OrderDTO dto) {
         OrderEntity newOrder = orderRepository.save(modelMapper.map(dto, OrderEntity.class));
-        CartEntity cart = modelMapper.map(dto.getCart(), CartEntity.class);
-        List<OrderEntity> orders = cart.getSetOrders();
-        if(orders == null) {
-            orders = new ArrayList<>();
-        }
-        orders.add(newOrder);
-        cart.setSetOrders(orders);
-        cartRepository.save(cart);
+//        CartEntity cart = modelMapper.map(dto.getCart(), CartEntity.class);
+//        List<OrderEntity> orders = cart.getSetOrders();
+//        if(orders == null) {
+//            orders = new ArrayList<>();
+//        }
+//        orders.add(newOrder);
+//        cart.setSetOrders(orders);
+//        cartRepository.save(cart);
 
         if(dto.getId() == null) {
             redisUtil.setQuantityOrder(1);
@@ -64,17 +64,17 @@ public class OrderService implements IOrderService{
     @Override
     public void purchase(OrderDTO dto) {
         OrderEntity order = orderRepository.findOneById(dto.getId()).get();
-        order.setQuantity(dto.getQuantity());
-        order.setStatus(SystemConstant.STRING_DELIVERED_ORDER);
-        orderRepository.save(modelMapper.map(order, OrderEntity.class));
-
-        order.getProduct().setSold(order.getProduct().getSold() + order.getQuantity());
-        long remainingStock = order.getProduct().getStock() - order.getQuantity();
-        if (remainingStock == 0) {
-            order.getProduct().setStatus(SystemConstant.SOLD_OUT_PRODUCT);
-        }
-        order.getProduct().setStock(remainingStock);
-        productRepository.save(modelMapper.map( order.getProduct(), ProductEntity.class));
+//        order.setQuantity(dto.getQuantity());
+//        order.setStatus(SystemConstant.STRING_DELIVERED_ORDER);
+//        orderRepository.save(modelMapper.map(order, OrderEntity.class));
+//
+//        order.getProduct().setSold(order.getProduct().getSold() + order.getQuantity());
+//        long remainingStock = order.getProduct().getStock() - order.getQuantity();
+//        if (remainingStock == 0) {
+//            order.getProduct().setStatus(SystemConstant.SOLD_OUT_PRODUCT);
+//        }
+//        order.getProduct().setStock(remainingStock);
+//        productRepository.save(modelMapper.map( order.getProduct(), ProductEntity.class));
 
         redisUtil.setQuantityOrder(-1);
     }
@@ -82,11 +82,11 @@ public class OrderService implements IOrderService{
 
     @Override
     public void delete(String id) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        CartEntity cart = cartRepository.findByStatusAndAccountUsername(SystemConstant.STRING_ACTIVE_STATUS, username).get();
-
-        cart.getSetOrders().removeIf(order -> order.getId().equals(id));
-        cartRepository.save(cart);
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//        CartEntity cart = cartRepository.findByStatusAndAccountUsername(username).get();
+//
+//        //cart.getSetOrders().removeIf(order -> order.getId().equals(id));
+//        cartRepository.save(cart);
         orderRepository.deleteById(id);
         redisUtil.setQuantityOrder(-1);
     }
@@ -98,56 +98,50 @@ public class OrderService implements IOrderService{
     }
     
     @Override
-    public OrderDTO findOneByProductIdAndCartIdAndStatus(String productId, String cartId, String status) {
-        Optional<OrderEntity> orderEntity = orderRepository.findOneByProductIdAndCartIdAndStatus(productId, cartId, status);
+    public OrderDTO findOneByAccountIdAndStatus(String accountId, String status) {
+        Optional<OrderEntity> orderEntity = orderRepository.findOneByAccountIdAndStatus(accountId, status);
         return orderEntity.map(entity -> modelMapper.map(entity, OrderDTO.class)).orElse(null);
-    }
-
-    @Override
-    public List<OrderDTO> findAllByCartIdAndStatus(String cartId, String status, Pageable pageable) {
-        List<OrderEntity> orderEntities = orderRepository.findAllByCartIdAndStatus(cartId, status, pageable).getContent();
-        return toListDTO(orderEntities);
     }
     
     @Override
-    public List<OrderDTO> findAllByCartIdAndStatus(String cartId, String status) {
-        List<OrderEntity> orderEntities = orderRepository.findAllByCartIdAndStatus(cartId, status);
+    public List<OrderDTO> findAllByAccountIdAndStatus(String accountId, String status) {
+        List<OrderEntity> orderEntities = orderRepository.findAllByAccountIdAndStatus(accountId, status);
         return toListDTO(orderEntities);
     }
 
     @Override
-    public List<OrderDTO> findAllByStatus(String status, Pageable pageable) {
-        List<OrderEntity> orderEntities = orderRepository.findAllByStatus(status, pageable).getContent();
+    public List<OrderDTO> findAllByStatus(String status) {
+        List<OrderEntity> orderEntities = orderRepository.findAllByStatus(status);
         return toListDTO(orderEntities);
     }
 
+//    @Override
+//    public List<OrderDTO> findAllByAccountIdAndStatus(String accountId, String status) {
+//
+//        LookupOperation lookupProduct = LookupOperation.newLookup()
+//                .from("PRODUCT")
+//                .localField("product.id")
+//                .foreignField("_id")
+//                .as("orders");
+//
+//
+//        MatchOperation match = Aggregation.match(Criteria.where("product.accountId").is(accountId).and("status").is(status));
+//
+//        TypedAggregation<OrderEntity> aggregation = Aggregation.newAggregation(OrderEntity.class,
+//                lookupProduct, match);
+//
+//        List<OrderEntity> results = mongoTemplate.aggregate(aggregation, OrderEntity.class).getMappedResults();
+//        return toListDTO(results);
+//    }
+
     @Override
-    public List<OrderDTO> findAllByStatusAndAccountId(String status, String accountId) {
-
-        LookupOperation lookupProduct = LookupOperation.newLookup()
-                .from("PRODUCT")
-                .localField("product.id")
-                .foreignField("_id")
-                .as("orders");
-
-
-        MatchOperation match = Aggregation.match(Criteria.where("product.accountId").is(accountId).and("status").is(status));
-
-        TypedAggregation<OrderEntity> aggregation = Aggregation.newAggregation(OrderEntity.class,
-                lookupProduct, match);
-
-        List<OrderEntity> results = mongoTemplate.aggregate(aggregation, OrderEntity.class).getMappedResults();
-        return toListDTO(results);
+    public Long countByAccountIdAndStatus(String accountId, String status) {
+        return orderRepository.countByAccountIdAndStatus(accountId, status);
     }
 
     @Override
-    public Long countByCartIdAndStatus(String cartId, String status) {
-        return orderRepository.countByCartIdAndStatus(cartId, status);
-    }
-
-    @Override
-    public boolean isOrderExistByProductIdAndCartIdAndStatus(String productID, String cartId, String status) {
-        return orderRepository.findOneByProductIdAndCartIdAndStatus(productID, cartId, status).isPresent();
+    public boolean isOrderExistByAccountIdAndStatus(String accountId, String status) {
+        return orderRepository.findOneByAccountIdAndStatus(accountId, status).isPresent();
     }
 
     private List<OrderDTO> toListDTO(List<OrderEntity> orderEntities) {

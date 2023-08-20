@@ -13,8 +13,8 @@ import java.util.Set;
 @NoArgsConstructor
 public class AccountDTO extends BaseDTO<AccountDTO> {
     
-    private String address;   
-    private Double balance;
+    private String address;
+
     private String phoneNumber;
     
     private String username;

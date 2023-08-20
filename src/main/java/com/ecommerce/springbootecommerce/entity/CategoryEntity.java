@@ -1,15 +1,15 @@
 package com.ecommerce.springbootecommerce.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.bson.types.Binary;
+import java.util.Set;
+
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
-import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Document(collection = "CATEGORY")
 @Getter
@@ -20,7 +20,7 @@ public class CategoryEntity extends BaseEntity{
 
     private String code;
 
-    private Binary thumbnail;
+    private String thumbnail;
 
     @ReadOnlyProperty
     @DocumentReference(lazy = true)

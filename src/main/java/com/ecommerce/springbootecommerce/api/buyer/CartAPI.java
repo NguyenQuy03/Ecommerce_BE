@@ -3,6 +3,7 @@ package com.ecommerce.springbootecommerce.api.buyer;
 import com.ecommerce.springbootecommerce.dto.CartDTO;
 import com.ecommerce.springbootecommerce.dto.OrderDTO;
 import com.ecommerce.springbootecommerce.service.IAccountService;
+import com.ecommerce.springbootecommerce.service.ICartItemService;
 import com.ecommerce.springbootecommerce.service.ICartService;
 import com.ecommerce.springbootecommerce.service.IOrderService;
 import org.modelmapper.ModelMapper;
@@ -26,18 +27,17 @@ public class CartAPI {
     private ModelMapper modelMapper;
 
     @Autowired
-    private IAccountService accountService;
+    private ICartItemService cartItemService;
     
     @PostMapping()
     public void purchase(
             @RequestBody CartDTO dto
     ) {
-        CartDTO cart = cartService.findOneById(dto.getId());
-
-        for(OrderDTO order : dto.getSetOrders()) {
-            orderService.purchase(order);
-            cart.getSetOrders().removeIf(element -> element.getId().equals(order.getId()));
-        }
-        cartService.save(cart);
+//        CartDTO cart = cartService.findOneById(dto.getId());
+//
+//        for(OrderDTO order : dto.getSetOrders()) {
+//            orderService.purchase(order);
+//            cart.getSetOrders().removeIf(element -> element.getId().equals(order.getId()));
+//        }
     }
 }

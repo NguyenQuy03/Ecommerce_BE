@@ -3,7 +3,7 @@ package com.ecommerce.springbootecommerce.controller.seller;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
-import com.ecommerce.springbootecommerce.dto.ProductDTO;
+import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.IProductService;
@@ -57,7 +57,7 @@ public class AddOrEditController {
         List<CategoryDTO> categories = categoryService.findAll();
         model.addAttribute("categories", categories);
         model.addAttribute("product", product);
-        model.addAttribute("isFileEmpty", "False");
+        model.addAttribute("isVariation", product.getProductItems().get(0).getVariationName() != null);
 
         return "/seller/product/addOrEdit";
     }

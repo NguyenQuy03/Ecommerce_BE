@@ -18,15 +18,6 @@
 			overflow:hidden;
 			text-overflow: ellipsis;
 		}
-		.fit-id {
-			white-space: nowrap;
-            text-overflow: ellipsis;
-            border: none;
-            width: 130px;
-            overflow: hidden;
-            height: 50px;
-            display: block;
-		}
 	</style>
 </head>
 
@@ -64,31 +55,53 @@
 							<table class="table table-bordered">
 								<thead>
 									<tr>
-										<th scope="col"><input type="checkbox" name="" id="checkAll"></th>
-										<th scope="col">Id</th>
+										<th scope="col"><input type="checkbox" name="" id="checkAll" style="height: 16px; width: 16px;"></th>
 										<th scope="col">Name</th>
-										<th scope="col">Price</th>
-										<th scope="col">Description</th>
-										<th scope="col">Image</th>
+										<th scope="col">Variations</th>
 										<th scope="col">Action</th>
 									</tr>
 								</thead>
 
 								<tbody>
-									<tr th:each="product : *{listResult}">
+									<tr th:each="product : *{listResult}" style="height: 150px;">
 										<td>
-											<input type="checkbox" th:id="${product.id}" name="">
+											<input type="checkbox" th:id="${product.id}" name="" style="height: 16px; width: 16px;">
 										</td>
-										<td th:text="${product.id}" class="fit-id"></td>
-										<td th:text="${product.name}"></td>
-										<td th:text="${product.intPrice}"></td>
-										<td>
-											<p th:text="${product.description}"class="fit-content">
-											</p>
-										</td>
-										<td><img style="max-width: 80px;" id="imagePreview"
-												th:src="'data:image/png;base64,' + ${product.imageBase64}"
+										<td style="max-width: 100px;">
+											<p th:text="${product.name}" class="fit-content"></p>
+											<img style="max-width: 100px;" id="imagePreview"
+												th:src="${product.image}"
 												alt="Background image" />
+										</td>
+										<td>
+											<table class="table table-bordered" th:each="productItem : ${product.productItems}">
+												<thead>
+													<tr>
+														<th scope="col" th:text="${productItem.variationName}"></th>
+														<th scope="col">Price</th>
+														<th scope="col">Stock</th>
+														<th scope="col">Sold</th>
+													</tr>
+												</thead>
+	
+												<tbody>
+													<tr>
+														<td class="fit-content">
+															<p th:text="${productItem.variationValue}"></p>
+														</td>
+														<td>
+															<p th:text="${productItem.intPrice}"></p>
+														</td>
+														<td>
+															<p th:text="${productItem.stock}"></p>
+														</td>
+														<td>
+															<p th:text="${productItem.sold}"></p>
+														</td>
+													</tr>
+												</tbody>
+												
+											</table>
 										</td>
 										<td style="text-align: center;">
 											<a title="Restore" class="btn btn-success restore-btn" th:id="${product.id}" style=" margin-top: 10px;">

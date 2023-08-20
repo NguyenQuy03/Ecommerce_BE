@@ -10,36 +10,26 @@
     <title>Add Or Edit Product</title>
 
     <script defer src="/seller/js/addOrEdit.js"></script>
-    <script defer src="/seller/js/checkingValidProduct.js"></script>
-    <script src="https://cdn.ckeditor.com/ckeditor5/38.1.1/classic/ckeditor.js"></script>
-
-    <style>
-        .spec-fit {
-            margin-left: auto;
-            margin-bottom: 6px;
-            order: 2;
-            max-height: 40px;
-        }
-
-        .ck .ck-content {
-            min-height: 300px;
-        }
-    </style>
+    <script defer src="/seller/js/addOrEditUI.js"></script>
+    <script defer src="/common/ckeditor5/build/ckeditor.js"></script>
+    <link rel="stylesheet" href="/seller/css/addOrEdit.css">
 </head>
 
 <body>
-    <div class="card" layout:fragment="content">
+    <div class="card" layout:fragment="content" th:object="${product}" >
+
+    <!-- BASIC INFORMATION -->
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Basic Information</h5>
-                        <form th:object="${product}" id="formSubmit" class="needs-validation" novalidate>
+                        <form id="basic-form" class="needs-validation" novalidate>
                             <div class="row mb-3">
                                 <label for="name" class="col-sm-2 col-form-label">Product Name</label>
                                 <div class="col-sm-10">
                                     <input type="text" class="form-control" th:field="*{name}" id="name" required/>
-	                                <div id="nameError" class="invalid-feedback">
+	                                <div class="invalid-feedback">
                                         <span> Please enter product's name! </span>
 	                                </div>
                                 </div>
@@ -64,31 +54,30 @@
                                         </option>
                                     </select>
 
-                                    <div id="categoryIdError"class="invalid-feedback">
+                                    <div class="invalid-feedback">
                                         <span> Please enter product's category! </span>
                                     </div>
                                 </div>
                             </div>
 
-
                             <div class="row mb-3">
-                                <label for="specifications" class="col-sm-2 col-form-label">Specifications</label>
+                                <label for="specification" class="col-sm-2 col-form-label">Specification</label>
 
                                 <div class="col-sm-5">
-                                    <span class="input-group-text">Key</span>
+                                    <span class="input-group-text">Name</span>
                                 </div>
                                 <div class="col-sm-5">
                                     <span class="input-group-text">Value</span>
                                 </div>
 
-                                <div id="specifications" class="m-1 mt-2">
-                                    <div th:each="item : *{specifications}">
-                                        <div class="spec-el col-sm-10 d-flex spec-fit">
-                                            <input type="text" th:value="${item.k}" aria-label="Key" class="input-group-text" required>
-                                            <input type="text" th:value="${item.v}" aria-label="Value" class="form-control" required>
+                                <div id="specification" class="m-1 mt-2">
+                                    <div th:each="item : *{specification}">
+                                        <div class="spec-el col-sm-10 d-flex fit-spec-content">
+                                            <input type="text" th:value="${item.k}" maxlength="14" class="form-control" required>
+                                            <input type="text" th:value="${item.v}" maxlength="24" class="form-control" required>
                                         </div>
                                     </div>
-                                    <div id="new-input"></div>
+                                    <div id="new-input-specs"></div>
                                 </div>
 
                             </div>
@@ -96,77 +85,175 @@
                             <div class="row mb-3">
                                 <div class="col-sm-10"></div>
                                 <div class="col-sm-2">
-                                    <button type="button" id="row-adder" name="row-adder" class="btn btn-primary">Add More</button>
+                                    <button type="button" id="row-adder-spec" class="btn btn-primary">Add More</button>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
                                 <label for="description" class="col-sm-2 col-form-label">Product Description</label>
                                 <div class="col-sm-10">
-                                  <textarea th:field="*{description}" class="form-control" type="text" id='description' required></textarea>
-                                    <div id="descriptionError" class="invalid-feedback">
-                                        <span> Please enter product's description! </span>
-                                    </div>
+                                  <textarea th:field="*{description}" id='description'></textarea>
                                 </div>
-                            </div>
-                            <div class="row mb-3">
-                                <label for="details" class="col-sm-2 col-form-label">Product Details</label>
-                                <div class="col-sm-10">
-                                    <textarea id="details" th:field="*{details}" class="form-control" required></textarea>
-                                    <div id="detailsError" class="invalid-feedback">
-                                        <span> Please enter product's details! </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <label for="price" class="col-sm-2 col-form-label">Price</label>
-                                <div class="col-sm-10">
-                                    <input class="form-control" th:field="*{price}"
-                                        style="width: 30%; display: inline-block;" type="number"
-                                        min="1" max="9999"  step="any" required  id='price'/>
-                                    <span>$</span>
-
-                                    <div id="priceError" class="invalid-feedback">
-                                        <span> Please enter product's price! </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mb-3">
-                                <label for="stock" class="col-sm-2 col-form-label">Stock</label>
-                                <div class="col-sm-10">
-                                    <input id="stock" type="number" th:field="*{stock}" style="width: 30%;" class="form-control"
-                                        min="1" max="1000" required />
-
-	                                <div id="stockError" class="invalid-feedback">
-                                        <span> Please enter product's stock! </span>
-                                    </div>
-                                </div>
-
                             </div>
                             <div class="row mb-4">
-                                <label for="imageBase64" class="col-sm-2 col-form-label">Product Image</label>
+                                <label for="product-image" class="col-sm-2 col-form-label">Product Image</label>
                                 <div class="col-sm-10">
-                                    <input id="imageBase64" class="form-control" th:field="*{imageBase64}" type="file"
-                                        accept="image/png, image/jpeg" required >
+                                    <input id="product-image" class="form-control" th:field="*{image}" type="file"
+                                        th:attr="${product.id == ''} ? required : id='product-image'"
+                                        accept="image/png, image/jpeg" onchange="showPreviewImage(this, 'preview-product-image')">
 
-	                                <div id="imageBase64Error" class="invalid-feedback">
+	                                <div class="invalid-feedback">
                                         <span> Please enter product's image! </span>
                                     </div>
                                 </div>
 
                             </div>
                             <div class="row mb-3">
-                                <div class="col-sm-12" >
-                                    <img th:if="${product.image}" class="img-fluid previewImage" alt="Preview Image"
-										th:src="'data:image/png;base64,' + ${product.imageBase64}"
-										style="max-width: 200px"
-									>
-                                    <img th:unless="${product.image}" class="img-fluid previewImage" src=""
-										style="max-width: 200px" alt=""
-									>
+                                <div class="col-sm-12 d-flex" >
+                                    <div class="col-sm-2"></div>
+                                    <div class="col-sm-10">
+                                        <img th:if="${product.image}" class="img-fluid preview-product-image" alt="Preview Image"
+                                            th:src="${product.image}" style="max-width: 200px"
+                                        >
+                                        <img th:unless="${product.image}" class="img-fluid preview-product-image" src=""
+                                            style="max-width: 200px" alt=""
+                                        >
+                                    </div>
                                 </div>
                             </div>
                             <br />
+
+                            <input type="hidden" th:field="*{id}" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- SALES INFORMATION -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Sales Information</h5>
+                        <form id="sales-form" class="needs-validation" novalidate>
+                            <div th:if="${isVariation == true}">
+                                <div class="row mb-3 variation-container">
+                                    <label class="col-sm-2 col-form-label">Variations</label>
+                                    <div style="display: none;" class="col-sm-10 enable-variation-btn">
+                                        <button type="button" class="btn btn-primary " style="min-width: 180px;">Enable Variation</button>
+                                    </div>
+    
+                                    <div class="col-sm-10 d-flex justify-content-between variation-content">
+                                        <div class="col-sm-5">
+                                            <span class="input-group-text mb-2">Variation 1</span> 
+                                            <div> 
+                                                <div class="col-sm-12 d-flex spec-fit"> 
+                                                    <input type="text" maxlength="14" th:value="${product.productItems[0].variationName}" class="form-control variation-key" 
+                                                    oninput="handleVariationKey(this)" placeholder="eg:colour, etc." required> 
+                                                </div>
+                                            </div></div> 
+                                        <div class="col-sm-5"> 
+                                            <span class="input-group-text mb-2">Options</span> 
+                                            <div class="option-content">
+                                                <div th:each="productItem : ${product.productItems}">
+                                                    <div class="col-sm-12 mb-2">
+                                                        <input type="text" th:value="${productItem.variationValue}" class="form-control variation-option" oninput="handleOptionEl(this)" placeholder="eg:Red, etc.">
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 mb-2">
+                                                    <input type="text" class="form-control variation-option" oninput="handleOptionEl(this)" placeholder="eg:Red, etc.">
+                                                </div>
+                                            </div>
+                                        </div> 
+                                        <button class="btn remove-variation-btn" onclick="removeVariation(event)" style="font-size: 20px;"><i class="bi bi-x-lg"></i></button> 
+                                    </div>
+                                </div>
+
+                                <div class="variation-list-container">
+                                    <div class="row mb-3 variation-list-content"><label class="col-sm-2 col-form-label">Variation List</label> 
+                                        <div class="tab-content pt-2 col-10"> 
+                                            <div class="tab-pane fade pt-3 active show mt-0" id="all-product"> 
+                                                <div class="card"><table class="table table-bordered"> 
+                                                        <thead><tr> 
+                                                            <th scope="col" th:text="${product.productItems[0].variationName}" class="variation-key-title" style="width: 155px;"></th> 
+                                                            <th scope="col">Price</th> 
+                                                            <th scope="col">Stock</th></thead> 
+                                                        <tbody class="variation-list-body">
+                                                            <tr th:each="productItem : ${product.productItems}"> 
+                                                                <td class="file-upload-variation"> 
+                                                                    <div class="d-flex align-items-center flex-column">
+                                                                    <span class="option-title" th:text="${productItem.variationValue}"></span> 
+                                                                    </div> 
+                                                                    <img class="img-fluid preview-image-item variation-image" 
+                                                                        th:src="${productItem.image}"> 
+                                                                    <input style="width: 100%;" type="file" accept="image/png, image/jpeg" 
+                                                                       onchange="handleImagePreview(this)" ></td> 
+                                                                <td >
+                                                                    <div class="d-flex align-center"><span class="p-2">$</span> 
+                                                                        <input class="form-control variation-price" type="number" min="0" max="9999"
+                                                                            th:value="${productItem.price}"  step="any" required/>
+                                                                    </div></td> 
+                                                                <td><input type="number" class="form-control variation-stock" min="0"
+                                                                    th:value="${productItem.stock}" max="1000" required /></td> 
+                                                   </tr>
+                                                        </tbody></table></div></div></div></div>
+                                </div>
+
+                                <div class="detail-container"></div>
+                            </div>
+
+                            <div th:unless="${isVariation}">
+                                <div class="row mb-3 variation-container">
+                                    <label class="col-sm-2 col-form-label">Variations</label>
+                                    <div class="col-sm-10 enable-variation-btn">
+                                        <button type="button" class="btn btn-primary " style="min-width: 180px;">Enable Variation</button>
+                                    </div>
+                                    <div style="display: none;" class="col-sm-10 d-flex justify-content-between variation-content">
+                                    </div>
+                                </div>
+    
+                                <div class="variation-list-container"></div>
+    
+                                <div class="detail-container">
+                                    <div class="detail-content">
+                                        <div class="row mb-3">
+                                            <label for="product-price" class="col-sm-2 col-form-label">Price</label>
+                                            <div class="col-sm-10">
+                                                <input th:if="${isVariation} == false and ${product.id} != null" id='product-price' class="form-control" 
+                                                       style="width: 30%; display: inline-block;" type="number"
+                                                       min="1" max="9999"  step="any" required th:value="${product.productItems[0].price}"/>
+
+                                                <input th:if="${product.id} == null" id='product-price' class="form-control" 
+                                                       style="width: 30%; display: inline-block;" type="number"
+                                                       min="1" max="9999"  step="any" required/>
+                                                <span>$</span>
+    
+                                                <div id="priceError" class="invalid-feedback">
+                                                    <span> Please enter product's price! </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <label for="product-stock" class="col-sm-2 col-form-label">Stock</label>
+                                            <div class="col-sm-10">
+                                                <input th:if="${isVariation} == false and ${product.id} != null" id="product-stock" type="number"  style="width: 30%;" class="form-control"
+                                                       min="1" max="1000" required th:value="${product.productItems[0].stock}"/>
+
+                                                <input th:if="${product.id} == null" id="product-stock" type="number"  style="width: 30%;" class="form-control"
+                                                       min="1" max="1000" required/>
+    
+                                                <div id="stockError" class="invalid-feedback">
+                                                    <span> Please enter product's stock! </span>
+                                                </div>
+                                            </div>
+    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+    <!-- SUBMIT SECTION -->
                             <div class="row mb-3">
                                 <div class="col-4">
                                     <label class="col-sm-2 col-form-label">Action</label>
@@ -182,9 +269,6 @@
 
                                 </div>
                             </div>
-
-                            <input type="hidden" th:field="*{id}" />
-                            <input type="hidden" th:field="*{sold}" />
                         </form>
                     </div>
                 </div>
@@ -192,8 +276,6 @@
         </div>
 
     </div>
-
-
 </body>
 
 </html>

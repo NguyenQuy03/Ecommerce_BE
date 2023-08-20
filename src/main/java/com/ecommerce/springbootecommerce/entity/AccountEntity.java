@@ -2,7 +2,6 @@ package com.ecommerce.springbootecommerce.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.ReadOnlyProperty;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
@@ -31,10 +30,11 @@ public class AccountEntity extends BaseEntity {
 
     private Set<String> roleCodes;
 
-    // BUYER
+    private String cartId;
+
     @ReadOnlyProperty
     @DocumentReference(lazy = true)
-    private Set<CartEntity> carts;
+    private Set<OrderEntity> orders;
 
     // SELLER
     @ReadOnlyProperty

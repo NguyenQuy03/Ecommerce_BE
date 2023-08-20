@@ -1,19 +1,15 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.ProductDTO;
-import com.ecommerce.springbootecommerce.entity.AccountEntity;
-import com.ecommerce.springbootecommerce.entity.CategoryEntity;
-import com.ecommerce.springbootecommerce.entity.ProductEntity;
-import com.ecommerce.springbootecommerce.repository.AccountRepository;
-import com.ecommerce.springbootecommerce.repository.CategoryRepository;
-import com.ecommerce.springbootecommerce.repository.ProductRepository;
-import com.ecommerce.springbootecommerce.service.IProductService;
-import com.ecommerce.springbootecommerce.util.ConverterUtil;
-import org.bson.BsonBinarySubType;
-import org.bson.types.Binary;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,15 +18,22 @@ import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.dto.BaseDTO;
+import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
+import com.ecommerce.springbootecommerce.entity.AccountEntity;
+import com.ecommerce.springbootecommerce.entity.CategoryEntity;
+import com.ecommerce.springbootecommerce.entity.ProductEntity;
+import com.ecommerce.springbootecommerce.entity.ProductItemEntity;
+import com.ecommerce.springbootecommerce.repository.AccountRepository;
+import com.ecommerce.springbootecommerce.repository.CategoryRepository;
+import com.ecommerce.springbootecommerce.repository.ProductItemRepository;
+import com.ecommerce.springbootecommerce.repository.ProductRepository;
+import com.ecommerce.springbootecommerce.service.IProductService;
+import com.ecommerce.springbootecommerce.util.ConverterUtil;
 
 @Service
 public class ProductService implements IProductService {
@@ -44,6 +47,9 @@ public class ProductService implements IProductService {
     private AccountRepository accountRepository;
 
     @Autowired
+    private ProductItemRepository productItemRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
@@ -53,50 +59,70 @@ public class ProductService implements IProductService {
     private MongoTemplate mongoTemplate;
 
     @Override
-    public void save(ProductDTO productDTO) {
-        ProductEntity productEntity;
-
-        String partSeparator = ",";
-        if (productDTO.getImageBase64Data().contains(partSeparator)) {
-            String encodedImg = productDTO.getImageBase64Data().split(partSeparator)[1];
-            byte[] decodedImg = Base64.getDecoder().decode(encodedImg.getBytes(StandardCharsets.UTF_8));
-            productDTO.setImage(new Binary(BsonBinarySubType.BINARY, decodedImg));
-        }
+    public void save(ProductDTO productDTO) {         
+        ProductEntity productEntity = converterUtil.toProductEntity(productDTO);
 
         String currentPrincipalName = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        productEntity = modelMapper.map(productDTO, ProductEntity.class);
         CategoryEntity categoryEntity = categoryRepository.findOneById(String.valueOf(productDTO.getCategoryId()));
         AccountEntity accountEntity = accountRepository.findByUsername(currentPrincipalName).get();
 
+        String customProductId = "";
+        boolean isUnique = false;
+        while (!isUnique) {
+            customProductId = UUID.randomUUID().toString();
+            if (!productRepository.existsById(customProductId)) {
+                productEntity.setId(customProductId);
+                isUnique = true;
+            }
+        }
+        
+        productEntity.setId(customProductId);
+        productEntity.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
+
         productEntity.setCategoryId(categoryEntity.getId());
         productEntity.setAccountId(accountEntity.getId());
+        List<ProductItemEntity> productItems = new ArrayList<>();
+
+        for(ProductItemEntity productItem : productEntity.getProductItems()) {
+            productItem.setProductId(customProductId);
+            productItems.add(productItemRepository.save(productItem));
+        }
+
+        productEntity.setProductItems(productItems);
 
         productRepository.save(productEntity);
+
     }
 
     @Override
-    public void update(ProductDTO productDTO) {
-        ProductEntity preProductEntity = productRepository.findOneById(productDTO.getId()).get();
-        String productImageBase64 = productDTO.getImageBase64Data();
+    public void update(ProductDTO dto) {
+        ProductEntity preProductEntity = productRepository.findOneById(dto.getId()).get();
 
-        if (productImageBase64 != null && !productImageBase64.equals("")) {
-            String partSeparator = ",";
-            if (productImageBase64.contains(partSeparator)) {
-                String encodedImg = productImageBase64.split(partSeparator)[1];
-                byte[] decodedImg = Base64.getDecoder().decode(encodedImg.getBytes(StandardCharsets.UTF_8));
-                productDTO.setImage(new Binary(BsonBinarySubType.BINARY, decodedImg));
+        for(int i = 0; i < preProductEntity.getProductItems().size(); i++) {
+            ProductItemEntity productItem = preProductEntity.getProductItems().get(i);
+            boolean isChange = false;
+        
+            if(dto.getProductItemsData().get(i).get("image") != productItem.getImage()) {
+                isChange = true;
             }
-        } else {
-            productDTO.setImage(preProductEntity.getImage());
+            
+            if(productItem.getStatus() == SystemConstant.INACTIVE_PRODUCT && productItem.getStock() > 0) {
+                productItem.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
+                isChange = true;
+            } else if(productItem.getStatus() == SystemConstant.STRING_ACTIVE_STATUS && productItem.getStock() == 0) {
+                productItem.setStatus(SystemConstant.INACTIVE_PRODUCT);     
+                isChange = true;
+            }
+            
+            if(isChange)
+                productItemRepository.save(productItem);
         }
-        if (productDTO.getStock() > 0) {
-            productDTO.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
-        }
-        modelMapper.map(productDTO, preProductEntity);
-        ProductEntity productEntity = modelMapper.map(preProductEntity, ProductEntity.class);
 
-        productRepository.save(productEntity);
+        dto.setAccountId(preProductEntity.getAccountId());
+        preProductEntity = converterUtil.toProductEntity(dto);
+
+        productRepository.save(preProductEntity);
     }
 
     @Override
@@ -145,8 +171,10 @@ public class ProductService implements IProductService {
     @Override
     public ProductDTO findOneById(String id) {
         Optional<ProductEntity> product = productRepository.findOneById(id);
-        return product.map(productEntity -> modelMapper.map(productEntity, ProductDTO.class))
-                .orElse(null);
+        if(product.isPresent()) {
+            return converterUtil.toProductDTO(product.get());
+        }
+        return null;
     }
 
     @Override
@@ -173,49 +201,43 @@ public class ProductService implements IProductService {
     }
     
     @Override
-    public List<ProductDTO> findAllByAccountIdAndStatus(String accountId, String status, Pageable pageable) {
-        Criteria criteria = new Criteria();
-        criteria.and("accountId").is(accountId);
-        criteria.andOperator(Criteria.where("status").is(status));
-        Query query = new Query(criteria).with(pageable);
-        List<ProductEntity> results = mongoTemplate.find(query, ProductEntity.class);
+    public BaseDTO<ProductDTO> findAllByAccountIdAndStatus(String accountId, String status, int page, int size) {
+        Page<ProductEntity> curPage = productRepository.findAllByAccountIdAndStatus(
+            accountId, status,
+            PageRequest.of(page - 1, size)
+        );
 
-        return toListProductDTO(results);
+        return getPagableData(curPage, page, size);
     }
     
     @Override
-    public List<ProductDTO> findAllValid(String accountId, String ignoreStatus1, String ignoreStatus2, Pageable pageable) {
-        Criteria criteria = new Criteria();
-        criteria.and("accountId").is(accountId);
-        criteria.andOperator(Criteria.where("status").ne(ignoreStatus1), Criteria.where("status").ne(ignoreStatus2));
-        Query query = new Query(criteria).with(pageable);
-        List<ProductEntity> results = mongoTemplate.find(query, ProductEntity.class);
+    public BaseDTO<ProductDTO> findAllValid(String accountId, String ignoreStatus1, String ignoreStatus2, int page, int size) {
+        Page<ProductEntity> curPage = productRepository.findAllValid(
+            accountId, Arrays.asList(ignoreStatus1, ignoreStatus2),
+            PageRequest.of(page - 1, size)
+        );
 
-        return toListProductDTO(results);
+        return getPagableData(curPage, page, size);
+    }
+    
+    @Override
+    public BaseDTO<ProductDTO> findAllLive(String accountId, String ignoreStatus1, String ignoreStatus2, long stock, int page, int size) {
+        Page<ProductEntity> curPage = productRepository.findAllLive(
+            accountId, Arrays.asList(ignoreStatus1, ignoreStatus2),
+            stock, PageRequest.of(page - 1, size)
+        );
+        
+        return getPagableData(curPage, page, size);
     }
 
     @Override
-    public List<ProductDTO> findAllSoldOut(long stock, String accountId, String ignoreStatus1, String ignoreStatus2, Pageable pageable) {
-        Criteria criteria = new Criteria();
-        criteria.and("accountId").is(accountId);
-        criteria.and("stock").equals(stock);
-        criteria.andOperator(Criteria.where("status").ne(ignoreStatus1), Criteria.where("status").ne(ignoreStatus2));
-        Query query = new Query(criteria).with(pageable);
-        List<ProductEntity> results = mongoTemplate.find(query, ProductEntity.class);
+    public BaseDTO<ProductDTO> findAllSoldOut(String accountId, String ignoreStatus1, String ignoreStatus2, long stock, int page, int size) {
+        Page<ProductEntity> curPage = productRepository.findSoldOut(
+            accountId, Arrays.asList(ignoreStatus1, ignoreStatus2),
+            stock, PageRequest.of(page - 1, size)
+        );
 
-        return toListProductDTO(results);
-    }
-
-    @Override
-    public List<ProductDTO> findAllLive(long stock, String accountId, String ignoreStatus1, String ignoreStatus2, Pageable pageable) {
-        Criteria criteria = new Criteria();
-        criteria.and("accountId").is(accountId);
-        criteria.and("stock").gt(stock);
-        criteria.andOperator(Criteria.where("status").ne(ignoreStatus1), Criteria.where("status").ne(ignoreStatus2));
-        Query query = new Query(criteria).with(pageable);
-        List<ProductEntity> results = mongoTemplate.find(query, ProductEntity.class);
-
-        return toListProductDTO(results);
+        return getPagableData(curPage, page, size);
     }
     
     //COUNT
@@ -238,36 +260,7 @@ public class ProductService implements IProductService {
     public long countByNameContains(String keyword) {
         return productRepository.countByNameContains(keyword);
     }
-
-    @Override
-    public long countAllLive(long stock, String accountId, String ignoreStatus1, String ignoreStatus2){
-        Criteria criteria = new Criteria();
-        criteria.and("accountId").is(accountId);
-        criteria.and("stock").gt(stock);
-        criteria.andOperator(Criteria.where("status").ne(ignoreStatus1), Criteria.where("status").ne(ignoreStatus2));
-        Query query = new Query(criteria);
-        return mongoTemplate.count(query, ProductEntity.class);
-    }
-
-    @Override
-    public long countAllSoldOut(long stock, String accountId, String ignoreStatus1, String ignoreStatus2){
-        Criteria criteria = new Criteria();
-        criteria.and("accountId").is(accountId);
-        criteria.and("stock").equals(stock);
-        criteria.andOperator(Criteria.where("status").ne(ignoreStatus1), Criteria.where("status").ne(ignoreStatus2));
-        Query query = new Query(criteria);
-        return mongoTemplate.count(query, ProductEntity.class);
-    }
-
-    @Override
-    public long countAllValid(String accountId, String ignoreStatus1, String ignoreStatus2) {
-        Criteria criteria = new Criteria();
-        criteria.and("accountId").is(accountId);
-        criteria.andOperator(Criteria.where("status").ne(ignoreStatus1), Criteria.where("status").ne(ignoreStatus2));
-        Query query = new Query(criteria);
-        return mongoTemplate.count(query, ProductEntity.class);
-    }
-
+    
     /* REUSE */
     private List<ProductDTO> toListProductDTO(List<ProductEntity> listProductEntity) {
         List<ProductDTO> listProductDTO = new ArrayList<>();
@@ -275,6 +268,17 @@ public class ProductService implements IProductService {
             listProductDTO.add(converterUtil.toProductDTO(entity));
         }
         return listProductDTO;
+    }
+
+    private BaseDTO<ProductDTO> getPagableData(Page<ProductEntity> curPage, int page, int size) {
+        BaseDTO<ProductDTO> dto = new BaseDTO<>();
+        dto.setListResult(toListProductDTO(curPage.getContent()));
+        dto.setTotalItem(curPage.getTotalElements());
+        dto.setPage(page);
+        dto.setSize(size);
+        dto.setTotalPage(curPage.getTotalPages());
+
+        return dto;
     }
 
 }

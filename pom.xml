@@ -16,7 +16,7 @@
 		<java.version>11</java.version>
 		<jwt.version>0.11.5</jwt.version>
 	</properties>
-	<dependencies>
+		<dependencies>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -46,6 +46,8 @@
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
+			<version>3.1.0</version>
+
 		</dependency>
 
 <!-- Spring security -->
@@ -83,7 +85,7 @@
 			<artifactId>hibernate-core</artifactId>
 		</dependency>
 
-		<!-- JWT -->
+<!-- JWT -->
 		<dependency>
 		    <groupId>com.auth0</groupId>
 		    <artifactId>java-jwt</artifactId>
@@ -133,7 +135,6 @@
 		</dependency>
 
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>

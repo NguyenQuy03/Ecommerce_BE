@@ -1,10 +1,12 @@
 package com.ecommerce.springbootecommerce.service;
 
-import com.ecommerce.springbootecommerce.dto.ProductDTO;
-import com.ecommerce.springbootecommerce.entity.ProductEntity;
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import com.ecommerce.springbootecommerce.dto.BaseDTO;
+import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
+import com.ecommerce.springbootecommerce.entity.ProductEntity;
 
 public interface IProductService {
     void save(ProductDTO product);
@@ -21,26 +23,19 @@ public interface IProductService {
     List<ProductDTO> findAllByStatus(String status, Pageable pageable);
     List<ProductDTO> findAllByCategoryId(String categoryId, Pageable pageable);
 
-    List<ProductDTO> findAllByAccountIdAndStatus(String id, String status, Pageable pageable);
+    BaseDTO<ProductDTO> findAllByAccountIdAndStatus(String id, String status, int page, int size);
     List<ProductDTO> findTopSelling(String id);
     List<ProductDTO> findAllByNameContains(String keyword, Pageable pageable);
     
         //MY PRODUCT CONTROLLER
-    List<ProductDTO> findAllValid(String id, String ignoreStatus1, String ignoreStatus2, Pageable pageable);
-    List<ProductDTO> findAllLive(long stock, String id, String ignoreStatus1, String ignoreStatus2, Pageable pageable);
-    List<ProductDTO> findAllSoldOut(long stock, String id, String ignoreStatus1, String ignoreStatus2, Pageable pageable);
+    BaseDTO<ProductDTO> findAllValid(String id, String inactiveProduct, String removedProduct, int page, int size);
+    BaseDTO<ProductDTO> findAllLive(String id, String ignoreStatus1, String ignoreStatus2, long stock, int page, int size);
+    BaseDTO<ProductDTO> findAllSoldOut(String id, String inactiveProduct, String removedProduct, long stock, int page, int size);
 
         //COUNT
     long countAllByCategoryId(String categoryId);
-    //MY PRODUCT CONTROLLER
-    long countAllValid(String id, String status1, String status2);
-    long countAllLive(long stock, String id, String ignoreStatus1, String ignoreStatus2);
-
-    long countAllSoldOut(long stock, String id, String ignoreStatus1, String ignoreStatus2);
-
     long countByNameContains(String keyword);
     long countAllByStatus(String status);
-
     long countAllByAccountIdAndStatus(String id, String status);
 
 }

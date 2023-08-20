@@ -12,6 +12,7 @@ public class BaseDTO<T> {
 	private Integer page;
 	private Integer size;
 	private Integer totalPage;
+	private long totalItem;
 
 	private Date createdDate;
 	private Date modifiedDate;

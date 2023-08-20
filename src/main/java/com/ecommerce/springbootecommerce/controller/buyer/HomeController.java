@@ -1,12 +1,7 @@
 package com.ecommerce.springbootecommerce.controller.buyer;
 
-import com.ecommerce.springbootecommerce.constant.RedisConstant;
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.CategoryDTO;
-import com.ecommerce.springbootecommerce.dto.ProductDTO;
-import com.ecommerce.springbootecommerce.service.ICategoryService;
-import com.ecommerce.springbootecommerce.service.IProductService;
-import com.ecommerce.springbootecommerce.util.RedisUtil;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +11,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
+import com.ecommerce.springbootecommerce.constant.RedisConstant;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.dto.CategoryDTO;
+import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
+import com.ecommerce.springbootecommerce.service.ICategoryService;
+import com.ecommerce.springbootecommerce.service.IProductService;
+import com.ecommerce.springbootecommerce.util.RedisUtil;
 
 @RequestMapping
 @Controller(value = "homeControllerOfBuyer")
@@ -36,14 +37,14 @@ public class HomeController {
     ) {
         List<CategoryDTO> categories = categoryService.findAll();
         Pageable pageable = PageRequest.of(0, 12);
-        List<ProductDTO> products = productService.findAllByStatus(SystemConstant.STRING_ACTIVE_STATUS, pageable);
+        List<ProductDTO> productItems = productService.findAllByStatus(SystemConstant.STRING_ACTIVE_STATUS, pageable);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (!username.contains("anonymousUser")) {
             model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER));
         }
         model.addAttribute("categories", categories);
-        model.addAttribute("products", products);
+        model.addAttribute("productItems", productItems);
 
         return "buyer/home";
     }

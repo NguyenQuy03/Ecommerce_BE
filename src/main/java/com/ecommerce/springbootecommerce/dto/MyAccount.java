@@ -13,8 +13,8 @@ import lombok.Setter;
 public class MyAccount extends User {
     private String fullName;
 
-    public MyAccount(String userName, String fullName, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(userName, password, authorities);
+    public MyAccount(String username, String fullName, String password, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, authorities);
         this.fullName = fullName;
     }
 

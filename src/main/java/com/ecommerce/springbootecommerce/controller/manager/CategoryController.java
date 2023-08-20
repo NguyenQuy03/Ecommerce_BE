@@ -1,7 +1,6 @@
 package com.ecommerce.springbootecommerce.controller.manager;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -25,8 +24,8 @@ public class CategoryController {
     @GetMapping(value="/category")
     public String categories(
             Model model,
-            @RequestParam int page,
-            @RequestParam int size
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "2") int size
         ) {
         
         long quantityCategory = categoryService.count();

@@ -18,6 +18,31 @@ a:hover {
   text-decoration: none;
 }
 
+.fit-content{
+    max-width: 150px;
+    max-height: 100px;
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+}
+
+.fit-id-content {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border: none;
+    width: 86px;
+    overflow: hidden;
+    height: 50px;
+    display: block;
+}
+
+.fit-spec-content {
+    margin-left: auto;
+    margin-bottom: 6px;
+    order: 2;
+    max-height: 40px;
+}
+
 h1,
 h2,
 h3,

@@ -18,8 +18,8 @@
 					<div class="tab-pane fade show active">
 						<div class="row justify-content-around align-items-center">
 							<div class="col-2 card-title">
-								<p th:utext="${quantityCategory}" class="d-inline-block"></p>
-								<h5 class="d-inline-block">_Categories</h5>
+								<h5 th:utext="${quantityCategory} ? ${quantityCategory} : 0" class="d-inline-block"></h5>
+								<h5 th:utext="${quantityCategory} == 1L  ? _Categories : _Category"  class="d-inline-block"></h5>
 							</div>
 							<a th:href="@{/manager/category/new}" class="col-3 btn btn-primary"
 								style="height: 40px; line-height: 1.8;"> Add a New Category </a>
@@ -33,7 +33,6 @@
 							<table class="table table-striped table-bordered">
 								<thead>
 									<tr>
-										<th scope="col">Id</th>
 										<th scope="col">Code</th>
 										<th scope="col">Image</th>
                     					<th scope="col">Action</th>
@@ -41,14 +40,12 @@
 								</thead>
 								<tbody>
 									<tr th:each="category : *{listResult}">
-										<td th:utext="${category.id}"></td>
 										<td th:utext="${category.code}"></td>
 					                    <td><img style="max-width: 80px;" id="imagePreview"
-					                      th:src="'data:image/png;base64,' + ${category.thumbnailBase64}"
-					                      alt="Category image" />
+					                      th:src="${category.thumbnail}" alt="Category image" />
 					                    </td>
 										<td>
-                      					<button class="btn btn-success">
+                      						<button class="btn btn-success">
 												<i class="bi bi-pencil-square"></i>
 											</button>
                     					</td>

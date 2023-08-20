@@ -1,7 +1,5 @@
 package com.ecommerce.springbootecommerce.controller.buyer;
 
-import com.ecommerce.springbootecommerce.constant.RedisConstant;
-import com.ecommerce.springbootecommerce.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -15,9 +13,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.ecommerce.springbootecommerce.api.buyer.OrderAPI;
+import com.ecommerce.springbootecommerce.constant.RedisConstant;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.ProductDTO;
+import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IProductService;
+import com.ecommerce.springbootecommerce.util.RedisUtil;
 
 @Controller
 @RequestMapping("/product")
@@ -37,14 +37,14 @@ public class BuyerProductController {
           @PathVariable("id") String id,
           Model model
     ) {
-        ProductDTO productDTO = productService.findOneById(id);
-        if (!productDTO.getStatus().equals(SystemConstant.STRING_ACTIVE_STATUS)) {
+        ProductDTO dto = productService.findOneById(id);
+        
+        if (!dto.getStatus().equals(SystemConstant.STRING_ACTIVE_STATUS)) {
             return "redirect:/error";
         }
-        productDTO.setQuantity(1L);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
                 
-        model.addAttribute("product", productDTO);
+        model.addAttribute("product", dto);
         model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER));
         return "/buyer/detailProduct";
     }

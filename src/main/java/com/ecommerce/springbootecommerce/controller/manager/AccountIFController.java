@@ -21,20 +21,20 @@ public class AccountIFController {
 
     @GetMapping(value = "/account/sellerAccount")
     public String sellerAccount(
-            Model model) {
-
+            Model model
+    ){
         List<AccountDTO> listAccount = getListAccount(SystemConstant.ROLE_SELLER);
         AccountDTO dto = new AccountDTO();
         dto.setListResult(listAccount);
         model.addAttribute("dto", dto);
-
+        
         return "manager/accountInfo";
     }
-
+    
     @GetMapping(value = "/account/buyerAccount")
     public String buyerAccount(Model model) {
         List<AccountDTO> listAccount = getListAccount(SystemConstant.ROLE_BUYER);
-
+        
         AccountDTO dto = new AccountDTO();
         dto.setListResult(listAccount);
         model.addAttribute("dto", dto);
@@ -43,8 +43,7 @@ public class AccountIFController {
 
     private List<AccountDTO> getListAccount(String roleCode) {
         RoleDTO roleDTO = roleService.findOneByCode(roleCode);
-        List<AccountDTO> accounts = roleDTO.getAccounts();
-        return accounts;
+        return roleDTO.getAccounts();
     }
 
 }

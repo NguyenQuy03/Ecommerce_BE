@@ -1,10 +1,7 @@
 package com.ecommerce.springbootecommerce.controller.buyer;
 
-import com.ecommerce.springbootecommerce.constant.RedisConstant;
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.ProductDTO;
-import com.ecommerce.springbootecommerce.service.IProductService;
-import com.ecommerce.springbootecommerce.util.RedisUtil;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
+import com.ecommerce.springbootecommerce.constant.RedisConstant;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
+import com.ecommerce.springbootecommerce.service.IProductService;
+import com.ecommerce.springbootecommerce.util.RedisUtil;
 
 @Controller
 @RequestMapping("/search")
@@ -32,8 +33,8 @@ public class SearchController {
     public String categoryPage(
             Model model,
             @PathVariable("id") String id,
-            @RequestParam("page") int page,
-            @RequestParam("size") int size
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "2") int size
     ) {
 
         Pageable pageable = PageRequest.of(page - 1, size);
@@ -65,13 +66,9 @@ public class SearchController {
     public String searchPage(
             Model model,
             @RequestParam(name = "keyword", required = false) String keyword,
-            @RequestParam(name = "page", required = false) Integer page,
-            @RequestParam(name = "size", required = false) Integer size
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "9") int size
     ) {
-        if (page == null && size == null) {
-            page = 1;
-            size = 9;
-        }
         Pageable pageable = PageRequest.of(page - 1, size);
         long quantityProduct = 0L;
         List<ProductDTO> products;

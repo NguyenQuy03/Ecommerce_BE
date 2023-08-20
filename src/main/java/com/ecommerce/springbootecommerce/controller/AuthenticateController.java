@@ -1,13 +1,10 @@
 package com.ecommerce.springbootecommerce.controller;
 
-import com.ecommerce.springbootecommerce.api.authenticate.AuthenticationAPI;
-import com.ecommerce.springbootecommerce.api.authenticate.payload.request.LogInRequest;
-import com.ecommerce.springbootecommerce.api.authenticate.payload.request.RegisterRequest;
-import com.ecommerce.springbootecommerce.constant.AlertConstant;
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.AccountDTO;
-import com.ecommerce.springbootecommerce.service.IAccountService;
-import com.ecommerce.springbootecommerce.util.CookieUtil;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -19,10 +16,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import com.ecommerce.springbootecommerce.api.authenticate.AuthenticationAPI;
+import com.ecommerce.springbootecommerce.api.authenticate.payload.request.LogInRequest;
+import com.ecommerce.springbootecommerce.api.authenticate.payload.request.RegisterRequest;
+import com.ecommerce.springbootecommerce.constant.AlertConstant;
+import com.ecommerce.springbootecommerce.dto.AccountDTO;
+import com.ecommerce.springbootecommerce.service.IAccountService;
+import com.ecommerce.springbootecommerce.util.CookieUtil;
 
 @Controller
 public class AuthenticateController {
