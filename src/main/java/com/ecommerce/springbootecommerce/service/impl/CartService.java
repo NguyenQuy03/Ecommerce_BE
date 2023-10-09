@@ -1,57 +1,64 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
-import com.ecommerce.springbootecommerce.dto.CartDTO;
-import com.ecommerce.springbootecommerce.dto.OrderDTO;
-import com.ecommerce.springbootecommerce.entity.CartEntity;
-import com.ecommerce.springbootecommerce.entity.OrderEntity;
-import com.ecommerce.springbootecommerce.repository.CartRepository;
-import com.ecommerce.springbootecommerce.service.ICartService;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.ecommerce.springbootecommerce.dto.CartDTO;
+import com.ecommerce.springbootecommerce.entity.CartEntity;
+import com.ecommerce.springbootecommerce.repository.CartItemRepository;
+import com.ecommerce.springbootecommerce.repository.CartRepository;
+import com.ecommerce.springbootecommerce.service.ICartService;
+import com.ecommerce.springbootecommerce.util.RedisUtil;
+import com.ecommerce.springbootecommerce.util.converter.CartConverter;
 
 @Service
 public class CartService implements ICartService{
     @Autowired
-    private CartRepository cartRepository;
+    private CartRepository cartRepo;
+
+    @Autowired
+    private CartItemRepository cartItemRepo;
+
+    @Autowired
+    private RedisUtil redisUtil;
+
+    @Autowired
+    private CartConverter cartConverter;
     
     @Autowired
     private ModelMapper modelMapper;
 
     @Override
     public void save(CartDTO cartDTO) {
-        
-        if (cartDTO.getId() == null) {
-            cartRepository.save(modelMapper.map(cartDTO, CartEntity.class));
-        } else {
-            Optional<CartEntity> cart = cartRepository.findOneById(cartDTO.getId());
-            if(Boolean.TRUE.equals(cart.isPresent())) {
-                CartEntity preCartEntity = cart.get();
-                modelMapper.map(cartDTO, preCartEntity);
-                List<OrderEntity> orderEntities = new ArrayList<>();
-//                for(OrderDTO order : cartDTO.getSetOrders()) {
-//                    orderEntities.add(modelMapper.map(order, OrderEntity.class));
-//                }
-//
-//                preCartEntity.setSetOrders(orderEntities);
-                cartRepository.save(modelMapper.map(preCartEntity, CartEntity.class));
-            }
-        }
+        cartRepo.save(modelMapper.map(cartDTO, CartEntity.class));
     }
 
     @Override
-    public CartDTO findOneById(String id) {
-        Optional<CartEntity> cart = cartRepository.findOneById(id);
+    public CartDTO findOneById(Long id) {
+        CartEntity cart = cartRepo.findOneById(id)
+            .orElseThrow(() -> new RuntimeException("Cart is not exist"));
+
+        return cartConverter.toDTO(cart);
+    }
+
+    @Override
+    public CartDTO findOneByAccountId(Long accountId) {
+        Optional<CartEntity> cart = cartRepo.findOneByAccountId(accountId);
         return cart.map(cartEntity -> modelMapper.map(cartEntity, CartDTO.class)).orElse(null);
     }
 
     @Override
-    public CartDTO findOneByAccountId(String accountId) {
-        Optional<CartEntity> cart = cartRepository.findOneByAccountId(accountId);
-        return cart.map(cartEntity -> modelMapper.map(cartEntity, CartDTO.class)).orElse(null);
+    public void delete(Long cartItemId, Long cartId, String username) {
+        CartEntity cartEntity = cartRepo.findById(cartId)
+                .orElseThrow(() -> new NoSuchElementException("Cart not found with ID: " + cartItemId));
+
+        cartRepo.save(cartEntity);
+        cartItemRepo.deleteById(cartItemId);
+
+        redisUtil.adjustQuantityOrder(username, -1);
     }
 }

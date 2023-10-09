@@ -1,17 +1,22 @@
-.model-product {
+.modal-product {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 200px;
     width: 450px;
     background-color: rgba(0,0,0,.7);
-    border-radius: 2px;
+    border-radius: 4px;
     font-size: 18px;
     padding-top: 25px;
     color: #fff;
 }
 
-.model-icon {
+.modal-icon_success {
 	font-size: 55px;
 	color: #00bfa5;
+}
+
+.modal-icon_error {
+	font-size: 55px;
+	color: #c02146;
 }

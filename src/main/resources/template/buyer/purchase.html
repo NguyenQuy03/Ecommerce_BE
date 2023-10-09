@@ -12,9 +12,7 @@
 </head>
 <body>
 	<!-- Cart Start -->
-	<div class="container-fluid pt-5" layout:fragment="content"
-		th:object="${dto}">
-
+	<div class="container-fluid pt-5" layout:fragment="content" th:object="${dto}">
 		<div class="row px-xl-5">
 			<div class="col-lg-12 table-responsive mb-5">
 				<table class="table table-bordered text-center mb-0">
@@ -23,69 +21,65 @@
 							<th>Products</th>
 							<th>Price</th>
 							<th>Quantity</th>
-							<th>Total</th>
 							<th>Action</th>
 						</tr>
 					</thead>
 					<tbody class="align-middle">
-						<tr th:each="item, index : *{listResult}">
-							<td class="align-middle"><a
-								class="d-flex align-items-center"
-								th:href="@{/product/detail/{id}(id=${item.product.id})}"> <img
-									class="img-fluid w-100" id="image-product"
-									th:src="'data:image/png;base64,' + ${item.imageBase64}"
-									alt="Background image"
-									style="max-width: 120px; float: left; margin-right: 20px;" />
-									<span th:text="${item.product.name}"></span>
-							</a></td>
-							<td class="align-middle " th:text="${item.curPrice}"></td>
-							<td class="align-middle"><input id="price-el" type="hidden"
-								th:value="${item.product.price}" />
-								<div class="input-group quantity mx-auto" style="width: 130px;">
-									<input th:id="quantity-el" type="number"
-										class="form-control form-control-sm bg-secondary text-center"
-										th:value="${item.quantity}" disabled>
-								</div></td>
-							<td class="align-middle price-el"><input id="total-price-el"
-								value="" disabled="disabled"
-								style="border: none; text-align: center;" /></td>
-							<td class="align-middle">
-								<form th:action="@{/buy-again}" method="POST">
-									<input type="hidden" th:value="${item.id}" th:name="orderId" />
-									<input type="hidden" th:value="${cartId}" th:name="cartId" />
-									<button class="btn btn-sm btn-primary" type="submit" style="padding: 8px;">Buy
-										Again</button>
-					 			</form>
+						<div th:each="order : *{listResult}">
+							<tr th:each="orderItem : ${order.orderItems}">
+								<td class="align-middle">
+									<a class="d-flex align-items-center" th:href="@{/product/detail/{id}(id=${orderItem.productItem.product.id})}">
+										<img class="img-fluid w-100 image-product" th:src="${orderItem.productItem.image}" alt="Background image"
+											style="max-width: 120px; float: left; margin-right: 20px;" />
+										<span th:text="${orderItem.productItem.product.name}"></span>
+									</a>
+								</td>
+								<td class="align-middle " th:text="${orderItem.formatedCurPrice}"></td>
+								<td class="align-middle">
+									<input class="price-el" type="hidden" th:value="${orderItem.productItem.intPrice}" />
+									<div class="input-group quantity mx-auto" style="width: 130px;">
+										<input type="number" class="quantity-el form-control form-control-sm bg-secondary text-center"
+											th:value="${orderItem.quantity}" disabled>
+									</div>
+								</td>
+								<td class="align-middle">
+									<form th:action="@{/buy-again}" method="POST">
+										<input class="order-item-id" type="hidden" th:value="${orderItem.id}" th:name="orderItemId" />
+										<button class="buyer-again-btn btn btn-sm btn-primary" type="submit" style="padding: 8px;">Buy Again</button>
+									</form>
+								</td>
+							</tr>
+
+							<td></td>
+							<td>
+								<h5 class="total-price-el" th:text="'Order total: ' + ${order.totalPrice}"></h5>
 							</td>
-						</tr>
+						</div>
 					</tbody>
 				</table>
 				
 				<!-- Modal Announcement-->
-				<div th:if="${message}" class="modal modal-announce fade align-items-center show fade" id="modal"
-					tabindex="-1" role="dialog" aria-labelledby="modalLabel"
-					aria-hidden="true" style="display:flex; background-color: rgba(0, 0, 0, 0.6)">
-					<div class="modal-dialog" role="document">
-						<div class="modal-content">
-							<div class="modal-header">
-								<h5 class="modal-title" id="exampleModalLabel" style="
-    								user-select: none;" th:text="${message}"></h5>
+				<div class="modal modal-announce fade align-items-center fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+					aria-hidden="true" style="display:none; background-color: rgba(0, 0, 0, 0.6)">
+					<div class="modal-dialog" role="document" style="margin-top: 160px;">
+						<div class="modal-content" style="border-radius: 4px;">
+							<div class="modal-header d-flex">
+								<h5 class="modal-accounce-title text-center" style="color: var(--primary); width: 100%; user-select: none">Your order is delivered</h5>
 							</div>
 							<div class="col-12 modal-footer d-flex justify-content-between">
-								<button type="button" class="btn btn-secondary close-btn"
-									data-dismiss="modal" style="width: 100%">Close</button>
+								<button type="button" class="btn btn-secondary close-announce-btn"
+									data-dismiss="modal" style="width: 100%;">Close</button>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div th:if="${noOrderYet}" class="d-flex justify-content-center align-items-center flex-column">
+				<div th:if="${notOrderYet}" class="d-flex justify-content-center align-items-center flex-column">
 					<h3 class="mt-5 ">No orders yet</h3>
 					<a href="/home">
 						<button class="btn btn-primary rounded mt-3">Go shopping now</button>
 					</a>
 				</div>
-				
 			</div>
 		</div>
 			<form id="formSubmit">
@@ -105,5 +99,6 @@
 	</div>
 
 	<!-- Cart End -->
+
 </body>
 </html>

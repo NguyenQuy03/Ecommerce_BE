@@ -1,11 +1,11 @@
 package com.ecommerce.springbootecommerce.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Set;
 
 @Getter
 @Setter
@@ -14,13 +14,14 @@ import java.util.Set;
 public class AccountDTO extends BaseDTO<AccountDTO> {
     
     private String address;
-
     private String phoneNumber;
     
     private String username;
     private String fullName;
     private String email;
-    private Set<String> roleCodes;
+    private List<RoleDTO> roleCodes;
+
+    private Long cartId;
     
     private String password;
     private String rePassword;

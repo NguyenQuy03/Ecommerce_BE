@@ -1,8 +1,7 @@
 package com.ecommerce.springbootecommerce.controller.seller;
 
-import java.util.HashMap;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,38 +10,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.AccountDTO;
-import com.ecommerce.springbootecommerce.dto.BaseDTO;
+import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
 import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
-import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.IProductService;
 
-@Controller
+@Controller(value = "ProductControllerOfSeller")
 @RequestMapping("seller/product")
 public class ProductController {
 
     @Autowired
     private IProductService productService;
-
-    @Autowired
-    private IAccountService accountService;
     
+    @PreAuthorize("hasAuthority('SELLER')")
     @GetMapping("list/all")
     public String allProduct(
             Model model,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "2") int size,
-            @RequestParam(value = "message", required = false) String message
+            @RequestParam(value = "size", required = false, defaultValue = "2") int size
     ) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO account = accountService.findByUsername(username);
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        BaseDTO<ProductDTO> dto = productService.findAllValid(account.getId(), SystemConstant.INACTIVE_PRODUCT, SystemConstant.REMOVED_PRODUCT, page, size);
-
-        
-        if(message != null && mapMessage.get(message) != null) {
-            model.addAttribute("message", mapMessage.get(message));
-        }
+        ProductDTO dto = productService.findAllByAccountIdAndStatus(userDetails.getId(), SystemConstant.STRING_ACTIVE_STATUS, page, size);
 
         model.addAttribute("tab", "all");
         model.addAttribute("quantityProduct", dto.getTotalItem());
@@ -58,13 +46,14 @@ public class ProductController {
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "size", required = false, defaultValue = "2") int size
     ) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO account = accountService.findByUsername(username);
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        BaseDTO<ProductDTO> dto = productService.findAllLive(account.getId(), SystemConstant.INACTIVE_PRODUCT, SystemConstant.REMOVED_PRODUCT, 0, page, size);
+        ProductDTO dto = productService.findAllByAccountIdAndProductStatusAndProductItemStatus(
+            userDetails.getId(), SystemConstant.STRING_ACTIVE_STATUS, SystemConstant.STRING_ACTIVE_STATUS, page, size
+        );
         
         model.addAttribute("tab", "live");
-        model.addAttribute("quantityProduct", dto.getTotalItem());
+        model.addAttribute("quantityProduct", dto == null ? 0 : dto.getTotalItem());
         model.addAttribute("dto", dto);
         
         return "seller/product/myProduct";
@@ -76,10 +65,11 @@ public class ProductController {
         @RequestParam(value = "page", required = false, defaultValue = "1") int page,
         @RequestParam(value = "size", required = false, defaultValue = "2") int size
     ){
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO account = accountService.findByUsername(username);
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
-        BaseDTO<ProductDTO> dto = productService.findAllSoldOut(account.getId(), SystemConstant.INACTIVE_PRODUCT, SystemConstant.REMOVED_PRODUCT, 0, page, size);
+        ProductDTO dto = productService.findAllByAccountIdAndProductStatusAndProductItemStatus(
+            userDetails.getId(), SystemConstant.STRING_ACTIVE_STATUS, SystemConstant.SOLD_OUT_STATUS, page, size
+        );
 
         model.addAttribute("tab", "soldout");
         model.addAttribute("quantityProduct", dto.getTotalItem());
@@ -92,29 +82,15 @@ public class ProductController {
     public String trashBin(
             Model model,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "2") int size,
-            @RequestParam(value = "message", required = false) String message
+            @RequestParam(value = "size", required = false, defaultValue = "2") int size
     ) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        AccountDTO account = accountService.findByUsername(username);
-        BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(account.getId(), SystemConstant.INACTIVE_PRODUCT, page, size);
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        if(message != null && mapMessage.get(message) != null) {
-            model.addAttribute("message", mapMessage.get(message));
-        }
+        ProductDTO dto = productService.findAllByAccountIdAndStatus(userDetails.getId(), SystemConstant.STRING_INACTIVE_STATUS, page, size);
 
         model.addAttribute("quantityProduct", dto.getTotalItem());
         model.addAttribute("dto", dto);
 
         return "seller/product/trashBin";
     }
-
-    HashMap<String, String> mapMessage = new HashMap<>() {{
-        put("addSucceed", "Success! Your product was published.");
-        put("updateSucceed", "Success! Your product was updated.");
-        put("deleteSucceed", "Success! Your product was deleted.");
-        put("fdeleteSucceed", "Success! Your product was force deleted.");
-        put("restoreSucceed", "Success! Your product was restored.");
-    }};
-
 }

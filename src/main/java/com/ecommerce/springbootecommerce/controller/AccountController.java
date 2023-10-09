@@ -1,6 +1,5 @@
 package com.ecommerce.springbootecommerce.controller;
 
-import com.ecommerce.springbootecommerce.constant.AlertConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,11 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ecommerce.springbootecommerce.config.AuthenticationConfig;
+import com.ecommerce.springbootecommerce.constant.AlertConstant;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.service.IAccountService;
 
-@Controller()
+@Controller(value = "AccountController")
 @RequestMapping("/profile")
 public class AccountController {
     

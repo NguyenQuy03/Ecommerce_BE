@@ -1,12 +1,15 @@
 package com.ecommerce.springbootecommerce.repository;
 
-import com.ecommerce.springbootecommerce.entity.CartItemEntity;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.ecommerce.springbootecommerce.entity.CartItemEntity;
 
 @Repository
-public interface CartItemRepository extends MongoRepository<CartItemEntity, String> {
-    List<CartItemEntity> findAllByCartId(String cartId);
+public interface CartItemRepository extends JpaRepository<CartItemEntity, Long> {
+    List<CartItemEntity> findAllByCartId(Long cartId);
+    Optional<CartItemEntity> findOneByCartIdAndProductItemId(Long cartId, Long productItemId);
 }

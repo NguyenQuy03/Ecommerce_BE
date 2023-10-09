@@ -1,26 +1,24 @@
 package com.ecommerce.springbootecommerce.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
-@Document(collection = "ROLE")
+@Entity
+@Table(name = "Role")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleEntity {
 
-    @Id
-    private String id;
+    @Id 
+    @Column(columnDefinition = "varchar(50)")
     private String code;
-
-    @DBRef
-    private List<AccountEntity> accounts;
 }

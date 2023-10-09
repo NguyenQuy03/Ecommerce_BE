@@ -74,15 +74,13 @@ public class AuthenticateController {
         }
          
         if (request.getUsername() != null) {
-            boolean isAccountExistByUserName = accountService.isAccountExistByUsername(request.getUsername());
-            if (isAccountExistByUserName) {
-                bindingResult.addError(new FieldError("account", "userName", AlertConstant.ALERT_ACCOUNT_EXISTED));
+            if (accountService.isAccountExistByUsername(request.getUsername())) {
+                bindingResult.addError(new FieldError("account", "username", AlertConstant.ALERT_ACCOUNT_EXISTED));
             }
         }
         
         if (request.getEmail() != null) {
-            boolean isAccountExistByEmail = accountService.isAccountExistByEmail(request.getEmail());
-            if (isAccountExistByEmail) {
+            if (accountService.isAccountExistByEmail(request.getEmail())) {
                 bindingResult.addError(new FieldError("account", "email", AlertConstant.ALERT_EMAIL_EXISTED));
             }
         }

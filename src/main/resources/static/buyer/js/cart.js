@@ -1,171 +1,111 @@
 
-const priceEls = document.querySelectorAll("#price-el");
-const totalPriceEls = document.querySelectorAll("#total-price-el");
-const quantityEls = document.querySelectorAll("#quantity-el")
-const minusBtns = document.querySelectorAll(".btn-minus")
-const plusBtns = document.querySelectorAll(".btn-plus")
-const modalPermission = document.querySelector(".modal-check-permission");
-const modalAnnounce = document.querySelector(".modal-announce");
-const closeBtn = document.querySelector(".close-btn");
-const closeAnnounceBtn = document.querySelector(".close-announce-btn");
-const acceptBtn = document.querySelector(".accept-btn");
-const checkAll = document.querySelector("#check-all");
-const checkBoxes = document.querySelectorAll(".check-box-item");
-const tableResponsive = document.querySelector(".table-responsive");
-const cartCheckout = document.querySelector(".cart-checkout");
-const purchaseBtn = document.querySelector(".purchase-btn");
+const APICartUrl = "/api/buyer/cart"
+const APIOrderUrl = "/api/buyer/order"
 
-const cartId = document.querySelector("#cartId");
+const modalAccounceTitle = document.querySelector(".modal-accounce-title");
 
-let summaryPrice = document.querySelector("#summary-price");
+const timeReload = 1500;
 
-const formatter = new Intl.NumberFormat('en-US', {
-	style: 'currency',
-	currency: 'USD',
-});
-
-$(document).ready(function() {
-	getTotalOrderPrice();
-
-	quantityEls.forEach((item, index) => {
-		item.addEventListener('input', (e) => {
-			if (+item.value == +item.max) {
-				item.value = +item.max;
-				plusBtns[index].setAttribute("disabled", "true");
-				totalPriceEls[index].value = formatter.format(priceEls[index].value * (item.value));
-				e.preventDefault();
-			} else {
-				plusBtns[index].removeAttribute("disabled")
-			}
-
-			if (+item.value == 0) {
-				modalPermission.classList.add("fade");
-				modalPermission.classList.add("show");
-				modalPermission.style.display = "flex";
-				item.setAttribute("disabled", "true");
-
-				closeBtn.onclick = () => {
-					modalPermission.classList.remove("show");
-					modalPermission.style.display = "none";
-					quantityEls[index].value = 1;
-					item.removeAttribute("disabled");
-
-					totalPriceEls[index].value = formatter.format(priceEls[index].value);
-					getTotal()
-				}
-			}
-
-		});
-	})
+deleteBtns.forEach(deleteBtn => {
+    deleteBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        displayModalPermission();
+        closeBtn.onclick = () => {
+            closeModalPermission();
+		}
+        acceptBtn.onclick = () => {
+            closeModalPermission();
+            deleteProductItem(deleteBtn.id);
+        }
+    })
 })
 
-if (closeAnnounceBtn) {
-	closeAnnounceBtn.onclick = () => {
-		modalAnnounce.classList.remove("show");
-		modalAnnounce.style.display = "none";
-	}				
+    // DELETE ProductItem
+async function deleteProductItem(CartItemId) {
+    try {
+        const response = await fetch(APICartUrl, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(CartItemId)
+        });
+
+        if (response.ok) {
+            let responseText = await response.text();
+            modalAccounceTitle.innerHTML = responseText;
+            modalAnnounce.classList.add("show");
+            modalAnnounce.style.display = "flex";
+            
+            setTimeout(function() {
+                location.reload();
+            }, timeReload);
+        } else if (response.status === 401 || response.status === 403 || response.status === 405) {
+            window.location.href = "/login";
+        } else if (response.status === 500) {
+            let mesResponse = await response.text();
+            console.log("Error message:", mesResponse);
+        }
+    } catch (error) {
+        console.log("Error:", error);
+    }
 }
+    // PURCHASE
+purchaseBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+	let data = {};
+	let orderItems = [];
+    let cartItemIds = [];
+    
+	checkBoxes.forEach((item, i) => {
+        if (item.checked == true) {
+            let orderItem = {};
+            let productItem = {};
 
-function getTotalOrderPrice() {
-	totalPriceEls.forEach((item, i) => {
-		item.value = formatter.format(priceEls[i].value * (quantityEls[i].value));
-	})
+            productItem["id"] = item.id;
+			orderItem["quantity"] = quantityEls[i].value;
+            orderItem["curPrice"] = priceEls[i].value;
+            orderItem["productItem"] = productItem;
 
-}
-
-function changeTotalPriceValue(index) {
-	totalPriceEls[index].value = formatter.format(priceEls[index].value * (quantityEls[index].value));
-	if (checkBoxes[index].checked == true) { getTotal(); }
-}
-
-//HANDLE BTN ACTIONS
-plusBtns.forEach((item, index) => {
-	item.onclick = () => {
-		if (quantityEls[index].value > quantityEls[index].max - 1) {
-			item.setAttribute("disabled", "true");
+            orderItems.push(orderItem);
+            cartItemIds.push(deleteBtns[i].id);
 		}
-		changeTotalPriceValue(index);
-	}
+    })
+
+	data["orderItems"] = orderItems;
+    
+    data["cartItemIds"] = cartItemIds;
+    data["cartId"] = cartId.value;
+
+	postOrder(data);
 })
 
-minusBtns.forEach((item, index) => {
-	item.onclick = () => {
-		if (quantityEls[index].value == 0) {
-			modalPermission.classList.add("fade");
-			modalPermission.classList.add("show");
-			modalPermission.style.display = "flex";
+async function postOrder(data) {
+    try {
+        const response = await fetch(APIOrderUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
 
-			closeBtn.onclick = () => {
-				modalPermission.classList.remove("show");
-				modalPermission.style.display = "none";
-				quantityEls[index].value = 1;
-
-			}
-
-			acceptBtn.onclick = () => {
-				deleteOrder(deleteBtns[index].id)
-			}
-
-		} else {
-			changeTotalPriceValue(index);
-		}
-		if (plusBtns[index].attributes.disabled = true) {
-			plusBtns[index].removeAttribute("disabled")
-		}
-	}
-})
-
-//HANDLE GET SUM PRICE
-checkAll.addEventListener('click', event => {
-	if (event.target.checked) {
-		$('tbody input[type=checkbox]').prop('checked', true);
-		getTotal();
-		if (checkBoxes.length > 0) {
-			purchaseBtn.removeAttribute("disabled");
-		}
-	} else {
-		$('tbody input[type=checkbox]').prop('checked', false);
-		summaryPrice.innerText = "$0.00"
-		purchaseBtn.setAttribute("disabled", "true");
-	}
-});
-
-checkBoxes.forEach((item) => {
-	item.onchange = () => {
-		getTotal();
-
-		isCheckAll() ? checkAll.checked = true : checkAll.checked = false;
-		if(leastChecked()) {
-        	purchaseBtn.removeAttribute("disabled", "false");
-		} else{
-        	purchaseBtn.setAttribute("disabled", "true");
-		}
-	}
-})
-
-function isCheckAll() {
-    let res = true;
-	checkBoxes.forEach(item => {
-		if (!item.checked) { return res = false }
-	})
-	return res;
-}
-
-function leastChecked() {
-    var res = false;
-	checkBoxes.forEach(item => {
-		if (item.checked) { return res = true }
-	})
-	return res;
-}
-
-function getTotal() {
-	let total = 0;
-	checkBoxes.forEach((item, index) => {
-		if (item.checked == true) {
-			var number = Number(totalPriceEls[index].value.replace(/[^0-9.-]+/g, ""));
-			total += number;
-		}
-	})
-	summaryPrice.innerText = formatter.format(total)
+        if (response.ok) {
+            let responseText = await response.text();
+            modalAccounceTitle.innerHTML = responseText;
+            modalAnnounce.classList.add("show");
+            modalAnnounce.style.display = "flex";
+            
+            setTimeout(function() {
+                window.location.href = "/home";
+            }, timeReload);
+        } else if (response.status === 401 || response.status === 403 || response.status === 405) {
+            window.location.href = "/login";
+        } else if (response.status === 500) {
+            let mesResponse = await response.text();
+            console.log("Error message:", mesResponse);
+        }
+    } catch (error) {
+        console.log("Error:", error);
+    }
 }

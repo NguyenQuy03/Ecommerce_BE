@@ -32,11 +32,10 @@ public class SearchController {
     @GetMapping("/category/{id}")
     public String categoryPage(
             Model model,
-            @PathVariable("id") String id,
+            @PathVariable("id") long id,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "size", required = false, defaultValue = "2") int size
     ) {
-
         Pageable pageable = PageRequest.of(page - 1, size);
 
         long quantityProduct = productService.countAllByCategoryId(id);
@@ -61,7 +60,6 @@ public class SearchController {
         return "buyer/search";
     }
 
-    @SuppressWarnings("null")
     @GetMapping()
     public String searchPage(
             Model model,
@@ -91,7 +89,7 @@ public class SearchController {
 
         ProductDTO dto = new ProductDTO();
         dto.setTotalPage(totalPage);
-        dto.setListResult(products);
+        // dto.setListResult(products);
         dto.setPage(page);
         dto.setSize(size);
 

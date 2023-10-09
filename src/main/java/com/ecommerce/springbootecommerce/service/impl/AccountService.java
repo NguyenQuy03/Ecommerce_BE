@@ -1,22 +1,11 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
-import com.ecommerce.springbootecommerce.api.authenticate.payload.request.LogInRequest;
-import com.ecommerce.springbootecommerce.api.authenticate.payload.request.RegisterRequest;
-import com.ecommerce.springbootecommerce.config.AuthenticationConfig;
-import com.ecommerce.springbootecommerce.constant.JWTConstant;
-import com.ecommerce.springbootecommerce.constant.RedisConstant;
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.AccountDTO;
-import com.ecommerce.springbootecommerce.entity.AccountEntity;
-import com.ecommerce.springbootecommerce.entity.CartEntity;
-import com.ecommerce.springbootecommerce.entity.RoleEntity;
-import com.ecommerce.springbootecommerce.repository.AccountRepository;
-import com.ecommerce.springbootecommerce.repository.CartRepository;
-import com.ecommerce.springbootecommerce.repository.OrderRepository;
-import com.ecommerce.springbootecommerce.repository.RoleRepository;
-import com.ecommerce.springbootecommerce.service.IAccountService;
-import com.ecommerce.springbootecommerce.util.JwtUtil;
-import com.ecommerce.springbootecommerce.util.RedisUtil;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,26 +18,50 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import com.ecommerce.springbootecommerce.api.authenticate.payload.request.LogInRequest;
+import com.ecommerce.springbootecommerce.api.authenticate.payload.request.RegisterRequest;
+import com.ecommerce.springbootecommerce.config.AuthenticationConfig;
+import com.ecommerce.springbootecommerce.constant.JWTConstant;
+import com.ecommerce.springbootecommerce.constant.RedisConstant;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.dto.AccountDTO;
+import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
+import com.ecommerce.springbootecommerce.entity.AccountEntity;
+import com.ecommerce.springbootecommerce.entity.AccountRoleEntity;
+import com.ecommerce.springbootecommerce.entity.CartEntity;
+import com.ecommerce.springbootecommerce.entity.RoleEntity;
+import com.ecommerce.springbootecommerce.repository.AccountRepository;
+import com.ecommerce.springbootecommerce.repository.AccountRoleRepository;
+import com.ecommerce.springbootecommerce.repository.CartRepository;
+import com.ecommerce.springbootecommerce.repository.RoleRepository;
+import com.ecommerce.springbootecommerce.service.IAccountService;
+import com.ecommerce.springbootecommerce.util.JwtUtil;
+import com.ecommerce.springbootecommerce.util.RedisUtil;
+import com.ecommerce.springbootecommerce.util.converter.AccountConverter;
 
 @Service
 public class AccountService implements IAccountService{
-    
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
 
     @Autowired
     private AuthenticationConfig authenticationConfig;
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private AuthenticationManager authenticationManager;
+    
+    @Autowired
+    private AccountRepository accountRepo;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private CartRepository cartRepo;
+
+    @Autowired
+    private RoleRepository roleRepo;
+
+    @Autowired
+    private AccountRoleRepository accountRoleRepo;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -60,14 +73,11 @@ public class AccountService implements IAccountService{
     private ModelMapper modelMapper;
 
     @Autowired
-    private CartRepository cartRepository;
-
-    @Autowired
-    private OrderRepository orderRepository;
+    private AccountConverter accountConverter;
 
     @Override
     public AccountDTO findByUsername(String username) {
-        Optional<AccountEntity> account = accountRepository.findByUsername(username);
+        Optional<AccountEntity> account = accountRepo.findByUsername(username);
         if(account.isPresent())
             return modelMapper.map(account, AccountDTO.class);
         return null;
@@ -75,83 +85,84 @@ public class AccountService implements IAccountService{
 
     @Override
     public boolean isAccountExistByEmail(String email) {      
-        return accountRepository.findOneByEmail(email).isPresent();
+        return accountRepo.findOneByEmail(email).isPresent();
     }
 
     @Override
     public boolean isAccountExistByUsername(String username) {
-        return accountRepository.findByUsername(username).isPresent();
+        return accountRepo.findByUsername(username).isPresent();
     }
     
     @Override
     public void register(RegisterRequest request) {
-        CartEntity cart = cartRepository.save(new CartEntity());
-
+        CartEntity cart = cartRepo.save(new CartEntity());
         var account = AccountEntity.builder()
-                .cartId(cart.getId())
-                .username(request.getUsername())
-                .fullName(request.getFullName())
-                .email(request.getEmail())
-                .status(SystemConstant.ACTIVE_STATUS)
-                .roleCodes(Collections.singleton(SystemConstant.ROLE_BUYER))
-                .password(authenticationConfig.passwordEncoder().encode(request.getPassword()))
-                .build();
-        AccountEntity newAcc = accountRepository.save(account);
+            .username(request.getUsername())
+            .fullName(request.getFullName())
+            .email(request.getEmail())
+            .status(SystemConstant.ACTIVE_STATUS)
+            .password(authenticationConfig.passwordEncoder().encode(request.getPassword()))
+            .build();
 
-    /* Add Account to role */
-        RoleEntity roleEntity = roleRepository.findOneByCode(SystemConstant.ROLE_BUYER).get();
-        List<AccountEntity> accounts = roleEntity.getAccounts();
-        accounts.add(newAcc);
-        roleEntity.setAccounts(accounts);
-        roleRepository.save(roleEntity);
+        try {
+            AccountEntity newAcc = accountRepo.save(account);
 
-    /* Add new cart */
-        cart.setAccountId(newAcc.getId());
-        cartRepository.save(cart);
+        /* Save Account_Role */
+            RoleEntity roleEntity = roleRepo.findOneByCode(SystemConstant.ROLE_BUYER).get();
+            AccountRoleEntity accountRoleEntity = new AccountRoleEntity();
+            accountRoleEntity.setAccount(newAcc);
+            accountRoleEntity.setRole(roleEntity);
+            accountRoleRepo.save(accountRoleEntity);
 
-        redisUtil.setHashField(RedisConstant.REDIS_USER_INFO + request.getUsername(), RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, String.valueOf(0));
+        /* Add new cart */
+            cart.setAccount(newAcc);
+            cartRepo.save(cart);
+            redisUtil.setHashField(RedisConstant.REDIS_USER_INFO + request.getUsername(), RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, String.valueOf(0));
+        } catch (Exception e) {
+            cartRepo.delete(cart);
+            accountRepo.delete(account);
+        }
     }
-
     @Override
     public void registerSeller(AccountDTO accountDTO) {
-        AccountEntity accountEntity = modelMapper.map(accountDTO, AccountEntity.class);
-        Set<String> roleCodes = accountEntity.getRoleCodes();
-        roleCodes.add(SystemConstant.ROLE_SELLER);
-        accountEntity.setRoleCodes(roleCodes);
 
-        RoleEntity roleEntity = roleRepository.findOneByCode(SystemConstant.ROLE_SELLER).get();
-        List<AccountEntity> accounts = roleEntity.getAccounts();
-        accounts.add(modelMapper.map(accountDTO, AccountEntity.class));
+        /* Save Account_Role */
+        RoleEntity roleEntity = roleRepo.findOneByCode(SystemConstant.ROLE_SELLER).get();
+        AccountRoleEntity accountRoleEntity = new AccountRoleEntity();
+        accountRoleEntity.setAccount(accountConverter.toEntity(accountDTO));
+        accountRoleEntity.setRole(roleEntity);
+        accountRoleRepo.save(accountRoleEntity);
 
-        roleRepository.save(roleEntity);
-        accountRepository.save(accountEntity);
-
+        /* Add new role for session */
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Set<String> newRoles = accountEntity.getRoleCodes();
-        newRoles.add(SystemConstant.ROLE_SELLER);
-        Set<GrantedAuthority> authorities = getAuthorities(newRoles);
+        Set<String> roles = new HashSet<>();
+        for (GrantedAuthority authority : auth.getAuthorities()) {
+            roles.add(authority.getAuthority());
+        }
+        roles.add(SystemConstant.ROLE_SELLER);
+        Set<GrantedAuthority> authorities = getAuthorities(roles);
         Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(),authorities);
         SecurityContextHolder.getContext().setAuthentication(newAuth);
     }
 
     @Override
     public void update(AccountDTO accountDTO) {
-        AccountEntity accountEntity; accountDTO.setStatus(SystemConstant.ACTIVE_STATUS);
-        AccountEntity preAccountEntity = accountRepository.findById(accountDTO.getId()).get();
+        accountDTO.setStatus(SystemConstant.ACTIVE_STATUS);
+        AccountEntity preAccountEntity = accountRepo.findById(accountDTO.getId())
+            .orElseThrow(() -> new IllegalArgumentException("Account is not exist"));
 
         modelMapper.map(accountDTO, preAccountEntity);
-        accountEntity = modelMapper.map(preAccountEntity, AccountEntity.class);
+        preAccountEntity = modelMapper.map(preAccountEntity, AccountEntity.class);
 
-        accountRepository.save(accountEntity);
+        accountRepo.save(preAccountEntity);
     }
 
     @Override
     public String authenticate(LogInRequest request, HttpServletRequest httpServletRequest) {
-        String username = request.getUsername();
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            username,
+                            request.getUsername(),
                             request.getPassword()
                     )
             );
@@ -159,7 +170,7 @@ public class AccountService implements IAccountService{
             return null;
         }
 
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+        CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(request.getUsername());
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 userDetails, userDetails.getPassword(),
                 userDetails.getAuthorities()
@@ -170,19 +181,18 @@ public class AccountService implements IAccountService{
         String accessToken = jwtUtil.generateAccessToken(userDetails);
         String refreshToken = jwtUtil.generateRefreshToken(userDetails);
         revokeAllUserTokens(userDetails);
-        redisUtil.setKey(RedisConstant.REDIS_JWT_BRANCH + username, refreshToken, JWTConstant.JWT_REFRESH_TOKEN_EXPIRATION);
+        redisUtil.setKey(RedisConstant.REDIS_JWT_BRANCH + request.getUsername(), refreshToken, JWTConstant.JWT_REFRESH_TOKEN_EXPIRATION);
 
         return accessToken;
     }
 
     @Override
-    public AccountDTO findOneById(String id) {
-        Optional<AccountEntity> account = accountRepository.findOneById(id);
-        if(account.isPresent())
-            return modelMapper.map(account.get(), AccountDTO.class);
-        return null;
+    public AccountDTO findById(Long id) {
+        Optional<AccountEntity> accountEntity = accountRepo.findById(id);
+        return accountEntity.map(entity -> modelMapper.map(entity, AccountDTO.class)).orElse(null);
     }
 
+// REUSE
     private void revokeAllUserTokens(UserDetails account) {
         redisUtil.removeKey("Jwt:" + account.getUsername());
     }

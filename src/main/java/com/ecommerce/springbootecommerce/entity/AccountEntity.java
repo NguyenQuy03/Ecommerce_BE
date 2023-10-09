@@ -1,43 +1,46 @@
 package com.ecommerce.springbootecommerce.entity;
 
-import lombok.*;
-import org.springframework.data.annotation.ReadOnlyProperty;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 
-import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Document(collection = "ACCOUNT")
+@Entity
+@Table(name = "Account")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountEntity extends BaseEntity {
-    private String username;
 
+    @NotNull
+    @Column(columnDefinition = "nvarchar(100)")
+    private String username;
+    
+    @NotNull
+    @Column(columnDefinition = "nvarchar(255)")
     private String fullName;
     
+    @NotNull
+    @Email
     private String email;
-
+    
+    @NotNull
     private String password;
-
+    
+    @Column(columnDefinition = "nvarchar(255)")
     private String address;
-
+    
     private String phoneNumber;
-
+    
+    @NotNull
     private boolean status;
-
-    private Set<String> roleCodes;
-
-    private String cartId;
-
-    @ReadOnlyProperty
-    @DocumentReference(lazy = true)
-    private Set<OrderEntity> orders;
-
-    // SELLER
-    @ReadOnlyProperty
-    @DocumentReference(lazy = true)
-    private Set<ProductEntity> products;
 }

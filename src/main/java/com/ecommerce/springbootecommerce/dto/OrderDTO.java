@@ -1,13 +1,13 @@
 package com.ecommerce.springbootecommerce.dto;
 
+import java.util.List;
+
+import com.ecommerce.springbootecommerce.dto.product.ProductItemDTO;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.text.NumberFormat;
-import java.util.List;
-import java.util.Locale;
 
 @Getter
 @Setter
@@ -18,13 +18,14 @@ public class OrderDTO extends BaseDTO<OrderDTO>{
     private AccountDTO account;
 
     private String status;
-    private double totalPrice;
+
+    private String totalPrice;
 
     private List<OrderItemDTO> orderItems;
-    
-    public String getTotalPrice() {
-        Locale moneyType = new Locale("en", "US");
-        NumberFormat $Format = NumberFormat.getCurrencyInstance(moneyType);
-        return $Format.format(this.totalPrice);
-    }
+
+    private List<Long> cartItemIds;
+
+    private Long cartId;
+
+    private ProductItemDTO productItem;
 }

@@ -1,12 +1,13 @@
 package com.ecommerce.springbootecommerce.repository;
 
-import com.ecommerce.springbootecommerce.entity.CartEntity;
-import org.springframework.data.mongodb.repository.MongoRepository;
-
 import java.util.Optional;
 
-public interface CartRepository extends MongoRepository<CartEntity, String> {
-    Optional<CartEntity> findOneById(String id);
+import org.springframework.data.jpa.repository.JpaRepository;
 
-    Optional<CartEntity> findOneByAccountId(String accountId);
+import com.ecommerce.springbootecommerce.entity.CartEntity;
+
+public interface CartRepository extends JpaRepository<CartEntity, Long> {
+    Optional<CartEntity> findOneById(Long id);
+
+    Optional<CartEntity> findOneByAccountId(Long accountId);
 }

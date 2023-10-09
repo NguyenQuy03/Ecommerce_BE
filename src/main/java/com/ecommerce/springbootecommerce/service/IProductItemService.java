@@ -9,4 +9,8 @@ import com.ecommerce.springbootecommerce.dto.product.ProductItemDTO;
 public interface IProductItemService {
 
     List<ProductItemDTO> findAllByStatus(String stringActiveStatus, Pageable pageable);
+
+    ProductItemDTO findOneById(Long id);
+
+    List<ProductItemDTO> findTopSelling(String sellerName);
 }

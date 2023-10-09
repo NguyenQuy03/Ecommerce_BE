@@ -1,14 +1,14 @@
 package com.ecommerce.springbootecommerce.repository;
 
-import com.ecommerce.springbootecommerce.entity.AccountEntity;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.mongodb.repository.MongoRepository;
-
 import java.util.Optional;
 
-public interface AccountRepository extends MongoRepository<AccountEntity, String> {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ecommerce.springbootecommerce.entity.AccountEntity;
+
+public interface AccountRepository extends JpaRepository<AccountEntity, Long> {
     Optional<AccountEntity> findByUsernameAndStatus(String username, Boolean status);
-    Optional<AccountEntity> findOneById(String id);
+    Optional<AccountEntity> findOneById(Long id);
     
     Optional<AccountEntity> findOneByEmail(String email);
 

@@ -11,7 +11,7 @@
 
 <body>
 	<div th:object="${dto}" class="card" layout:fragment="content">
-		<form id="formSubmit" th:action="@{/manager/category}" method="GET">
+		<form id="formSubmit" th:action="@{/manager/category}" method="POST">
 			<div class="card-body pt-3">
 				<div class="tab-content pt-2">
 
@@ -55,7 +55,6 @@
 							<!-- End Table with stripped rows -->
 
 						</div>
-
 					</div>
 
 					<!-- Pagination -->

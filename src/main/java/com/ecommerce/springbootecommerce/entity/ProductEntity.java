@@ -1,34 +1,48 @@
 package com.ecommerce.springbootecommerce.entity;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.data.mongodb.core.mapping.Document;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Document(collection = "PRODUCT")
+@Entity
+@Table(name = "Product")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductEntity extends BaseEntity{
-    private String accountId;
-
-    private String categoryId;
-
+    
+    @NotNull
+    @Column(columnDefinition = "varchar(100)")
     private String name;
-
+    
+    @NotNull
     private String image;
-
+    
+    @Column(columnDefinition = "varchar(max)")
     private String description;
-
+    
+    @NotNull
+    @Column(columnDefinition = "varchar(20)")
     private String status;
+    
+    @NotNull
+    @Column(columnDefinition = "NVARCHAR(MAX)")
+    private String specification;
+    
+    @OneToOne
+    @JoinColumn(name = "account_id", referencedColumnName = "id")
+    private AccountEntity account;
 
-    private List<Map<String, String>> specification;
-
-    private List<ProductItemEntity> productItems;
+    @OneToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private CategoryEntity category;
 }

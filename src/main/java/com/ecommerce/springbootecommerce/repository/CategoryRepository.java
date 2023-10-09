@@ -1,8 +1,11 @@
 package com.ecommerce.springbootecommerce.repository;
 
-import com.ecommerce.springbootecommerce.entity.CategoryEntity;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import java.util.Optional;
 
-public interface CategoryRepository extends MongoRepository<CategoryEntity, String> {
-    CategoryEntity findOneById(String id);
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ecommerce.springbootecommerce.entity.CategoryEntity;
+
+public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
+    Optional<CategoryEntity> findOneByCode(String code);
 }

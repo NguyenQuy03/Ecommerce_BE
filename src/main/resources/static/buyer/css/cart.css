@@ -1,4 +1,4 @@
-#total-price-el {
+.total-price-el {
 	border: none;
 	text-align: center;
 }
@@ -9,7 +9,21 @@ input[type="checkbox"] {
 	cursor: pointer;
 }
 
-#image-product {
+.modal-content {
+	min-width: 350px;
+	min-height: 180px;
+	justify-content: space-around;
+	margin-bottom: 200px;
+	border-radius: 4px;
+}
+
+.modal-accounce-title {
+	width: 100%;
+	text-align: center;
+	user-select: none;
+}
+
+.image-product {
 	display: inline-block;
 	max-width: 100px;
 }
@@ -21,4 +35,17 @@ input[type="checkbox"] {
 	z-index: 1000;
 	box-shadow: -2px -2px #888888;
 	background-color: #fff;
+}
+
+.modal-icon_success {
+	font-size: 55px;
+	color: #00bfa5;
+}
+
+.fit-content{
+	max-width: 200px;
+	overflow: hidden;
+	-webkit-line-clamp: 2;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
 }

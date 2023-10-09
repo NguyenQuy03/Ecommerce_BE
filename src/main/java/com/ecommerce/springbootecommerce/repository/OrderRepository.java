@@ -1,18 +1,20 @@
 package com.ecommerce.springbootecommerce.repository;
 
-import com.ecommerce.springbootecommerce.entity.OrderEntity;
-import org.springframework.data.mongodb.repository.MongoRepository;
-
 import java.util.List;
 import java.util.Optional;
 
-public interface OrderRepository extends MongoRepository<OrderEntity, String> {
-    Optional<OrderEntity> findOneByAccountIdAndStatus(String accountId, String status);
-    Optional<OrderEntity> findOneById(String id);
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-    List<OrderEntity> findAllByAccountIdAndStatus(String accountId, String status);
+import com.ecommerce.springbootecommerce.entity.OrderEntity;
+
+public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
+    Optional<OrderEntity> findOneByAccountIdAndStatus(Long accountId, String status);
+
+    Page<OrderEntity> findAllByAccountIdAndStatus(Long accountId, String status, Pageable page);
 
     List<OrderEntity> findAllByStatus(String status);
 
-    Long countByAccountIdAndStatus(String accountId, String status);
+    long countByAccountIdAndStatus(Long accountId, String status);
 }

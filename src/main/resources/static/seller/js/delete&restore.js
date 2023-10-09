@@ -2,6 +2,8 @@ const checkAll = document.getElementById('checkAll');
 const checkBoxes = $('tbody input[type=checkbox]');
 const restoreBtn = $(".restore-btn");
 
+const defaultPageSize = 2;
+
 checkAll.addEventListener('click', event => {
 	if (event.target.checked && checkBoxes.length > 0) {
 		$('tbody input[type=checkbox]').prop('checked', true);
@@ -87,7 +89,7 @@ function deleteProduct(data) {
 		data: JSON.stringify(data),
 		contentType: "application/json",
 		success: function() {
-			window.location.href = "/seller/product/list/all?page=1&size=2&message=deleteSucceed";
+			window.location.href = `/seller/product/list/all?page=1&size=${defaultPageSize}`;
 		},
 		error: function(e) {
 			console.log("error")
@@ -102,7 +104,7 @@ function forceDeleteProduct(data) {
 		data: JSON.stringify(data),
 		contentType: "application/json",
 		success: function() {
-			window.location.href = "/seller/product/trashbin?page=1&size=2&message=fdeleteSucceed";
+			window.location.href = `/seller/product/trashbin?page=1&size=${defaultPageSize}`;
 		},
 		error: function(e) {
 			console.log("error")
@@ -117,7 +119,7 @@ function restoreProduct(data) {
 		data: JSON.stringify(data),
 		contentType: "application/json",
 		success: function() {
-			window.location.href = "/seller/product/list/all?page=1&size=2&message=restoreSucceed";
+			window.location.href = `/seller/product/list/all?page=1&size=2${defaultPageSize}`;
 		},
 		error: function(e) {
 			console.log("error" + e)

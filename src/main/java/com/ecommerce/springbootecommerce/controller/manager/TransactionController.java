@@ -22,7 +22,7 @@ public class TransactionController {
 
     @GetMapping(value="/transaction")
     public String transactions(Model model) {
-        List<OrderDTO> dtos = orderService.findAllByStatus(SystemConstant.STRING_DELIVERED_ORDER);
+        List<OrderDTO> dtos = orderService.findAllByStatus(SystemConstant.DELIVERED_STATUS);
         
         OrderDTO dto = new OrderDTO();
         dto.setListResult(dtos);

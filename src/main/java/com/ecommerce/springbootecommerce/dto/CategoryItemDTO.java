@@ -1,5 +1,7 @@
 package com.ecommerce.springbootecommerce.dto;
 
+import com.ecommerce.springbootecommerce.dto.product.ProductItemDTO;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,9 +9,9 @@ import lombok.Setter;
 @Setter
 public class CategoryItemDTO extends BaseDTO<CategoryItemDTO> {
 
-    private String cartId;
+    private CartDTO cart;
 
-    private String productItemId;
+    private ProductItemDTO productItem;
 
     private long quantity;
 }

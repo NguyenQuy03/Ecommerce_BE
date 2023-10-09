@@ -14,12 +14,13 @@ public class SystemConstant {
     public static final String PRODUCT_NOT_AVAILABLE = "This product was no longer available";
 
     public static final String COOKIE_JWT_HEADER = "JWT";
-    public static final String TOKEN_TYPE = "Bearer ";
-
-    /*STATUS*/
+    public static final String TOKEN_JWT_TYPE = "Bearer ";
+    
+    public static final String ANONYMOUS_USER = "anonymousUser";
+        /*STATUS*/
     public static final String STRING_ACTIVE_STATUS = "ACTIVE";
-    public static final String STRING_DELIVERED_ORDER = "DELIVERED";
-    public static final String SOLD_OUT_PRODUCT = "SOLD OUT";
-    public static final String REMOVED_PRODUCT = "REMOVED";
-    public static final String INACTIVE_PRODUCT = "INACTIVE";
+    public static final String STRING_INACTIVE_STATUS = "INACTIVE";
+    public static final String DELIVERED_STATUS = "DELIVERED";
+    public static final String SOLD_OUT_STATUS = "SOLD_OUT";
+    public static final String REMOVED_STATUS = "REMOVED";
 }

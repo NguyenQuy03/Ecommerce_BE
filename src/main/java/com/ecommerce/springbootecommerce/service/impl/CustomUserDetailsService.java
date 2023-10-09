@@ -1,20 +1,21 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.MyAccount;
-import com.ecommerce.springbootecommerce.entity.AccountEntity;
-import com.ecommerce.springbootecommerce.repository.AccountRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
+import com.ecommerce.springbootecommerce.entity.AccountEntity;
+import com.ecommerce.springbootecommerce.entity.AccountRoleEntity;
+import com.ecommerce.springbootecommerce.repository.AccountRepository;
+import com.ecommerce.springbootecommerce.repository.AccountRoleRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService{
@@ -22,23 +23,27 @@ public class CustomUserDetailsService implements UserDetailsService{
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private AccountRoleRepository accountRoleRepo;
+
     @Override
-    public UserDetails loadUserByUsername(String username) {
+    public CustomUserDetails loadUserByUsername(String username) {
         if(accountRepository.findByUsernameAndStatus(username, SystemConstant.ACTIVE_STATUS).isPresent()){
             AccountEntity account = accountRepository.findByUsernameAndStatus(username, SystemConstant.ACTIVE_STATUS).get();
-            Set<String> accountRoles = account.getRoleCodes();
-            Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-            for (String role : accountRoles) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+            Set<AccountRoleEntity> accountRoles = accountRoleRepo.findAllByAccountId(account.getId());
+            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+            for (AccountRoleEntity entity : accountRoles) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + entity.getRole().getCode()));
             }
-            MyAccount myAccount = new MyAccount(
+            CustomUserDetails userDetails = new CustomUserDetails(
+                    account.getId(),
                     account.getUsername(),
                     account.getFullName(),
                     account.getPassword(),
                     authorities
             );
 
-            return myAccount;
+            return userDetails;
         } else {
             throw new UsernameNotFoundException("User not found");
         }

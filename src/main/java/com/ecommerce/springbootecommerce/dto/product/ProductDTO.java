@@ -3,7 +3,9 @@ package com.ecommerce.springbootecommerce.dto.product;
 import java.util.List;
 import java.util.Map;
 
+import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.BaseDTO;
+import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,9 +13,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductDTO extends BaseDTO<ProductDTO>{
-    private String accountId;
-
-    private String categoryId;
+    
+    private AccountDTO account;
+    private CategoryDTO category;
 
     private String name;
 
@@ -31,9 +33,7 @@ public class ProductDTO extends BaseDTO<ProductDTO>{
 
     private String status;
 
-    private List<Map<String, String>> specification;
-
-    private List<Map<String, String>> productItemsData;    
+    private Map<String, String> specification;
 
     private List<ProductItemDTO> productItems;    
 

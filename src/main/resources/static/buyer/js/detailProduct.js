@@ -1,85 +1,90 @@
+const data = {};
+const APIProductUrl = "/api/buyer/cart";
 
+const modalAnnounce = document.querySelector(".modal-announce");
+const modalAccounceTitle = document.querySelector(".modal-accounce-title");
+const modalIcon = document.querySelector(".modal-icon");
 
-const productQuantity = document.querySelector(".quantity-product");
-const plusBtn = document.querySelector(".btn-plus");
-const minusBtn = document.querySelector(".btn-minus");
-const addBtn = document.querySelector(".add-btn");
-const modalSuccess = document.querySelector(".modal-success");
-const stockEl = document.querySelector("#stock");
-const priceEl = document.querySelector("#price");
-const modelSoldOut = document.querySelector("#model-sold-out");
+const submitForm = document.querySelector("#submit-form");
+const submitBtn = document.querySelector("#submit-btn");
+const variationErrorEl = document.querySelector(".variation-error");
 
-const variation0 = document.querySelectorAll(".variation-0")
-const productItemStock = document.querySelectorAll(".product-item-stock")
-const productItemPrice = document.querySelectorAll(".product-item-price")
+const variationOption0 = document.querySelectorAll(".variation-option-0")
+const productItemIds = document.querySelectorAll(".product-item-id")
 
-variation0.forEach((item, index) => {
-	item.addEventListener('change', () => {
-		stockEl.innerHTML = productItemStock[index].value;
-		priceEl.innerHTML = "$" + productItemPrice[index].value;
-
-		addBtn.disabled = productItemStock[index].value == 0;
-		plusBtn.disabled = productItemStock[index].value == 0;
-		productQuantity.disabled = productItemStock[index].value == 0;
-	})
-})
-
-
-productQuantity.addEventListener('input', editValue);
-
-$(document).ready(function() {
-	productQuantity.addEventListener('input', () => {
-		if (+productQuantity.value > +productQuantity.max) {
-			productQuantity.value = +productQuantity.max;
-			plusBtn.setAttribute("disabled", "true");
-		}
-		
-		if(+productQuantity.value <= 0) {
-			productQuantity.value = 1;
-			minusBtn.setAttribute("disabled", "true");
-		}
-
-	});
-
-})
-
-function editValue() {
-	minusBtn.disabled = +productQuantity.value == 1;
-	plusBtn.disabled = +productQuantity.value == +productQuantity.max;
+let indexVariationEl = -1;
+if(!$(".variation-content")[0]) {
+    indexVariationEl = 0;
 }
 
-plusBtn.addEventListener('click', (e) => {
-	e.preventDefault();
-	minusBtn.removeAttribute("disabled");
-	plusBtn.disabled = +productQuantity.value == +productQuantity.max;
+submitBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    data["productId"] = $("#id")[0].value;
+    data["quantity"] = $("#quantity")[0].value;
+
+    indexVariationEl = getVariationValue();
+    if(indexVariationEl === -1) {
+        variationErrorEl.style.display = "block"; 
+        return;
+    }
+
+    data["id"] = productItemIds[indexVariationEl].value;
+
+    addProduct(data);
+
 })
 
-
-minusBtn.addEventListener('click', (e) => {
-	e.preventDefault();
-	plusBtn.removeAttribute("disabled");
-	minusBtn.disabled = +productQuantity.value == 1;
-})
-
-if (modalSuccess) {
-	setTimeout(() => {
-		modalSuccess.classList.remove("show");
-		modalSuccess.style.display = "none";
-	}, 1200)
-
+function getVariationValue() {
+    variationOption0.forEach((item, i) => {
+        if(item.checked) {
+            indexVariationEl = i;
+        }
+    })
+    return indexVariationEl;
 }
 
-addBtn.addEventListener("click", (e) => {
-	if (+stockEl.innerHTML == 0) {
-		e.preventDefault();
-		modelSoldOut.classList.add("show");
-		modelSoldOut.style.display = "block"
-		setTimeout(() => {
-			modelSoldOut.classList.remove("show");
-			modelSoldOut.style.display = "none";
-		}, 1200)
-	}
-})
+async function addProduct(data) {
+    try {
+        const response = await fetch(APIProductUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+        let responseText = await response.text();
 
+        if (response.ok) {
+            displayModal(modalAnnounce, responseText, "success");
+            reloadPage();
+        } else if (response.status === 401 || response.status === 403 || response.status === 405) {
+            window.location.href = "/login";
+        } else if (response.status === 500) {
+            displayModal(modalAnnounce, "Error: " + responseText, "error");
+            reloadPage();
+        }
+    } catch (error) {
+        let errorMes = await error.message;        
+        displayModal(modalAnnounce, "Error: " + errorMes, "error");
+        reloadPage();
+    }
+}
 
+function displayModal(modal, message, status) {
+    modalAccounceTitle.innerHTML = message;
 
+    if(status == "success") {
+        modalIcon.classList.add("modal-icon_success");
+    } else if(status == "error") {
+        modalIcon.classList.add("modal-icon_error");
+    }
+
+    modal.classList.add("show");
+    modal.style.display = "flex";
+}
+
+function reloadPage() {
+    setTimeout(function() {
+        location.reload();
+    }, 1500);
+}

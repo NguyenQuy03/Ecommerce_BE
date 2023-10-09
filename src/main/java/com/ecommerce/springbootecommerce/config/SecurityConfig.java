@@ -1,10 +1,6 @@
 
 package com.ecommerce.springbootecommerce.config;
 
-import com.ecommerce.springbootecommerce.security.CustomLogoutHandle;
-import com.ecommerce.springbootecommerce.security.JwtAuthenticationFilter;
-import com.ecommerce.springbootecommerce.service.impl.CustomUserDetailsService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +13,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+
+import com.ecommerce.springbootecommerce.security.CustomLogoutHandle;
+import com.ecommerce.springbootecommerce.security.JwtAuthenticationFilter;
+import com.ecommerce.springbootecommerce.service.impl.CustomUserDetailsService;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -40,16 +42,16 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .antMatchers(HttpMethod.GET).permitAll()
                 .antMatchers(
-                        "/api/auth/**", "/register**",
-                        "/home/**", "/admin/vendor/**", "/admin/js/main.js",
-                        "/common/**", "/buyer/**",
-                        "/favicon.ico"
-                )
+                    "/api/auth/**", "/register**",
+                    "/home/**", "/admin/vendor/**", "/admin/js/main.js",
+                    "/common/**", "/buyer/**",
+                    "/favicon.ico"
+                    )
                 .permitAll()
                 .antMatchers("/seller/**").hasRole("SELLER")
                 .antMatchers("/manager/**").hasRole("MANAGER")
+                .antMatchers(HttpMethod.GET).permitAll()
                 .anyRequest().authenticated()
             .and()
                 .sessionManagement()

@@ -1,9 +1,8 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,28 +11,32 @@ import com.ecommerce.springbootecommerce.dto.product.ProductItemDTO;
 import com.ecommerce.springbootecommerce.entity.ProductItemEntity;
 import com.ecommerce.springbootecommerce.repository.ProductItemRepository;
 import com.ecommerce.springbootecommerce.service.IProductItemService;
+import com.ecommerce.springbootecommerce.util.converter.ProductItemConverter;
 
 @Service
 public class ProductItemService implements IProductItemService {
     @Autowired
-    private ProductItemRepository productItemRepository;
+    private ProductItemRepository productItemRepo;
     
     @Autowired
-    private ModelMapper modelMapper;
-
+    private ProductItemConverter productItemConverter;
 
     @Override
     public List<ProductItemDTO> findAllByStatus(String status, Pageable pageable) {
-        List<ProductItemEntity> entities = productItemRepository.findAllByStatus(status, pageable).getContent();
-        return toListDTO(entities);
+        List<ProductItemEntity> entities = productItemRepo.findAllByStatus(status, pageable).getContent();
+        return productItemConverter.toListDTO(entities);
     }
 
-    private List<ProductItemDTO> toListDTO(List<ProductItemEntity> entities) {
-        List<ProductItemDTO> dtos = new ArrayList<>();
-        entities.forEach(item -> {
-            dtos.add(modelMapper.map(item, ProductItemDTO.class));
-        });
+    @Override
+    public ProductItemDTO findOneById(Long id) {
+        Optional<ProductItemEntity> entity = productItemRepo.findById(id);
+        return entity.map(item -> productItemConverter.toDTO(item)).orElse(null);
+    }
 
-        return dtos;
+    @Override
+    public List<ProductItemDTO> findTopSelling(String sellerName) {
+
+        return productItemConverter.toListDTO(productItemRepo.findAllByCreatedByOrderBySoldDesc(sellerName));
     }
 }
+    

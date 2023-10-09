@@ -2,10 +2,10 @@ package com.ecommerce.springbootecommerce.security;
 
 import java.io.IOException;
 
-import com.ecommerce.springbootecommerce.constant.RedisConstant;
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.util.CookieUtil;
-import com.ecommerce.springbootecommerce.util.RedisUtil;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,9 +13,9 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.ecommerce.springbootecommerce.constant.RedisConstant;
+import com.ecommerce.springbootecommerce.util.CookieUtil;
+import com.ecommerce.springbootecommerce.util.RedisUtil;
 
 @Component
 public class CustomLogoutHandle implements LogoutHandler{

@@ -3,6 +3,8 @@ package com.ecommerce.springbootecommerce.api.manager;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +21,15 @@ public class CategoryAPI {
     private ICategoryService categoryService;
     
     @PostMapping(value = "/category")
-    public void createCategory(
+    public ResponseEntity<String> createCategory(
             @RequestBody CategoryDTO category 
     ) throws IOException {
-        category.setId(null);
-        categoryService.save(category);
+        try {
+            categoryService.save(category);
+            return ResponseEntity.ok("Success! Your category has been created.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error create category");
+        }
     }
 
 }

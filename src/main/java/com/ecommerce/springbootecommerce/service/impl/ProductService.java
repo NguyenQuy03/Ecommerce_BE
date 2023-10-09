@@ -1,284 +1,294 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.MatchOperation;
-import org.springframework.data.mongodb.core.aggregation.SortOperation;
-import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.BaseDTO;
 import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
-import com.ecommerce.springbootecommerce.entity.AccountEntity;
+import com.ecommerce.springbootecommerce.dto.product.ProductItemDTO;
 import com.ecommerce.springbootecommerce.entity.CategoryEntity;
 import com.ecommerce.springbootecommerce.entity.ProductEntity;
 import com.ecommerce.springbootecommerce.entity.ProductItemEntity;
-import com.ecommerce.springbootecommerce.repository.AccountRepository;
 import com.ecommerce.springbootecommerce.repository.CategoryRepository;
 import com.ecommerce.springbootecommerce.repository.ProductItemRepository;
 import com.ecommerce.springbootecommerce.repository.ProductRepository;
 import com.ecommerce.springbootecommerce.service.IProductService;
-import com.ecommerce.springbootecommerce.util.ConverterUtil;
+import com.ecommerce.springbootecommerce.util.ProductServiceUtil;
+import com.ecommerce.springbootecommerce.util.converter.ProductConverter;
+import com.ecommerce.springbootecommerce.util.converter.ProductItemConverter;
 
 @Service
 public class ProductService implements IProductService {
     @Autowired
-    private ProductRepository productRepository;
+    private ProductRepository productRepo;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private ProductItemRepository productItemRepo;
 
     @Autowired
-    private AccountRepository accountRepository;
+    private CategoryRepository categoryRepo;
 
     @Autowired
-    private ProductItemRepository productItemRepository;
+    private ProductConverter productConverter;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private ProductItemConverter productItemConverter;
 
     @Autowired
-    private ConverterUtil converterUtil;
-
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    private ProductServiceUtil productServiceUtil;
 
     @Override
-    public void save(ProductDTO productDTO) {         
-        ProductEntity productEntity = converterUtil.toProductEntity(productDTO);
+    public void save(ProductDTO productDTO) {           
+        try {
+            productDTO.setStatus(SystemConstant.STRING_ACTIVE_STATUS);                      
 
-        String currentPrincipalName = SecurityContextHolder.getContext().getAuthentication().getName();
+            ExecutorService executorService = Executors.newFixedThreadPool(5);
+                String imageUrl = productServiceUtil.updateProductImage(productDTO);
+                productDTO.setImage(imageUrl);
+                
+                if(productDTO.getProductItems().get(0).getVariationName() != null) {
+                    List<Future<String>> uploadProductItemImages = productServiceUtil.productItemImages(productDTO.getProductItems(), executorService);
 
-        CategoryEntity categoryEntity = categoryRepository.findOneById(String.valueOf(productDTO.getCategoryId()));
-        AccountEntity accountEntity = accountRepository.findByUsername(currentPrincipalName).get();
+                    for (int i = 0; i < uploadProductItemImages.size(); i++) {
+                        try {
+                            String productItemImageUrl = uploadProductItemImages.get(i).get();
+                            productDTO.getProductItems().get(i).setImage(productItemImageUrl);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            executorService.shutdown();
 
-        String customProductId = "";
-        boolean isUnique = false;
-        while (!isUnique) {
-            customProductId = UUID.randomUUID().toString();
-            if (!productRepository.existsById(customProductId)) {
-                productEntity.setId(customProductId);
-                isUnique = true;
+            ProductEntity entity = productConverter.toEntity(productDTO);
+            CategoryEntity categoryEntity = categoryRepo.findOneByCode(productDTO.getCategory().getCode()).get();
+            entity.setCategory(categoryEntity);
+
+            try {
+                productRepo.save(entity);
+            } catch (Exception e) {
+                throw new RuntimeException("Error create product");
             }
+
+            for(ProductItemDTO productItemDTO : productDTO.getProductItems()) {
+                ProductItemEntity productItemEntity = productItemConverter.toEntity(productItemDTO);
+                productItemEntity.setProduct(entity);
+                productItemEntity.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
+                if(productItemEntity.getImage() == null) {
+                    productItemEntity.setImage(productDTO.getImage());
+                }
+                try {
+                    productItemRepo.save(productItemEntity);
+                } catch (Exception e) {
+                    productItemRepo.delete(productItemEntity);
+                    throw new RuntimeException("Error create product item");
+                }
+            }
+            
+
+        } catch (Exception e) {
+            for(ProductItemDTO productItemDTO : productDTO.getProductItems()) {
+                productItemRepo.deleteById(productItemDTO.getId());
+            }
+            throw new RuntimeException("Error occurred, product creation rolled back");
         }
-        
-        productEntity.setId(customProductId);
-        productEntity.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
-
-        productEntity.setCategoryId(categoryEntity.getId());
-        productEntity.setAccountId(accountEntity.getId());
-        List<ProductItemEntity> productItems = new ArrayList<>();
-
-        for(ProductItemEntity productItem : productEntity.getProductItems()) {
-            productItem.setProductId(customProductId);
-            productItems.add(productItemRepository.save(productItem));
-        }
-
-        productEntity.setProductItems(productItems);
-
-        productRepository.save(productEntity);
-
     }
 
     @Override
     public void update(ProductDTO dto) {
-        ProductEntity preProductEntity = productRepository.findOneById(dto.getId()).get();
-
-        for(int i = 0; i < preProductEntity.getProductItems().size(); i++) {
-            ProductItemEntity productItem = preProductEntity.getProductItems().get(i);
-            boolean isChange = false;
+            // Get Previous Product Version
+        ProductEntity preProductEntity = productRepo.findById(dto.getId())
+            .orElseThrow(() -> new IllegalArgumentException("Product is not exist"));
+            
+        dto.setStatus(SystemConstant.STRING_ACTIVE_STATUS);      
         
-            if(dto.getProductItemsData().get(i).get("image") != productItem.getImage()) {
-                isChange = true;
-            }
+        List<ProductItemEntity> preProductItems = productItemRepo.findAllByProductId(dto.getId());
+        List<Long> preProductItemIds = new ArrayList<>();
+        preProductItems.forEach(item -> {
+            preProductItemIds.add(item.getId());
+        });
+
+        for(ProductItemDTO itemDTO : dto.getProductItems()) {
+            if(itemDTO.getId() == null) continue;
             
-            if(productItem.getStatus() == SystemConstant.INACTIVE_PRODUCT && productItem.getStock() > 0) {
-                productItem.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
-                isChange = true;
-            } else if(productItem.getStatus() == SystemConstant.STRING_ACTIVE_STATUS && productItem.getStock() == 0) {
-                productItem.setStatus(SystemConstant.INACTIVE_PRODUCT);     
-                isChange = true;
+            for(int i = 0; i < preProductItemIds.size(); i++) {
+                if(itemDTO.getId().equals(preProductItemIds.get(i))) {
+                    preProductItemIds.remove(i);
+                    break;
+                }
+                if(!itemDTO.getId().equals(preProductItemIds.get(i)) && i == preProductItemIds.size() - 1) {
+                    productItemRepo.deleteById(itemDTO.getId());
+                    dto.getProductItems().remove(itemDTO);
+                }
             }
-            
-            if(isChange)
-                productItemRepository.save(productItem);
         }
 
-        dto.setAccountId(preProductEntity.getAccountId());
-        preProductEntity = converterUtil.toProductEntity(dto);
+        if(preProductItemIds.size() > 0) {
+            productItemRepo.deleteAllById(preProductItemIds);
+        }
 
-        productRepository.save(preProductEntity);
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+            String imageUrl = productServiceUtil.updateProductImage(dto);
+            dto.setImage(imageUrl);
+            
+            if(dto.getProductItems().get(0).getVariationName() != null) {
+                List<Future<String>> uploadProductItemImages = productServiceUtil.productItemImages(dto.getProductItems(), executorService);
+
+                for (int i = 0; i < uploadProductItemImages.size(); i++) {
+                    try {
+                        String productItemImageUrl = uploadProductItemImages.get(i).get();
+                        dto.getProductItems().get(i).setImage(productItemImageUrl);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        executorService.shutdown();
+
+        preProductEntity = productConverter.toEntity(dto, preProductEntity);
+        CategoryEntity categoryEntity = categoryRepo.findOneByCode(dto.getCategory().getCode()).get();
+        preProductEntity.setCategory(categoryEntity);
+
+        try {
+            productRepo.save(preProductEntity);
+        } catch (Exception e) {
+            throw new RuntimeException("Error save product");
+        }
+
+        for(ProductItemDTO itemDTO : dto.getProductItems()) {
+            if(itemDTO.getStock() > 0) {
+                itemDTO.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
+            } else {
+                itemDTO.setStatus(SystemConstant.SOLD_OUT_STATUS);     
+            }  
+        }
+
+            // Update Product Item            
+        for(ProductItemDTO productItemDTO : dto.getProductItems()) {
+            try {
+                if(productItemDTO.getId() == null) {
+                    ProductItemEntity itemEntity = productItemConverter.toEntity(productItemDTO);
+                    itemEntity.setProduct(preProductEntity);
+                    productItemRepo.save(itemEntity);
+                } else {
+                    ProductItemEntity preProductItemEntity = productItemRepo.findById(productItemDTO.getId()).get();
+                    ProductItemEntity itemEntity = productItemConverter.toEntity(preProductItemEntity, productItemDTO);
+                    itemEntity.setProduct(preProductEntity);
+                    productItemRepo.save(itemEntity);
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+                throw new RuntimeException("Error save product item");
+            }
+        }
     }
 
     @Override
-    public void softDelete(String status, String[] ids) {
-        for (String id : ids) {
-            ProductEntity product = productRepository.findOneById(id).get();
+    public void softDelete(String status, long[] ids) {
+        for (Long id : ids) {
+            ProductEntity product = productRepo.findById(id).get();
             product.setStatus(status);
-            productRepository.save(product);
+            productRepo.save(product);
         }
     }
 
     @Override
-    public void forceDelete(String status, String[] ids) {
+    public void forceDelete(String status, long[] ids) {
         softDelete(status, ids);
     }
 
     @Override
-    public void restore(String id) {
-        Optional<ProductEntity> optionalProduct = productRepository.findOneById(id);
+    public void restore(long id) {
+        Optional<ProductEntity> optionalProduct = productRepo.findById(id);
         if(optionalProduct.isPresent()) {
             ProductEntity product = optionalProduct.get();
             product.setStatus(SystemConstant.STRING_ACTIVE_STATUS);
-            productRepository.save(product);
+            productRepo.save(product);
         }
     }
     @Override
     public void save(ProductEntity entity) {
-
-        productRepository.save(entity);
+        productRepo.save(entity);
     }
 
     //FIND
     @Override
-    public ProductDTO findByAccountIdAndId(String accountId, String id) {
-        Optional<ProductEntity> res = productRepository.findByAccountIdAndId(accountId, id);
-        return res.map(productEntity -> modelMapper.map(productEntity, ProductDTO.class))
-                .orElse(null);
+    public ProductDTO findById(long id) {
+        return productRepo.findById(id).map(item -> productConverter.toDTO(item)).orElse(null);
     }
 
     @Override
-    public List<ProductDTO> findAllByCategoryId(String categoryId, Pageable pageable) {
-        List<ProductEntity> listProductEntity = productRepository.findAllByCategoryId(categoryId, pageable).getContent();
-        return toListProductDTO(listProductEntity);
+    public ProductDTO findOneByIdAndAccountId(long id, long accountId) {
+        return productRepo.findOneByIdAndAccountId(id, accountId).map(item -> productConverter.toDTO(item)).orElse(null);
     }
 
     @Override
-    public ProductDTO findOneById(String id) {
-        Optional<ProductEntity> product = productRepository.findOneById(id);
-        if(product.isPresent()) {
-            return converterUtil.toProductDTO(product.get());
-        }
-        return null;
+    public List<ProductDTO> findAllByCategoryId(long categoryId, Pageable pageable) {
+        List<ProductEntity> listProductEntity = productRepo.findAllByCategoryId(categoryId, pageable).getContent();
+        return productConverter.toListDTO(listProductEntity);
     }
 
     @Override
     public List<ProductDTO> findAllByNameContains(String keyword, Pageable pageable) {
-        List<ProductEntity> productEntities = productRepository.findAllByNameContains(keyword, pageable).getContent();
-        return toListProductDTO(productEntities);
+        List<ProductEntity> productEntities = productRepo.findAllByNameContains(keyword, pageable).getContent();
+        return productConverter.toListDTO(productEntities);
     }
 
     @Override
     public List<ProductDTO> findAllByStatus(String status, Pageable pageable) {
-        List<ProductEntity> productEntities = productRepository.findAllByStatus(status, pageable).getContent();
-        return toListProductDTO(productEntities);
-    }
-
-    
-    @Override
-    public List<ProductDTO> findTopSelling(String accountId) {
-        SortOperation sort = Aggregation.sort(Sort.Direction.DESC, "sold");
-        MatchOperation match = Aggregation.match(Criteria.where("accountId").is(accountId));
-        TypedAggregation<ProductEntity> aggregation = Aggregation.newAggregation(ProductEntity.class, match, sort);
-
-        List<ProductEntity> result = mongoTemplate.aggregate(aggregation, ProductEntity.class).getMappedResults();
-        return toListProductDTO(result);
+        List<ProductEntity> productEntities = productRepo.findAllByStatus(status, pageable).getContent();
+        return productConverter.toListDTO(productEntities);
     }
     
     @Override
-    public BaseDTO<ProductDTO> findAllByAccountIdAndStatus(String accountId, String status, int page, int size) {
-        Page<ProductEntity> curPage = productRepository.findAllByAccountIdAndStatus(
-            accountId, status,
-            PageRequest.of(page - 1, size)
-        );
-
-        return getPagableData(curPage, page, size);
+    public ProductDTO findAllByAccountIdAndStatus(long accountId, String status, int page, int size) {
+        Page<ProductEntity> pageEntity = productRepo.findAllByAccountIdAndStatus(accountId, status, PageRequest.of(page - 1, size));
+        return productConverter.mapDataFromPage(pageEntity);
     }
     
     @Override
-    public BaseDTO<ProductDTO> findAllValid(String accountId, String ignoreStatus1, String ignoreStatus2, int page, int size) {
-        Page<ProductEntity> curPage = productRepository.findAllValid(
-            accountId, Arrays.asList(ignoreStatus1, ignoreStatus2),
-            PageRequest.of(page - 1, size)
+    public ProductDTO findAllByAccountIdAndProductStatusAndProductItemStatus(
+        long accountId, String productStatus, String productItemStatus,
+        int page, int size
+    ) {
+        Page<ProductEntity> pageEntity = productRepo.findAllByAccountIdAndProductStatusAndProductItemStatus(
+            accountId, productStatus, productItemStatus, PageRequest.of(page - 1, size)
         );
-
-        return getPagableData(curPage, page, size);
-    }
-    
-    @Override
-    public BaseDTO<ProductDTO> findAllLive(String accountId, String ignoreStatus1, String ignoreStatus2, long stock, int page, int size) {
-        Page<ProductEntity> curPage = productRepository.findAllLive(
-            accountId, Arrays.asList(ignoreStatus1, ignoreStatus2),
-            stock, PageRequest.of(page - 1, size)
-        );
-        
-        return getPagableData(curPage, page, size);
+        return productConverter.mapDataFromPage(pageEntity);
     }
 
     @Override
-    public BaseDTO<ProductDTO> findAllSoldOut(String accountId, String ignoreStatus1, String ignoreStatus2, long stock, int page, int size) {
-        Page<ProductEntity> curPage = productRepository.findSoldOut(
-            accountId, Arrays.asList(ignoreStatus1, ignoreStatus2),
-            stock, PageRequest.of(page - 1, size)
-        );
+    public ProductDTO findTopSelling(String sellerName) {
+        ProductDTO dto = new ProductDTO();
+        Page<ProductEntity> pageDTO = productRepo.findTopSelling(PageRequest.of(0, 25));
 
-        return getPagableData(curPage, page, size);
+
+        return null;
     }
     
     //COUNT
     @Override
     public long countAllByStatus(String status) {
-        return productRepository.countAllByStatus(status);
-    }
-
-    @Override
-    public long countAllByAccountIdAndStatus(String accountId, String status) {
-        return productRepository.countAllByAccountIdAndStatus(accountId, status);
+        return productRepo.countAllByStatus(status);
     }
     
     @Override
-    public long countAllByCategoryId(String categoryId) {
-        return productRepository.countAllByCategoryId(categoryId);
+    public long countAllByCategoryId(long categoryId) {
+        return productRepo.countAllByCategoryId(categoryId);
     }
 
     @Override
     public long countByNameContains(String keyword) {
-        return productRepository.countByNameContains(keyword);
+        return productRepo.countByNameContains(keyword);
     }
-    
-    /* REUSE */
-    private List<ProductDTO> toListProductDTO(List<ProductEntity> listProductEntity) {
-        List<ProductDTO> listProductDTO = new ArrayList<>();
-        for(ProductEntity entity : listProductEntity) {
-            listProductDTO.add(converterUtil.toProductDTO(entity));
-        }
-        return listProductDTO;
-    }
-
-    private BaseDTO<ProductDTO> getPagableData(Page<ProductEntity> curPage, int page, int size) {
-        BaseDTO<ProductDTO> dto = new BaseDTO<>();
-        dto.setListResult(toListProductDTO(curPage.getContent()));
-        dto.setTotalItem(curPage.getTotalElements());
-        dto.setPage(page);
-        dto.setSize(size);
-        dto.setTotalPage(curPage.getTotalPages());
-
-        return dto;
-    }
-
 }

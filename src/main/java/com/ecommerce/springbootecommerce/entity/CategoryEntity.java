@@ -1,29 +1,24 @@
 package com.ecommerce.springbootecommerce.entity;
 
-import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-import org.springframework.data.annotation.ReadOnlyProperty;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
-
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Document(collection = "CATEGORY")
-@Getter
-@Setter
+@Entity
+@Table(name = "Category")
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryEntity extends BaseEntity{
 
+    @NotNull
     private String code;
-
+    
+    @NotNull
     private String thumbnail;
-
-    @ReadOnlyProperty
-    @DocumentReference(lazy = true)
-    private Set<ProductEntity> products;
-
 }

@@ -1,5 +1,18 @@
 package com.ecommerce.springbootecommerce.api.authenticate;
 
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.ecommerce.springbootecommerce.api.authenticate.payload.request.LogInRequest;
 import com.ecommerce.springbootecommerce.api.authenticate.payload.request.RegisterRequest;
 import com.ecommerce.springbootecommerce.constant.AlertConstant;
@@ -8,17 +21,6 @@ import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.service.impl.AccountService;
 import com.ecommerce.springbootecommerce.util.CookieUtil;
 import com.ecommerce.springbootecommerce.util.SecurityUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -51,11 +53,12 @@ public class AuthenticationAPI {
         else {
             List<String> roles = SecurityUtil.getAuthorities();
             String route = handleRoute(roles);
-            Cookie cookie = cookieUtil.initCookie(SystemConstant.COOKIE_JWT_HEADER,SystemConstant.TOKEN_TYPE + jwt, JWTConstant.JWT_COOKIE_ACCESS_TOKEN_EXPIRATION);
+            Cookie cookie = cookieUtil.initCookie(SystemConstant.COOKIE_JWT_HEADER,SystemConstant.TOKEN_JWT_TYPE + jwt, JWTConstant.JWT_COOKIE_ACCESS_TOKEN_EXPIRATION);
 
             httpServletResponse.addCookie(cookie);
             httpServletResponse.sendRedirect(route);
         }
+
     }
 
     private String handleRoute(List<String> roles) {

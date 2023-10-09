@@ -1,21 +1,24 @@
 package com.ecommerce.springbootecommerce.util;
 
-import com.ecommerce.springbootecommerce.constant.JWTConstant;
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.entity.AccountEntity;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import com.ecommerce.springbootecommerce.constant.JWTConstant;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 
 
 @Component  
@@ -38,7 +41,7 @@ public class JwtUtil{
     }
 
     public String generateAccessToken(
-        Map<String, Object> extraClaims,
+        Map<String, Long> extraClaims,
         UserDetails account
     ) {
       return buildToken(extraClaims, account, JWTConstant.JWT_ACCESS_TOKEN_EXPIRATION);
@@ -60,7 +63,7 @@ public class JwtUtil{
     }
 
     private String buildToken(
-            Map<String, Object> extraClaims,
+            Map<String, Long> extraClaims,
             UserDetails account,
             long expiration
     ) {
@@ -74,7 +77,7 @@ public class JwtUtil{
               .compact();
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         try {
             return extractExpiration(token).before(new Date());
         } catch(ExpiredJwtException e) {

@@ -31,14 +31,12 @@
 						<tr th:each="item : *{listResult}">
 							<th scope="row">
 								<a th:href="@{/product/detail/{id}(id=${item.id})}">
-									<img id="imageProduct"
-									class="img-fluid w-100"
-									th:src="'data:image/png;base64,' + ${item.imageBase64}"
-									alt="img" style="max-width: 120px;">
+									<img id="imageProduct" class="img-fluid w-100" th:src="${item.image}" alt="img" style="max-width: 120px;">
 								</a>
 							</th>
-							<td><a th:href="@{/product/detail/{id}(id=${item.id})}"
-								class="fw-bold" th:text="${item.name}"></a></td>
+							<td>
+								<a th:href="@{/product/detail/{id}(id=${item.id})}" class="fw-bold" th:text="${item.product.name}"></a>
+							</td>
 
 							<td th:text="${item.price}"></td>
 							<td class="fw-bold" th:text="${item.sold}"></td>

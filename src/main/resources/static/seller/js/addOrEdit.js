@@ -2,6 +2,14 @@
 const APIProductUrl = "/api/seller/product";
 const saveBtn = $("#saveBtn");
 const descriptionEl = $("#description");
+const categoryEl = $("#category")[0];
+const productIdEl = $("#id")[0];
+
+const loadingOverlay = $('#loading-overlay')[0];
+const modalAnnounce = $("#modal-announce")[0];
+const modalAnnounceContent = $(".modal-announce-content")[0];
+const modalAccounceTitle = $(".modal-accounce-title")[0];
+
 
 const basicForm = $("#basic-form");
 const salesForm = $("#sales-form");
@@ -9,7 +17,6 @@ const data = {};
 
 saveBtn.click(function(e) {
     e.preventDefault();
-
     
     let isBasicFormValid = basicForm[0].checkValidity();
     if(!isBasicFormValid) return basicForm[0].classList.add("was-validated");
@@ -20,11 +27,12 @@ saveBtn.click(function(e) {
     getBaseFormData();
     getSalesFormData();
 
-   if($("#id")[0].value === '') {
-       addProduct(data);
-   } else {
-       updateProduct(data);
-   }
+    console.log(data)
+    if(!productIdEl.value) {
+        pushProduct(data, "POST");
+    } else {
+        pushProduct(data, "PUT");
+    }
 })
 
 var descriptionContent;
@@ -41,19 +49,17 @@ function getBaseFormData() {
     const formData = basicForm.serializeArray();
     const specEls = document.querySelectorAll(".spec-el")
 
-    var specData = [];
+    var specData = {};
     specEls.forEach(specEl => {
-        let tmp = {};
-        tmp["k"] = specEl.children[0].value;
-        tmp["v"] = specEl.children[1].value;
-        specData.push(tmp);
+        specData[specEl.children[0].value] = specEl.children[1].value;
     })
     data["specification"] = specData;
 
     $.each(formData, function (i, v) {
-        data[v.name] = v.value;
+        data[v.name] = v.value ? v.value : null;
     });
 
+    data["category"] = {code : categoryEl.value};
 
     data["description"] = descriptionContent.getData();
     data["image"] = $(".preview-product-image")[0].src;
@@ -65,7 +71,8 @@ function getSalesFormData() {
     var priceEls = document.querySelectorAll(".variation-price");
     var stockEls = document.querySelectorAll(".variation-stock");
     var imageEls = document.querySelectorAll(".variation-image");
-
+    var productItemIds =  document.querySelectorAll(".product-item-id");
+    
     var productItems = [];
 
     if(variationKeys.length == 0) {
@@ -80,11 +87,16 @@ function getSalesFormData() {
                 if(index == variationOptions.length - 1) return;
     
                 var productItem = {};
+                productItem["id"] = productItemIds[index] ? productItemIds[index].value : null;
                 productItem["price"] = priceEls[index].value;
                 productItem["stock"] = stockEls[index].value;
                 productItem["image"] = imageEls[index].src;
-                productItem["variationKey"] = key.value;
-                productItem["variationValue"] = option.value;
+                productItem["variationName"] = key.value.trim();
+                productItem["variationValue"] = option.value.trim();
+
+                if(productIdEl.value) {
+                    productItem["productId"] = productIdEl.value;
+                }
     
                 productItems.push(productItem);
             })
@@ -92,43 +104,39 @@ function getSalesFormData() {
         })
     }
 
-    data["productItemsData"] = productItems;
+    data["productItems"] = productItems;
 }
 
+async function pushProduct(data, method) {
+    try {
+        loadingOverlay.style.display = "block";
+        const response = await fetch(APIProductUrl, {
+            method: method,
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
 
-function addProduct(data) {
-    $.ajax({
-        url: APIProductUrl,
-        type: "POST",
-        contentType: "application/json",
-        data: JSON.stringify(data),
-        processData: false,
-        cache: false,
-        success: function() {
-            window.location.href = "/seller/product/list/all?page=1&size=2&message=addSucceed";
-        },
-        error: function(e) {
-            console.log("error" + e)
+        if (response.ok) {
+            let responseText = await response.text();
+            modalAccounceTitle.innerHTML = responseText;
+            modalAnnounceContent.classList.add("text-success");
+            modalAnnounce.classList.add("show");
+            modalAnnounce.style.display = "flex";
+            
+            setTimeout(function() {
+                window.location.href = "/seller/product/list/all?page=1&size=2";
+            }, 1800);
+        } else if (response.status === 401 || response.status === 403 || response.status === 405) {
+            console.log(response);
+        } else if (response.status === 500) {
+            let mesResponse = await response.text();
+            console.log("Error message:", mesResponse);
         }
-    });
+    } catch (error) {
+        console.log("Error:", error);
+    } finally {
+        loadingOverlay.style.display = "none";
+    }
 }
-
-function updateProduct(data) {
-    $.ajax({
-        url: APIProductUrl,
-        type: "PUT",
-        contentType: "application/json",
-        processData: false,
-        cache: false,
-        data: JSON.stringify(data),
-        success: function() {
-            window.location.href = "/seller/product/list/all?page=1&size=2&message=addSucceed";
-        },
-        error: function(e) {
-            console.log("error" + e)
-        }
-    });
-}
-
-
-

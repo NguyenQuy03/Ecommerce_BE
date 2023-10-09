@@ -9,6 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Detail Product</title>
+<script defer src="/buyer/js/detailProductUI.js"></script>
 <script defer src="/buyer/js/detailProduct.js"></script>
 <link rel="stylesheet" href="/buyer/css/detailProductCustom.css">
 </head>
@@ -22,8 +23,8 @@
 					  <div class="carousel-item active">
 						<img class="d-block w-100" th:src="${product.image}" alt="First slide">
 					  </div>
-					  	<div th:if="${product.productItems[0].image} != null" th:each="productItem : ${product.productItems}" class="carousel-item">
-							<img class="w-100 h-100" th:src="${productItem.image}" alt="Image">
+					  	<div th:if="${isVariation}" th:each="productItem : ${product.productItems}" class="carousel-item">
+							<img th:if="${productItem.image} != ''" class="w-100 h-100" th:src="${productItem.image}" alt="Image">
 						</div>
 					</div>
 					<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -48,25 +49,30 @@
 					<small class="pt-1">(50 Reviews)</small>
 				</div>
 				<h3 th:text=*{avgPrice} id="price" class="font-weight-semi-bold mb-4"></h3>
-				<div th:if="${product.variations != null}">
-					<div class="d-flex mb-4" th:each="instance : ${product.variations}">
-						<p class="text-dark font-weight-medium mb-0 mr-3" th:utext="(${#strings.capitalize(instance.key)}) + ': '"></p>
-						<div class="custom-control custom-radio custom-control-inline"
-							th:classappend="'variation-'+${instanceStat.index}" th:each="item : ${instance.value}">
-							<input type="radio" class="custom-control-input" th:id="${instance.key}+'-'+${item}" th:name="${instance.key}">
-							<label class="custom-control-label" th:text="${item}" th:for="${instance.key}+'-'+${item}"></label>
-						</div>
+
+				<div th:if="${product.variations != null}" class="d-flex mb-4 variation-content" th:each="instance : ${product.variations}">
+					<p class="text-dark font-weight-medium mb-0 mr-3" th:utext="(${#strings.capitalize(instance.key)}) + ': '"></p>
+					<div class="custom-control custom-radio custom-control-inline"
+						th:classappend="'variation-'+${instanceStat.index}" th:each="item : ${instance.value}">
+						<input type="radio" class="custom-control-input" th:id="${instance.key}+'-'+${item}" 
+							th:classappend="'variation-option-'+${instanceStat.index}" th:name="${instance.key}">
+						<label class="custom-control-label" th:text="${item}" th:for="${instance.key}+'-'+${item}"></label>
 					</div>
 				</div>
 
+				
 				<div th:each="productItem : ${product.productItems}">
-					<input type="hidden" class="product-item-price" th:value="${productItem.price}">
+					<input type="hidden" class="product-item-id" th:value="${productItem.id}">
+					<input type="hidden" class="product-item-price" th:value="${productItem.intPrice}">
 					<input type="hidden" class="product-item-stock" th:value="${productItem.stock}">
 				</div>
 				
-
+				<div th:each="quantityAddedProduct : ${quantityAddedProducts}">
+					<input type="hidden" class="quantityAddedProduct" th:value="${quantityAddedProduct}">
+				</div>
+				
 				<!-- ADD PRODUCT TO CART-->
-				<form th:action="@{/product}" method="POST">
+				<form id="submit-form" th:action="@{/product}" method="POST" >
 					<div class="d-flex align-items-center mb-4 pt-2">
 						<p class="text-dark font-weight-medium mb-0 mr-3">Quantity:</p>
 						<div class="input-group quantity mr-3" style="width: 180px;">
@@ -76,47 +82,46 @@
 								</button>
 							</div>
 							<input type="number" class="form-control bg-secondary text-center quantity-product" min="1" 
-								value="1" id="quantity" name="quantity" th:max=*{totalStock} th:aria-valuemax=*{totalStock}
+								value="1" id="quantity" name="quantity" th:max=*{totalStock}
 							>
 							<div class="input-group-btn">
 								<button class="btn btn-primary btn-plus">
 									<i class="fa fa-plus"></i>
 								</button>
 							</div>
-
+							
 						</div>
 						<span th:text=*{totalStock} id="stock"></span> <span>&nbsp;pieces available</span>
 					</div>
+
+					<div style="min-height: 35px; min-width: 200px; overflow: hidden;">
+						<div class="mb-3 invalid-feedback over-quantity-feedback" style="font-size: 16px;">
+							<span class="over-quantity-feedback-message"></span>
+						</div>
+						<div class="invalid-feedback variation-error" style="font-size: 16px;">
+							<span> Please select product variation first! </span>
+						</div>
+					</div>
+
 					<div>
-						<button class="btn btn-primary px-3 add-btn" type="submit">
+						<button id="submit-btn" class="btn btn-primary px-3" type="submit">
 							<i class="fa fa-shopping-cart mr-1"></i> Add To Cart
 						</button>
 					</div>
-
-					<input type="hidden" th:field=*{id}>
+					
+					<input type="hidden" id="id" name="id" th:value="${id.toString()}">
 				</form>
 
 				<!-- Modal -->
-				<div th:if="${showModal}" class="modal fade modal-success" th:classappend="${showModal}"
-					id="exampleModalCenter" tabindex="-1" role="dialog"
-					aria-labelledby="exampleModalLabel" aria-hidden="true"
-					style="display: block;">
+				<div class="modal fade modal-announce" id="modal-announce" tabindex="-1" role="dialog"
+					aria-labelledby="modal-announce" aria-hidden="true" style="display: none;">
 					<div class="modal-dialog modal-dialog-centered" role="document">
-						<div class="modal-content model-product ">
-							<i class="fas fa-check-circle model-icon"></i>
-							<div class="modal-body">Item has been added to your shopping cart</div>
-						</div>
-					</div>
-				</div>
-				
-				<!-- Modal Sold Out -->
-				<div class="modal fade" id="model-sold-out" tabindex="-1" role="dialog"
-					aria-labelledby="exampleModalLabel" aria-hidden="true"
-					style="display: none;">
-					<div class="modal-dialog modal-dialog-centered" role="document">
-						<div class="modal-content model-product ">
-							<i class="fas fa-times-circle model-icon" style="color: red!important"></i>
-							<div class="modal-body">The Product has been sold out</div>
+						<div class="modal-content modal-product">
+							<i class="fas fa-check-circle modal-icon"></i>
+							<div class="modal-body">
+								<h5 style="color: #fff; font-size: inherit;" class="modal-accounce-title"></h5>
+							</div>
+							
 						</div>
 					</div>
 				</div>
@@ -140,10 +145,10 @@
 
 					<div class="tab-pane fade show" id="tab-pane-2">
 						<h4 class="mb-3">Product Information</h4>
-						<div th:each="spec : ${product.specification}">
-							<div class="d-flex" th:each="instance : ${spec}">
-								<label class="mr-3" th:utext="${instance.key} + ': '"></label>
-								<p th:utext="${instance.value}"></p>
+						<div th:if="${product.specification != null}">
+							<div class="d-flex" th:each="spec : ${product.specification.entrySet()}">
+								<label style="min-width: 140px;" th:utext="${spec.key}"></label>
+								<p class="text-dark" th:utext="${spec.value}"></p>
 							</div>
 						</div>
 					</div>

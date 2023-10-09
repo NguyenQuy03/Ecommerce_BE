@@ -3,6 +3,8 @@ const imageProduct = $("#imageProduct");
 const rowAdderSpec = $("#row-adder-spec")
 const specEl = $("#specification");
 
+const imageFiles = document.querySelectorAll(".variation-input-file");
+
 var reader = new FileReader();
 
 let optionContentEl;
@@ -27,7 +29,7 @@ rowAdderSpec.click(function (e) {
 function addSpecRow(){
     newSpecRow =
         '<div class="spec-el spec-row col-sm-10 d-flex fit-spec-content">' +
-            '<input required type="text" maxlength="14" class="form-control" class="spec-key input-group-text">' +
+            '<input required type="text" maxlength="18" class="form-control" class="spec-key input-group-text">' +
             '<input required type="text" maxlength="24" class="form-control" class="spec-value form-control">' +
             '<button class="delete-spec-btn btn btn-danger" type="button">' +
                 '<i class="bi bi-trash"></i>' +
@@ -66,7 +68,7 @@ function addVariationContent() {
                                 '<div class="tab-pane fade pt-3 active show mt-0" id="all-product">' +
                                     '<div class="card"><table class="table table-bordered">' +
                                             '<thead><tr>' +
-                                                '<th scope="col" class="variation-key-title" style="width: 155px;">Variation 1</th>' +
+                                                '<th scope="col" class="variation-key-title text-center" style="width: 155px;">Variation 1</th>' +
                                                 '<th scope="col">Price</th>' +
                                                 '<th scope="col">Stock</th></thead>' +
                                             '<tbody class="variation-list-body"></tbody></table></div></div></div></div>'
@@ -137,7 +139,9 @@ function handleOptionEl(inputEl) {
             }
 
             if (index === variationOptions.length - 1) {
-                addOptionRow();
+                if(option.value.trim().length > 0) {
+                    addOptionRow();
+                }
                 if(variationOptions.length > 1) addVariationListRow();
             }
 
@@ -165,11 +169,11 @@ function addVariationListRow() {
                              '</div>' +
                              `<img class="img-fluid preview-image-item variation-image"` +
                               `th:src="'data:image/png;base64,' ">` +
-                             `<input id="variation-input-file" class="form-control" style="width: 100%;" type="file" accept="image/png, image/jpeg"` +
-                                `onchange="handleImagePreview(this)" ></td>` +
+                             `<input class="variation-input-file form-control" class="form-control" style="width: 100%;" type="file" accept="image/png, image/jpeg"` +
+                                `onchange="handleImagePreview(this)" required></td>` +
                          '<td ><div class="d-flex align-center"><span class="p-2">$</span>' +
                                  `<input class="form-control variation-price" type="number" min="1" max="9999"  step="any" required/></div></td>` +
-                         `<td><input type="number" class="form-control variation-stock" min="1" max="1000" required /></td>` +
+                         `<td><input type="number" class="form-control variation-stock" min="1" max="10000" required /></td>` +
             '</tr>'
 
     $(".variation-list-body").append(newVariationListRow);
@@ -183,7 +187,6 @@ function handleVariationKey(inputEl){
         $(".variation-key-title")[0].textContent = inputEl.value;
     }
 }
-
     /*  Handle Image Preview */
 function handleImagePreview(imageFile) {
     showPreviewImage(imageFile, imageFile.parentElement.getElementsByTagName('img')[0])

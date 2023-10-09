@@ -34,24 +34,30 @@
                 <table class="table table-borderless datatable">
                     <thead>
                         <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Buyer</th>
-                        <th scope="col">Product</th>
-                        <th scope="col">Total Price</th>
-                        <th scope="col">Time</th>
-                      </tr>
+                            <th class="text-center" scope="col">Product</th>
+                            <th class="text-center" scope="col">Total Price</th>
+                            <th class="text-center" scope="col">Status</th>
+                            <th class="text-center" scope="col">Time</th>
+                        </tr>
                     </thead>
-                    <tbody>
-                        <tr th:each="order : *{listResult}">
-                        <th scope="row" th:text="${order.id}" class="crop"></th>
-                        <td th:text="${order.cart.account.username}"></td>
-                        <td>
-                        <a th:href="@{/product/detail/{id}(id=${order.product.id})}"
-                        	th:text="${order.product.name}"
-                        ></a></td>
-                        <td th:text="'$' + ${order.quantity} * ${order.product.price}"></td>
-                        <td th:text="${order.createdDate}"></td>
-                      </tr>
+                    <tbody class="text-center">
+                        <tr th:each="orderItem : *{listResult}">
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <div>
+                                        <a class="crop" th:href="@{/product/detail/{id}(id=${orderItem.productItem.product.id})}" th:text="${orderItem.productItem.product.name}"></a>
+                                        <img style="max-width: 80px;" th:src="${orderItem.productItem.image}" alt="Product image">
+                                    </div>
+                                    <div>
+                                        <p th:text="(${#strings.capitalize(orderItem.productItem.variationName)})"></p>
+                                        <p th:text="(${#strings.capitalize(orderItem.productItem.variationValue)})"></p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td th:text="${orderItem.totalPrice}"></td>
+                            <td th:text="${orderItem.status}"></td>
+                            <td th:text="${orderItem.createdDate}"></td>
+                        </tr>
                     </tbody>
                 </table>
 
