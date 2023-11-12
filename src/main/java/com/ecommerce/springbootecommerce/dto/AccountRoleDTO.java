@@ -6,10 +6,10 @@ import com.ecommerce.springbootecommerce.entity.RoleEntity;
 import lombok.Data;
 
 @Data
-public class AccountRoleDTO {
+public class AccountRoleDTO extends BaseDTO<AccountRoleDTO>{
     private Long accountId;
     private String roleCode;
     
-    private AccountEntity accountEntity;
-    private RoleEntity roleEntity;
+    private AccountEntity account;
+    private RoleEntity role;
 }

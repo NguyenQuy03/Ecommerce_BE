@@ -2,9 +2,11 @@ package com.ecommerce.springbootecommerce.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -13,7 +15,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Product")
+@Table(name = "Product", indexes = {
+    @Index(columnList = "category_id"),
+    @Index(columnList = "name")
+})
 @Getter
 @Setter
 @AllArgsConstructor
@@ -21,13 +26,13 @@ import lombok.Setter;
 public class ProductEntity extends BaseEntity{
     
     @NotNull
-    @Column(columnDefinition = "varchar(100)")
+    @Column(columnDefinition = "NVARCHAR(100)")
     private String name;
     
     @NotNull
     private String image;
     
-    @Column(columnDefinition = "varchar(max)")
+    @Column(columnDefinition = "NVARCHAR(max)")
     private String description;
     
     @NotNull
@@ -45,4 +50,7 @@ public class ProductEntity extends BaseEntity{
     @OneToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private CategoryEntity category;
+
+    @Transient
+    private Long totalSold;
 }

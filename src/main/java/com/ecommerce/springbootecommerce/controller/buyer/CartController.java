@@ -1,6 +1,10 @@
 package com.ecommerce.springbootecommerce.controller.buyer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,14 +14,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ecommerce.springbootecommerce.constant.RedisConstant;
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.constant.StatusConstant;
+import com.ecommerce.springbootecommerce.constant.enums.order.OrderStatus;
 import com.ecommerce.springbootecommerce.dto.CartDTO;
-import com.ecommerce.springbootecommerce.dto.CartItemDTO;
 import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
 import com.ecommerce.springbootecommerce.dto.OrderDTO;
-import com.ecommerce.springbootecommerce.service.ICartItemService;
+import com.ecommerce.springbootecommerce.dto.OrderItemDTO;
 import com.ecommerce.springbootecommerce.service.ICartService;
 import com.ecommerce.springbootecommerce.service.IOrderService;
+import com.ecommerce.springbootecommerce.service.IVoucherService;
 import com.ecommerce.springbootecommerce.util.RedisUtil;
 
 
@@ -28,47 +33,52 @@ public class CartController {
     private IOrderService orderService;
     
     @Autowired
-    private RedisUtil redisUtil;
-
-    @Autowired
     private ICartService cartService;
 
     @Autowired
-    private ICartItemService cartItemService;
+    private IVoucherService voucherService;
+    
+    @Autowired
+    private RedisUtil redisUtil;
     
     @GetMapping(value="cart")
-    public String cart(
+    public String displayCart(
             Model model
     ) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CartDTO cart = cartService.findOneByAccountId(userDetails.getId());
 
-        List<CartItemDTO> cartItems = cartItemService.findAllByCartId(cart.getId());
-        
-        // StringBuilder productNotAvailable = new StringBuilder();
-        
-        // if(cartItems != null) {
-        //     for(CartItemDTO item : cartItems) {
-        //         String productStatus = item.getProductItem().getStatus();
+        List<OrderDTO> orders = orderService.findAllByCartIdAndStatus(cart.getId(), OrderStatus.PENDING);
 
-        //         if (productStatus.equals(SystemConstant.REMOVED_PRODUCT)
-        //                 || productStatus.equals(SystemConstant.INACTIVE_PRODUCT)
-        //                 || productStatus.equals(SystemConstant.SOLD_OUT_PRODUCT))
-        //         {
-        //             productNotAvailable.append(item.getProductItem().getProductId() + ", ");
-        //             cartItems.remove(item);
-        //             cartItemService.delete(item.getId());
-        //         }
-        //     }
-        // }
-        
-        // if (!productNotAvailable.isEmpty()) {
-        //     String s = SystemConstant.PRODUCT_NOT_AVAILABLE + ": " + productNotAvailable.substring(0, productNotAvailable.length() - 2);
-        //     model.addAttribute("message", s);
-        // }
+        Map<String, String> map = new HashMap<>();
 
-        model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, Integer.parseInt((String) redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + userDetails.getUsername(), RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER)) );
-        model.addAttribute("cartItems", cartItems);
+        for(OrderDTO order : orders) {
+            // List<VoucherDTO> vouchers = voucherService.findAllByAccountIdAndStatus(order.getAccount().getId(), StatusConstant.STRING_ACTIVE_STATUS);
+        }
+
+        // Handle Inactive Product
+        if(orders != null) {
+            List<Long> inActiveCartItem = new ArrayList<>();
+            List<String> inActiveStatus = Arrays.asList(StatusConstant.REMOVED_STATUS, StatusConstant.STRING_INACTIVE_STATUS, StatusConstant.SOLD_OUT_STATUS);
+            for(OrderDTO order : orders) {
+                for(OrderItemDTO orderItem : order.getOrderItems()) {
+                    String productStatus = orderItem.getProductItem().getStatus();
+
+                    if (inActiveStatus.contains(productStatus)) {
+                        inActiveCartItem.add(orderItem.getProductItem().getId());
+                    }
+                }
+            }
+            model.addAttribute("inActiveCartItem", inActiveCartItem);
+        }
+
+        model.addAttribute(
+            RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER,
+            Integer.parseInt((String) redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + userDetails.getUsername(),
+            RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER))
+        );
+
+        model.addAttribute("orders", orders);
         
         return "buyer/cart";
     }
@@ -81,15 +91,9 @@ public class CartController {
     ) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        List<OrderDTO> orders = orderService.findAllByAccountIdAndStatus(userDetails.getId(), SystemConstant.DELIVERED_STATUS, page, size);
+        List<OrderDTO> orders = orderService.findAllByAccountIdAndStatus(userDetails.getId(), OrderStatus.DELIVERED, page, size);
         
-        long quantityOrder = orders.size();
-
-        Integer totalPage = (int) Math.ceil((double) quantityOrder / size);
-
-        if(quantityOrder == 0) {
-            model.addAttribute("notOrderYet", true);
-        }
+        Integer totalPage = (int) Math.ceil((double) orders.size() / size);
 
         OrderDTO dto = new OrderDTO();
         dto.setTotalPage(totalPage);
@@ -98,8 +102,11 @@ public class CartController {
         dto.setSize(size);
 
         model.addAttribute("dto", dto);
-        model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, Integer.parseInt((String) redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + userDetails.getUsername(), RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER)) );
-
+        model.addAttribute(
+            RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER,
+            Integer.parseInt((String) redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + userDetails.getUsername(),
+            RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER))
+        );
         return "buyer/purchase";
     }
 }

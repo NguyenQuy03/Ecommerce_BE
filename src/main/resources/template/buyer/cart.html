@@ -4,75 +4,103 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{layout/buyerLayout/buyerLayoutWithoutSideBar}">
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cart</title>
-<script defer src="/buyer/js/cartUI.js"></script>
-<script defer src="/buyer/js/cart.js"></script>
-<link rel="stylesheet" href="/buyer/css/cart.css">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Cart</title>
+	<link rel="stylesheet" href="/buyer/css/cart.css">
+	<link rel="stylesheet" href="/common/css/spinAndModal.css">
+	<script defer src="/common/js/handleAddOrEdit.js"></script>
+	<script defer src="/buyer/js/cart/cartUI.js"></script>
+	<script defer src="/buyer/js/cart/cart.js"></script>
 </head>
 <body>
 	<!-- Cart Start -->
 	<div class="container-fluid pt-5" layout:fragment="content">
 
 		<div class="row px-xl-5">
-			<div class="col-lg-12 table-responsive mb-5">
-				<table class="table table-bordered text-center mb-0">
-					<thead class="bg-secondary text-dark">
-						<tr>
-							<th><input type="checkbox" id="check-all"></th>
-							<th>Products</th>
-							<th>Price</th>
-							<th>Quantity</th>
-							<th>Total</th>
-							<th>Remove</th>
-						</tr>
-					</thead>
-					<tbody class="align-middle">
-						<tr th:each="item, index : ${cartItems}">
-							<td><input class="check-box-item product-item-id" type="checkbox" th:id="${item.productItem.id}" /></td>
-							<td class="align-middle d-flex justify-content-around align-items-center" >
+			<div id="order-container" class="col-lg-12 mb-5">
+				<div class="order-header bg-secondary text-dark">
+					<div class="row header-inner d-flex justify-content-between text-center">
+						<div class="d-flex col-4">
+							<input type="checkbox" id="check-all">
+							<h6 class="mx-4">Products</h6>
+						</div>
+						<h6 class="col-2">Price</h6>
+						<h6 class="col-2">Quantity</h6>
+						<h6 class="col-2">Total</h6>
+						<h6 class="col-2">Remove</h6>
+					</div>
+				</div>
+
+				<div class="order-content mt-4" th:each="order : ${orders}">
+					<div class="row order-shop d-flex align-items-center">
+						<div class="col-4">
+							<input class="check-box-list" type="checkbox"/>
+							<i class="fas fa-store mx-4"></i>
+							<a th:href="@{/shop/{name}(name=${order.account.username})}" th:text="${#strings.capitalize(order.account.username)}"
+								style="color: var(--primary);"
+							></a>
+						</div>
+					</div>
+					<div class="row order-item d-flex justify-content-between align-items-center text-center" th:each="item, index : ${order.orderItems}">
+						<div class="d-flex col-4">
+							<input class="check-box-item product-item-id" type="checkbox" th:id="${item.productItem.id}" />
+							<div class="align-middle d-flex justify-content-around align-items-center mx-4" >
 								<a th:href="@{/product/detail/{id}(id=${item.productItem.product.id})}">
 									<img class="img-fluid w-100 image-productItem" th:src="${item.productItem.image}"
 									style="max-width: 100px;" alt="Background image" />
 								</a>
-								<div th:text="${item.productItem.product.name}" class="fit-content"></div>
-								<div class="variation" style="min-width: 40px;">
+								<div th:text="${item.productItem.product.name}" class="fit-content mx-3"></div>
+								<div class="variation text-center" style="min-width: 40px;">
 									<div th:text="${#strings.capitalize(item.productItem.variationName)}"></div>
 									<div th:text="${item.productItem.variationValue}"></div>
 								</div>
-							</td>
-							<td class="align-middle " th:text="${item.productItem.price}"></td>
-							<td class="align-middle">
-								<input class="price-el" type="hidden"th:value="${item.productItem.price}"/>
-								<div class="input-group quantity mx-auto" style="width: 130px;">
-									<div class="input-group-btn">
-										<button class="btn btn-sm btn-primary btn-minus">
-											<i class="fa fa-minus"></i>
-										</button>
-									</div>
-									<input type="number" class="form-control quantity-el form-control-sm bg-secondary text-center" min="0"
-										th:value="${item.quantity}" th:max="${item.productItem.stock}"
-										th:attr="oninput=|changeTotalPriceValue(${index.index})|"
-									>
-									<div class="input-group-btn">
-										<button class="btn btn-sm btn-primary btn-plus">
-											<i class="fa fa-plus"></i>
-										</button>
-									</div>
+							</div>
+						</div>
+						<div class="align-middle col-2" th:text="${item.productItem.intPrice}"></div>
+						<div class="align-middle col-2">
+							<input class="price-el" type="hidden"th:value="${item.productItem.price}"/>
+							<div class="input-group quantity mx-auto" style="width: 130px;">
+								<div class="input-group-btn">
+									<button class="btn btn-sm btn-primary btn-minus">
+										<i class="fa fa-minus"></i>
+									</button>
 								</div>
-							</td>
-							<td class="align-middle">
-								<input class="total-price-el" value="" disabled="disabled" /></td>
-							<td class="align-middle">
-								<button th:id="${item.id}" class="btn btn-sm btn-primary btn-delete">
-									<i class="fa fa-times"></i>
-								</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+								<input type="number" class="form-control quantity-el form-control-sm bg-secondary text-center" min="0"
+									th:value="${item.quantity}" th:max="${item.productItem.stock}"
+									th:attr="oninput=|changeTotalPriceValue(${index.index})|"
+								>
+								<div class="input-group-btn">
+									<button class="btn btn-sm btn-primary btn-plus">
+										<i class="fa fa-plus"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+						<div class="align-middle col-2">
+							<input class="total-price-el" value="" disabled="disabled" /></div>
+						<div class="align-middle col-2">
+							<button th:id="${item.id}" class="btn btn-sm btn-primary btn-delete">
+								<i class="fa fa-times"></i>
+							</button>
+						</div>
+
+					</div>
+					<div class="row d-flex align-items-center">
+						<div class="col-6">
+						</div>
+						<div class="col-6 d-flex justify-content-around mb-4">
+							<div class="d-flex align-items-center" style="color: var(--primary);">
+								<i class="fas fa-receipt mx-3" style="font-size: 22px;"></i>
+								<h6 class="mb-0">Shop Voucher</h6>
+							</div>
+							<div>
+								<input class="form-control shop-voucher" type="text" placeholder="Enter voucher code">
+							</div>
+						</div>
+					</div>
+				</div>
 				<!-- Cart empty-->
 				<div th:if="${quantityOrder == 0}" class="d-flex justify-content-center align-items-center flex-column">
 					<h3 class="mt-5 ">Your shopping cart is empty</h3>
@@ -100,39 +128,65 @@
 				</div>
 				
 				<!-- Modal Announcement-->
-				<div class="modal modal-announce fade align-items-center fade"
+				<div id="modal-announce" class="modal modal-announce fade align-items-center fade"
 					tabindex="-1" role="dialog" aria-labelledby="modalLabel"
 					aria-hidden="true" style="display:none; background-color: rgba(0, 0, 0, 0.6)">
 					<div class="modal-dialog" role="document">
 						<div class="modal-content">
 							<div class="modal-header d-flex">
-								<h5 class="modal-accounce-title" style="color: var(--primary)">Your order is delivered</h5>
+								<h5 class="modal-accounce-title" style="color: var(--primary)"></h5>
 							</div>
 							<div class="col-12 modal-footer d-flex justify-content-between">
-								<button type="button" class="btn btn-secondary close-announce-btn"
+								<button type="button" class="btn btn-secondary modal-accounce-close-btn"
 									data-dismiss="modal" style="width: 100%;">Close</button>
 							</div>
 						</div>
 					</div>
 				</div>
+
+				<!-- LOADING SECTION -->
+				<div id="loading-overlay" style="display: none;">
+					<div class="d-flex justify-content-center align-items-center h-100">
+						<div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
+							<span class="sr-only"></span>
+						</div>
+					</div>
+				</div>
 								
 			</div>
-			<div class="cart-checkout col-12">
-				<div class="card">
-					<div class="card-header bg-secondary border-0">
-						<h4 class="font-weight-semi-bold m-0">Cart Summary</h4>
-					</div>
-					<div class="card-footer border-secondary bg-transparent col-12">
-						<div class="d-flex justify-content-between mt-2 col-12">
-							<h5 class="font-weight-bold">Total</h5>
-							<h5 id="summary-price" class="font-weight-bold">$0.00</h5>
-						<button class="btn-purchase btn btn-block btn-primary my-3 py-3 col-4" disabled>Purchase</button>
-						<input type="hidden" th:if="${quantityOrder != 0}" th:value="${cartItems[0].cart.id}" id="cartId"/>
+
+			<!-- CART SUMMARY -->
+			<div class="cart-checkout col-lg-12">	
+				<div class="card row d-flex align-items-center flex-row">
+					<div class="d-flex flex-column" style="width: 100%;">
+						<div class="card-header bg-secondary border-0 p-0">
+							<div class="row shop-voucher d-flex align-items-center">
+								<div class="col-6"></div>
+								<div class="col-6 d-flex justify-content-around" style="padding: 10px 28px;">
+									<div class="d-flex align-items-center" style="color: var(--primary);">
+										<i class="fas fa-receipt mx-3" style="font-size: 22px;"></i>
+										<h6 class="mb-0">Platform Voucher</h6>
+									</div>
+									<div>
+										<input id="platform-voucher" class="form-control" type="text" placeholder="Enter voucher code">
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="card-footer border-secondary bg-transparent col-12">
+							<div class="d-flex justify-content-between mt-2 col-12" style="padding: 10px 54px;">
+								<h5 class="font-weight-bold">Total:</h5>
+								<h5 id="summary-price" class="font-weight-bold">$0.00</h5>
+							<button class="btn-check-out btn btn-block btn-primary my-3 py-3 col-4" disabled>Check Out</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		</div>
+
+		<input type="hidden" th:value="${inActiveCartItem}" id="inActiveCartItem"/>
 	</div>
 	
 	<!-- Cart End -->

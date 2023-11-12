@@ -1,5 +1,7 @@
 package com.ecommerce.springbootecommerce.api.buyer;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,29 +12,35 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.constant.StatusConstant;
+import com.ecommerce.springbootecommerce.constant.enums.order.OrderStatus;
+import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.CartDTO;
-import com.ecommerce.springbootecommerce.dto.CartItemDTO;
 import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
+import com.ecommerce.springbootecommerce.dto.OrderDTO;
 import com.ecommerce.springbootecommerce.dto.OrderItemDTO;
-import com.ecommerce.springbootecommerce.dto.product.ProductItemDTO;
-import com.ecommerce.springbootecommerce.service.ICartItemService;
+import com.ecommerce.springbootecommerce.dto.ProductItemDTO;
+import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.ICartService;
 import com.ecommerce.springbootecommerce.service.IOrderItemService;
+import com.ecommerce.springbootecommerce.service.IOrderService;
 import com.ecommerce.springbootecommerce.service.IProductItemService;
 
 @RestController
 @RequestMapping("/api/buyer/cart")
 public class CartAPI {
-    
-    @Autowired
-    private ICartItemService cartItemService;
 
     @Autowired
     private IProductItemService productItemService;
     
     @Autowired
+    private IAccountService accountService;
+    
+    @Autowired
     private ICartService cartService;
+
+    @Autowired
+    private IOrderService orderService;
 
     @Autowired
     private IOrderItemService orderItemService;
@@ -41,20 +49,34 @@ public class CartAPI {
     public ResponseEntity<String> add(
             @RequestBody ProductItemDTO dto
     ) {
-       CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-       
-       CartDTO cartDTO = cartService.findOneByAccountId(userDetails.getId());
-       ProductItemDTO productItemDTO = productItemService.findOneById(dto.getId());
-
-       CartItemDTO cartItemDTO = CartItemDTO.builder()
-                                .cart(cartDTO)
-                                .username(userDetails.getUsername())
-                                .productItem(productItemDTO)
-                                .quantity(dto.getQuantity())
-                                .build();
-
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
-            cartItemService.save(cartItemDTO);
+            CartDTO cartDTO = cartService.findOneByAccountId(userDetails.getId());
+            ProductItemDTO productItemDTO = productItemService.findOneById(dto.getId());
+            AccountDTO accountDTO = accountService.findById(productItemDTO.getProduct().getAccount().getId());
+    
+            OrderDTO orderDTO = orderService.findOneByCartIdAndAccountIdAndStatus(cartDTO.getId(), accountDTO.getId(), OrderStatus.PENDING);
+            var orderItemDTO = OrderItemDTO.builder()
+                                    .orders(orderDTO)
+                                    .productItem(productItemDTO)
+                                    .quantity(dto.getQuantity())
+                                    .curPrice(productItemDTO.getPrice())
+                                    .status(OrderStatus.PENDING)
+                                    .build();
+
+            if (orderDTO == null) {
+                orderDTO = OrderDTO.builder()
+                                .account(accountDTO)
+                                .status(OrderStatus.PENDING)
+                                .cart(cartDTO)
+                                .build();
+                OrderDTO newOrderDTO = orderService.save(orderDTO);
+
+                orderItemDTO.setOrders(newOrderDTO);
+            }
+
+            orderItemService.save(orderItemDTO);
+
             return ResponseEntity.ok("Item has been added to your shopping cart");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error add cart item");
@@ -70,7 +92,7 @@ public class CartAPI {
 
                 /* HANDLE IF PRODUCT ITEM IS NOT AVAILABLE */
             String productItemStatus = orderItem.getProductItem().getStatus();
-            if (productItemStatus.equals(SystemConstant.STRING_INACTIVE_STATUS) || productItemStatus.equals(SystemConstant.REMOVED_STATUS)) {
+            if (productItemStatus.equals(StatusConstant.STRING_INACTIVE_STATUS) || productItemStatus.equals(StatusConstant.REMOVED_STATUS)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product is not avaialable now");
             }
 
@@ -78,14 +100,14 @@ public class CartAPI {
             CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             CartDTO cart = cartService.findOneByAccountId(userDetails.getId());
 
-            CartItemDTO cartItem = CartItemDTO.builder()
-                                    .cart(cart)
-                                    .productItem(orderItem.getProductItem())
-                                    .quantity(1)
-                                    .username(userDetails.getUsername())
-                                    .build();
+            // CartItemDTO cartItem = CartItemDTO.builder()
+            //                         .cart(cart)
+            //                         .productItem(orderItem.getProductItem())
+            //                         .quantity(1)
+            //                         .username(userDetails.getUsername())
+            //                         .build();
 
-            cartItemService.save(cartItem);
+            // cartItemService.save(cartItem);
 
             return ResponseEntity.ok("Success");
         } catch (Exception e) {
@@ -95,14 +117,29 @@ public class CartAPI {
     
     @DeleteMapping
     public ResponseEntity<String> delete(
-        @RequestBody Long cartItemId
+        @RequestBody Long orderItemId
     ) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        CartDTO cartDTO = cartService.findOneByAccountId(userDetails.getId());
+        
         try {
-            cartService.delete(cartItemId, cartDTO.getId(), userDetails.getUsername());
-            return ResponseEntity.ok("Item deleted successfully");
+            CartDTO cartDTO = cartService.findOneByAccountId(userDetails.getId());
+            List<OrderDTO> orderDTOs = orderService.findAllByCartIdAndAndStatus(cartDTO.getId(), OrderStatus.PENDING);
+    
+            OrderItemDTO orderItemDTO = orderItemService.findOneByIdAndStatus(orderItemId, OrderStatus.PENDING);
+            
+            if(orderItemDTO == null || orderDTOs.size() == 0) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Order item is not exist");
+            }
+
+            for(OrderDTO orderDTO : orderDTOs) {
+                if(orderDTO.getId().equals(orderItemDTO.getOrders().getId())) {
+                    orderItemService.deleteById(orderItemId);
+                    return ResponseEntity.ok("Item deleted successfully");
+                }
+            }
+            
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You do not have permission to do this action");
+
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error delete Item");
         }

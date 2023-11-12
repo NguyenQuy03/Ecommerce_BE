@@ -22,8 +22,8 @@
 						<tr>
 							<th scope="col">Preview</th>
 							<th scope="col">Product</th>
-							<th scope="col">Price</th>
-							<th scope="col">Sold</th>
+							<th scope="col">Average Price</th>
+							<th scope="col">Total Sold</th>
 							<th scope="col">Revenue</th>
 						</tr>
 					</thead>
@@ -35,12 +35,12 @@
 								</a>
 							</th>
 							<td>
-								<a th:href="@{/product/detail/{id}(id=${item.id})}" class="fw-bold" th:text="${item.product.name}"></a>
+								<a th:href="@{/product/detail/{id}(id=${item.id})}" class="fw-bold" th:text="${item.name}"></a>
 							</td>
 
-							<td th:text="${item.price}"></td>
-							<td class="fw-bold" th:text="${item.sold}"></td>
-							<td th:text="'$' + ${item.sold} * ${item.price}"></td>
+							<td th:text="${item.avgPrice}"></td>
+							<td class="fw-bold" th:text="${item.totalSold}"></td>
+							<td th:text="'$' + ${item.revenue}"></td>
 						</tr>
 					</tbody>
 				</table>

@@ -4,7 +4,9 @@ import com.ecommerce.springbootecommerce.dto.CartDTO;
 
 public interface ICartService {
     void save(CartDTO cartDTO);
-    void delete(Long cartItemId, Long cartId, String username);
+    
+    void delete(Long orderItemId, Long cartId);
+
     CartDTO findOneById(Long id);
 
     CartDTO findOneByAccountId(Long id);

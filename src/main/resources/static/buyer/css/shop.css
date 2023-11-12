@@ -1,0 +1,20 @@
+
+.shop-info-container {
+	justify-content: space-evenly;
+	width: 100%;
+}
+
+.shop-info-thumbnail {
+	background-color: var(--primary);
+	min-width: 400px;
+	min-height: 160px;
+}
+
+.shop-info-interaction {
+	width: 100%;
+}
+
+.shop-info-interaction button {
+	min-width: 160px;
+	margin: 4px 0 4px 0;
+}

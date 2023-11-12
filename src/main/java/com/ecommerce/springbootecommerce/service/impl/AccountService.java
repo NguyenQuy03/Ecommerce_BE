@@ -23,6 +23,7 @@ import com.ecommerce.springbootecommerce.api.authenticate.payload.request.Regist
 import com.ecommerce.springbootecommerce.config.AuthenticationConfig;
 import com.ecommerce.springbootecommerce.constant.JWTConstant;
 import com.ecommerce.springbootecommerce.constant.RedisConstant;
+import com.ecommerce.springbootecommerce.constant.StatusConstant;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
@@ -37,7 +38,7 @@ import com.ecommerce.springbootecommerce.repository.RoleRepository;
 import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.util.JwtUtil;
 import com.ecommerce.springbootecommerce.util.RedisUtil;
-import com.ecommerce.springbootecommerce.util.converter.AccountConverter;
+import com.ecommerce.springbootecommerce.util.converter.account_role.AccountConverter;
 
 @Service
 public class AccountService implements IAccountService{
@@ -100,7 +101,7 @@ public class AccountService implements IAccountService{
             .username(request.getUsername())
             .fullName(request.getFullName())
             .email(request.getEmail())
-            .status(SystemConstant.ACTIVE_STATUS)
+            .status(StatusConstant.BOOLEAN_ACTIVE_STATUS)
             .password(authenticationConfig.passwordEncoder().encode(request.getPassword()))
             .build();
 
@@ -121,6 +122,7 @@ public class AccountService implements IAccountService{
         } catch (Exception e) {
             cartRepo.delete(cart);
             accountRepo.delete(account);
+            throw new RuntimeException("Error register");
         }
     }
     @Override
@@ -147,7 +149,7 @@ public class AccountService implements IAccountService{
 
     @Override
     public void update(AccountDTO accountDTO) {
-        accountDTO.setStatus(SystemConstant.ACTIVE_STATUS);
+        accountDTO.setStatus(StatusConstant.BOOLEAN_ACTIVE_STATUS);
         AccountEntity preAccountEntity = accountRepo.findById(accountDTO.getId())
             .orElseThrow(() -> new IllegalArgumentException("Account is not exist"));
 

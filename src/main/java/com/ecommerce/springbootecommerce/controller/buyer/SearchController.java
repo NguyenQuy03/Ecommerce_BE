@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ecommerce.springbootecommerce.constant.RedisConstant;
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
+import com.ecommerce.springbootecommerce.constant.StatusConstant;
+import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IProductService;
 import com.ecommerce.springbootecommerce.util.RedisUtil;
 
@@ -40,10 +40,6 @@ public class SearchController {
 
         long quantityProduct = productService.countAllByCategoryId(id);
         
-        if (quantityProduct == 0) {
-            return "buyer/searchEmpty";
-        }
-
         Integer totalPage = (int) Math.ceil((double) quantityProduct / size);
         List<ProductDTO> products = productService.findAllByCategoryId(id, pageable);
 
@@ -71,18 +67,11 @@ public class SearchController {
         long quantityProduct = 0L;
         List<ProductDTO> products;
         if (keyword.equals("")) {
-            quantityProduct = productService.countAllByStatus(SystemConstant.STRING_ACTIVE_STATUS);
-            products = productService.findAllByStatus(SystemConstant.STRING_ACTIVE_STATUS, pageable);
-        } else {
-            quantityProduct = productService.countByNameContains(keyword);
-            
-            if (quantityProduct == 0) {
-                return "buyer/searchEmpty";
-            } else {
-                products = productService.findAllByNameContains(keyword, pageable);
-            }
+            quantityProduct = productService.countAllByStatus(StatusConstant.STRING_ACTIVE_STATUS);
+            products = productService.findAllByStatus(StatusConstant.STRING_ACTIVE_STATUS, pageable);
         }
 
+        products = productService.findAllByNameContains(keyword, pageable);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Integer totalPage = (int) Math.ceil((double) quantityProduct / size);

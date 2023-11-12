@@ -1,12 +1,10 @@
 package com.ecommerce.springbootecommerce.entity;
 
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import groovyjarjarantlr4.v4.runtime.misc.NotNull;

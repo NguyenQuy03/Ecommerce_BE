@@ -1,5 +1,6 @@
 package com.ecommerce.springbootecommerce.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -14,6 +15,8 @@ import com.ecommerce.springbootecommerce.entity.ProductEntity;
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     // FIND-ONE
     Optional<ProductEntity> findOneByIdAndAccountId(long id, long accountId);
+
+    List<ProductEntity> findAllByAccountIdAndStatus(long accountId, String status);
 
     // FIND ALL
     Slice<ProductEntity> findAllByStatus(String status, Pageable pageable);
@@ -36,8 +39,11 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     );
 
     @Query(
-        value = "SELECT product.id, SUM(sold) as totalSold from product inner join product_item on product.id = product_item.product_id" +
-                " WHERE product.account_id = 2 GROUP BY product.id ORDER BY totalSold DESC",
+        value = "SELECT p.*, subquery.totalSold FROM product AS p" +
+                " INNER JOIN ( SELECT TOP 4 product.id, SUM(sold) as totalSold FROM product" + 
+                " INNER JOIN product_item ON product.id = product_item.product_id" +
+                " WHERE product.account_id = 2 GROUP BY product.id ORDER BY SUM(sold) DESC" + 
+                " ) AS subquery ON p.id = subquery.id;",
         countQuery = "SELECT COUNT(*) FROM (SELECT product.id FROM product inner join product_item on product.id = product_item.product_id"+
                 " WHERE product.account_id = 2 GROUP BY product.id) as totalItem",
         nativeQuery = true
@@ -50,5 +56,4 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     long countAllByStatus(String status);
     long countAllByCategoryId(long categoryId);
     long countByNameContains(String keyword);
-
 }

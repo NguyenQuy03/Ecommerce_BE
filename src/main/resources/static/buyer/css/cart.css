@@ -42,10 +42,27 @@ input[type="checkbox"] {
 	color: #00bfa5;
 }
 
-.fit-content{
-	max-width: 200px;
-	overflow: hidden;
-	-webkit-line-clamp: 2;
-	display: -webkit-box;
-	-webkit-box-orient: vertical;
+.header-inner {
+	padding: 20px;
+	margin: 20px 30px;
+	height: 3.75rem;
+}
+
+.order-content {
+	box-shadow: 0 1px 1px 0 rgba(0,0,0,.05);
+    border-radius: 0.125rem;
+	background-color: #f9f9f9;
+}
+
+.order-shop {
+	height: 3.75rem;
+    border-bottom: 1px solid rgba(0,0,0,.09);
+    padding: 20px;
+	margin: 20px 30px;
+}
+
+.order-item {
+    padding: 20px;
+	margin: 20px 30px;
+	border-bottom: 1px solid rgba(0,0,0,.09);
 }

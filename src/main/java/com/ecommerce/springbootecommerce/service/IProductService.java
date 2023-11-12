@@ -4,7 +4,8 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
-import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
+import com.ecommerce.springbootecommerce.dto.BaseDTO;
+import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.entity.ProductEntity;
 
 public interface IProductService {
@@ -24,8 +25,10 @@ public interface IProductService {
 
     List<ProductDTO> findAllByNameContains(String keyword, Pageable pageable);
     
-    ProductDTO findAllByAccountIdAndStatus(long id, String status, int page, int size);
-    ProductDTO findAllByAccountIdAndProductStatusAndProductItemStatus(long accountId, String productStatus, String productItemStatus, int page, int size);
+    List<ProductDTO> findAllByAccountIdAndStatus(long id, String status);
+
+    BaseDTO<ProductDTO> findAllByAccountIdAndStatus(long id, String status, int page, int size);
+    BaseDTO<ProductDTO> findAllByAccountIdAndProductStatusAndProductItemStatus(long accountId, String productStatus, String productItemStatus, int page, int size);
 
     ProductDTO findTopSelling(String sellerName);
 

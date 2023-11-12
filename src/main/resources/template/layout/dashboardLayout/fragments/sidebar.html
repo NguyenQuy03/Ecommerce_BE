@@ -15,51 +15,72 @@
 			th:if="${authority.getAuthority().startsWith('ROLE_SELLER')}"
 			class="sidebar-nav" id="sidebar-nav">
 
-			<li class="nav-item"><a class="nav-link"
-				th:href="@{/seller/recentSales}"> <i class="bi bi-journal-text"></i><span>Recent
-						Sales</span>
-			</a></li>
+			<li class="nav-item">
+				<a class="nav-link" th:href="@{/seller/recentSales}">
+					<i class="bi bi-journal-text"></i><span>Recent Sales</span>
+				</a>
+			</li>
 
-			<li class="nav-item"><a class="nav-link"
-				th:href="@{/seller/topSelling}"> <i
-					class="bi bi-layout-text-window-reverse"></i><span>Top
-						Selling</span>
-			</a></li>
+			<li class="nav-item">
+				<a class="nav-link" th:href="@{/seller/topSelling}">
+					 <i class="bi bi-layout-text-window-reverse"></i><span>Top Selling</span>
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" data-bs-target="#voucher-action" data-bs-toggle="collapse" href="#">
+					<i class="bi bi-tag"></i><span>Vouchers</span>
+					<i class="bi bi-chevron-down ms-auto"></i>
+				</a>
 
-			<li class="nav-item"><a class="nav-link "
-				data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-					<i class="bi bi-journal-text"></i><span>Product</span><i
-					class="bi bi-chevron-down ms-auto"></i>
-			</a>
+				<ul id="voucher-action" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+					<li>
+						<a th:href="@{/seller/voucher/list/all?page=1&size=2}">
+							<i class="bi bi-circle"></i><span>My Vouchers</span>
+						</a>
+					</li>
+					<li>
+						<a th:href="@{/seller/voucher}">
+							<i class="bi bi-circle"></i><span>Add New Voucher</span>
+						</a>
+					</li>
+				</ul>
+			</li>
 
-				<ul class="nav-content collapse show"
-					data-bs-parent="#sidebar-nav">
-					<li><a th:href="@{/seller/product/list/all?page=1&size=2}">
+			<li class="nav-item">
+				<a class="nav-link" data-bs-target="#product-action" data-bs-toggle="collapse" href="#">
+					<i class="bi bi-bag"></i><span>Product</span>
+					<i class="bi bi-chevron-down ms-auto"></i>
+				</a>
+
+				<ul id="product-action" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+					<li>
+						<a th:href="@{/seller/product/list/all?page=1&size=2}">
 							<i class="bi bi-circle"></i><span>My Products</span>
-					</a></li>
-					<li><a th:href="@{/seller/product}"> <i
-							class="bi bi-circle"></i><span>Add New Product</span>
-					</a></li>
-					<li><a th:href="@{/seller/product/trashbin?page=1&size=2}">
+						</a>
+					</li>
+					<li>
+						<a th:href="@{/seller/product}">
+							<i class="bi bi-circle"></i><span>Add New Product</span>
+						</a>
+					</li>
+					<li>
+						<a th:href="@{/seller/product/trashbin?page=1&size=2}">
 							<i class="bi bi-circle"></i><span>Trash Bin</span>
-					</a></li>
-				</ul></li>
+						</a>
+					</li>
+				</ul>
+			</li>
 		</ul>
 
 		<!-- MANAGER -->
 		<ul th:each="authority : ${#authentication.getAuthorities()}"
-			th:if="${authority.getAuthority().startsWith('ROLE_MANAGER')}"
-			class="sidebar-nav">
+			th:if="${authority.getAuthority().startsWith('ROLE_MANAGER')}" class="sidebar-nav">
 
-			<li class="nav-item"><a class="nav-link "
-				data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-					<i class="bi bi-person-lines-fill"></i> <span>Accounts</span><i
-					class="bi bi-chevron-down ms-auto"></i>
+			<li class="nav-item"><a class="nav-link" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+					<i class="bi bi-person-lines-fill"></i> <span>Accounts</span>
+					<i class="bi bi-chevron-down ms-auto"></i>
 			</a>
-
-				<ul class="nav-content collapse show"
-					data-bs-parent="#sidebar-nav">
-
+				<ul class="nav-content collapse show" data-bs-parent="#sidebar-nav">
 					<li class="nav-item"><a class="nav-link"
 						th:href="@{/manager/account/sellerAccount}"> <i
 							class="bi bi-coin"></i> <span>Seller Account</span>
@@ -71,14 +92,37 @@
 					</a></li>
 				</ul></li>
 
-			<li class="nav-item"><a class="nav-link"
-				th:href="@{/manager/category?page=1&size=2}"> <i
-					class="bi bi-card-list"></i> <span>Categories</span>
-			</a></li>
+			<li class="nav-item">
+				<a class="nav-link" th:href="@{/manager/transaction}">
+					<i class="bi bi-cart3"></i> <span>Transactions</span>
+				</a>
+			</li>
 
-			<li class="nav-item"><a class="nav-link"
-				th:href="@{/manager/transaction}"> <i class="bi bi-cart3"></i> <span>Transactions</span>
-			</a></li>
+			<li class="nav-item">
+				<a class="nav-link" th:href="@{/manager/category/list/all?page=1&size=2}">
+					<i class="bi bi-card-list"></i> <span>Categories</span>
+				</a>
+			</li>
+
+			<li class="nav-item">
+				<a class="nav-link" data-bs-target="#voucher-action" data-bs-toggle="collapse" href="#">
+					<i class="bi bi-tag"></i><span>Vouchers</span>
+					<i class="bi bi-chevron-down ms-auto"></i>
+				</a>
+
+				<ul id="voucher-action" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+					<li>
+						<a th:href="@{/manager/voucher/list/all?page=1&size=2}">
+							<i class="bi bi-circle"></i><span>My Vouchers</span>
+						</a>
+					</li>
+					<li>
+						<a th:href="@{/manager/voucher}">
+							<i class="bi bi-circle"></i><span>Add New Voucher</span>
+						</a>
+					</li>
+				</ul>
+			</li>
 		</ul>
 
 		<!-- PROFILE -->

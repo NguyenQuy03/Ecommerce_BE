@@ -9,4 +9,6 @@ public class CategoryDTO extends BaseDTO<CategoryDTO> {
     
     private String code;
     private String thumbnail;
+
+    private AccountDTO account;
 }

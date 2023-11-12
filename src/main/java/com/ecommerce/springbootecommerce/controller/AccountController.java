@@ -64,10 +64,8 @@ public class AccountController {
             if (account.getPassword().equals(account.getNewPassword())) {
                 return handleRedirectError(redirectAttributes, "Failure! Your new password must be different from your old password.", AlertConstant.ALERT_DANGER);
             }
-            if (account.getNewPassword() != null && account.getReNewPassword() != null) {
-                if (!account.getNewPassword().equals(account.getReNewPassword())) {
+            if (account.getNewPassword() != null && account.getReNewPassword() != null && !account.getNewPassword().equals(account.getReNewPassword())) {
                     return handleRedirectError(redirectAttributes,"Failure! Your new password must match.", AlertConstant.ALERT_DANGER);
-                }
             }
 
             account.setPassword(passwordEncoded);

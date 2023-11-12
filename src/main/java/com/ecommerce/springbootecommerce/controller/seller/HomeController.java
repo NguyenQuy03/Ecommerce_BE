@@ -8,10 +8,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.constant.enums.order.OrderStatus;
 import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
 import com.ecommerce.springbootecommerce.dto.OrderItemDTO;
-import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
+import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IOrderItemService;
 import com.ecommerce.springbootecommerce.service.IProductService;
 
@@ -29,7 +29,7 @@ public class HomeController {
     public String recentSalesPage(Model model) {
 	    	    
 	    CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        OrderItemDTO dto = orderItemService.findAllBySellerNameAndStatus(userDetails.getUsername(), SystemConstant.DELIVERED_STATUS, 0, 50);
+        OrderItemDTO dto = orderItemService.findAllBySellerNameAndStatus(userDetails.getUsername(), OrderStatus.DELIVERED, 0, 50);
 
         model.addAttribute("dto", dto);
         

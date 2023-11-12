@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.constant.enums.order.OrderStatus;
 import com.ecommerce.springbootecommerce.dto.OrderDTO;
 import com.ecommerce.springbootecommerce.service.IOrderService;
 
@@ -22,7 +22,7 @@ public class TransactionController {
 
     @GetMapping(value="/transaction")
     public String transactions(Model model) {
-        List<OrderDTO> dtos = orderService.findAllByStatus(SystemConstant.DELIVERED_STATUS);
+        List<OrderDTO> dtos = orderService.findAllByStatus(OrderStatus.DELIVERED);
         
         OrderDTO dto = new OrderDTO();
         dto.setListResult(dtos);

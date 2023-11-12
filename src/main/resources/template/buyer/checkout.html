@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/buyerLayout/buyerLayoutWithoutSideBar}">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Cart</title>
+	<link rel="stylesheet" href="/buyer/css/cart.css">
+	<link rel="stylesheet" href="/buyer/css/checkout.css">
+	<link rel="stylesheet" href="/common/css/spinAndModal.css">
+	<script defer src="/common/js/handleAddOrEdit.js"></script>
+	<script defer src="/buyer/js/checkout/checkoutUI.js"></script>
+</head>
+<body>
+	<!-- Cart Start -->
+	<div class="container-fluid pt-5" layout:fragment="content">
+
+		<div class="row px-xl-5">
+			<div id="order-container" class="col-lg-12 mb-5">
+				<div class="order-header bg-secondary text-dark">
+					<div class="row header-inner d-flex justify-content-between text-center">
+						<div class="d-flex col-4">
+							<h6 class="mx-4">Products Ordered</h6>
+						</div>
+						<h6 class="col-2">Price</h6>
+						<h6 class="col-2">Quantity</h6>
+						<h6 class="col-2">Total</h6>
+					</div>
+				</div>
+
+				<div class="order-content mt-4" th:each="order : ${orders}">
+					<div class="row order-shop d-flex align-items-center">
+						<div class="col-4">
+							<i class="fas fa-store mx-4"></i>
+							<a th:href="@{/shop/{name}(name=${order.account.username})}" th:text="${#strings.capitalize(order.account.username)}"
+								style="color: var(--primary);"
+							></a>
+						</div>
+					</div>
+					<div class="row order-item d-flex justify-content-between align-items-center text-center" th:each="item, index : ${order.orderItems}">
+						<div class="d-flex col-4">
+							<div class="align-middle d-flex justify-content-around align-items-center mx-4" >
+								<a th:href="@{/product/detail/{id}(id=${item.productItem.product.id})}">
+									<img class="img-fluid w-100 image-productItem" th:src="${item.productItem.image}"
+									style="max-width: 100px;" alt="Background image" />
+								</a>
+								<div th:text="${item.productItem.product.name}" class="fit-content mx-3"></div>
+								<div class="variation text-center" style="min-width: 40px;">
+									<div th:text="${#strings.capitalize(item.productItem.variationName)}"></div>
+									<div th:text="${item.productItem.variationValue}"></div>
+								</div>
+							</div>
+						</div>
+						<div class="align-middle col-2" th:text="${item.productItem.intPrice}"></div>
+						<div class="align-middle col-2">
+							<input class="price-el" type="hidden"th:value="${item.productItem.price}"/>
+							<div class="input-group quantity mx-auto" style="width: 130px;">
+								<input type="number" class="form-control quantity-el form-control-sm bg-secondary text-center" min="0"
+									th:value="${item.quantity}" th:max="${item.productItem.stock}"
+									th:attr="oninput=|changeTotalPriceValue(${index.index})|" disabled
+								>
+							</div>
+						</div>
+						<div class="align-middle col-2">
+							<input class="total-price-el" value="" disabled="disabled" /></div>
+					</div>
+
+					<div class="row order-total d-flex align-items-center">
+						<div class="col-8">
+						</div>
+						<div class="col-4 d-flex justify-content-between flex-column mb-4 p-0">
+							<div class="d-flex justify-content-between mb-2">
+								<h6 class="mb-0 min-width-order-header">Shop Voucher:</h6>
+								<input class="shop-voucher-total-value min-value-width borderless text-center" disabled>
+							</div>
+							<div class="d-flex justify-content-between" style="color: var(--primary);">
+								<h6 class="mb-0 min-width-order-header">Order Total:</h6>
+								<input class="order-total-value min-value-width borderless text-center" disabled>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Cart empty-->
+				<div th:if="${quantityOrder == 0}" class="d-flex justify-content-center align-items-center flex-column">
+					<h3 class="mt-5 ">Your shopping cart is empty</h3>
+					<a href="/home">
+						<button class="btn btn-primary rounded mt-3">Go shopping now</button>
+					</a>
+				</div>
+				<!-- Modal Check Permission -->
+				<div class="modal modal-check-permission fade align-items-center"
+					tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+					aria-hidden="true" style="background-color: rgba(0, 0, 0, 0.6)">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modalLabel" style="
+    								user-select: none;">Do you want to remove this item?</h5>
+							</div>
+							<div class="col-12 modal-footer d-flex justify-content-between">
+								<button type="button" class="col-5 btn btn-primary accept-btn">Yes</button>
+								<button type="button" class="col-5 btn btn-secondary btn-close"
+									data-dismiss="modal">No</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Modal Announcement-->
+				<div id="modal-announce" class="modal modal-announce fade align-items-center fade"
+					tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+					aria-hidden="true" style="display:none; background-color: rgba(0, 0, 0, 0.6)">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header d-flex">
+								<h5 class="modal-accounce-title" style="color: var(--primary)"></h5>
+							</div>
+							<div class="col-12 modal-footer d-flex justify-content-between">
+								<button type="button" class="btn btn-secondary close-announce-btn"
+									data-dismiss="modal" style="width: 100%;">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- LOADING SECTION -->
+				<div id="loading-overlay" style="display: none;">
+					<div class="d-flex justify-content-center align-items-center h-100">
+						<div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
+							<span class="sr-only"></span>
+						</div>
+					</div>
+				</div>
+								
+			</div>
+
+			<div class="cart-checkout col-lg-12">
+				<div class="card row col-12 d-flex flex-row">
+					<div class="col-6"></div>
+					<div class="col-6 d-flex justify-content-around card-footer border-secondary bg-transparent flex-column" style="padding: 20px 12px;">
+						<div>
+							<div class="d-flex justify-content-between mb-2">
+								<h5 class="min-width-header">Merchandise Subtotal:</h5>
+								<input id="sub-total-payment" class="borderless text-center" disabled>
+							</div>
+							
+							<div class="d-flex justify-content-between mb-2">
+								<h5 class="min-width-header">Platform Voucher:</h5>
+								<input id="platform-voucher" class="borderless text-center" disabled>
+							</div>
+
+							<div class="d-flex justify-content-between">
+								<h5 class="min-width-header">Total Payment:</h5>
+								<input id="total-payment" class="borderless text-center" style="color: var(--primary);" disabled>
+							</div>
+						</div>
+
+						<div style="margin-left: auto; order: 2;">
+							<button class="btn-purchase btn btn-block btn-primary mt-3 py-2 col-4 rounded" style="min-width: 200px;">Place Order</button>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+
+			<!-- <input type="hidden" th:if="${quantityOrder != 0}" th:value="${orders[0].cart.id}" id="cartId"/> -->
+			<input type="hidden" th:value="${inActiveCartItem}" id="inActiveCartItem"/>
+		</div>
+
+		
+	</div>
+	
+	<!-- Cart End -->
+</body>
+</html>

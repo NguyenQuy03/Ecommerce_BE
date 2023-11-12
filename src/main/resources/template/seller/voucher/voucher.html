@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/dashboardLayout/dashboardLayout}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Or Edit Voucher</title>
+
+    <link rel="stylesheet" href="/seller/css/voucher.css">
+    <link rel="stylesheet" href="/seller/css/myProduct.css">
+    <link rel="stylesheet" href="/common/css/spinAndModal.css">
+
+    <script defer src="/common/js/handleAddOrEdit.js"></script>
+    <script defer src="/seller/js/voucher/voucher.js"></script>
+    <script defer src="/seller/js/voucher/voucherUI.js"></script>
+</head>
+<body>
+    <div class="card" layout:fragment="content" th:object="${dto}" >
+
+    <!-- BASIC INFORMATION -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title" style="margin-top: 0;">Basic Information</h5>
+                        <form id="basic-form" class="needs-validation" novalidate>
+                            <div class="row mb-4">
+                                <label for="name" class="col-sm-2 col-form-label">Voucher Name</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" th:field="*{name}" id="name" required
+                                        maxlength="100"
+                                    />
+	                                <div class="invalid-feedback">
+                                        <span> Please enter voucher's name! </span>
+	                                </div>
+                                    <div id="code-warning" class="mt-2 warning-text" style="display: flex; flex-direction: column;">
+                                        <span>Voucher name is not visible to buyers</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <label for="code" class="col-sm-2 col-form-label">Voucher Code</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control" th:field="*{code}" id="code"
+                                        maxlength="5" required style="text-transform:uppercase" pattern="^[A-Za-z0-9]+$"/>
+	                                <div id="code-feedback" class="invalid-feedback">
+                                        <span> Please enter voucher's code! </span>
+	                                </div>
+
+                                    <div id="code-warning" class="mt-2 warning-text" style="display: flex; flex-direction: column;">
+                                        <span>Please enter A-Z, 0-9; 5 characters maximum</span>
+                                        <span id="voucher-code-inform" th:text="'Your complete voucher code is: ' + ${dto.account.username.toUpperCase()}"></span>
+	                                </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <label for="code" class="col-sm-2 col-form-label">Voucher Usage Period</label>
+                                <div class="col-sm-8 d-flex">
+									<div class="col-sm-4 p-0">
+                                        <div class='input-group date'>
+                                            <input th:field="*{startDate}" id='start-date' type='datetime-local' class="form-control" onchange="setMinDate()" required/>
+                                            <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+									</div>
+									<div class="col-sm-2 d-flex justify-content-center align-items-center separator">
+                                        <div class="separator-line" ></div>
+                                    </div>
+									<div class="col-sm-4 p-0">
+                                        <div class='input-group date'>
+                                            <input th:field="*{endDate}" id='end-date' type='datetime-local' class="form-control" onchange="setMaxDate()" required/>
+                                            <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+									</div>
+                                </div>
+                            </div>
+                            <br />
+
+                            <input type="hidden" th:field="*{quantityUsed}"/>
+                            <input type="hidden" th:field="*{id}"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- REWARD SETTING -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Reward Settings</h5>
+                        <form id="reward-setting-form" class="needs-validation" novalidate>
+                            <div class="row mb-6" style="margin-bottom: 16px;">
+                                <label for="type" class="col-sm-2 col-form-label">Type</label>
+                                <div class="col-sm-4 d-flex flex-column">
+                                    <div class="d-flex">
+                                        <div class="form-control p-0" style="margin-right: 16px;">
+                                            <select id="type" name='type' required style="border: none; height: 100%; width: 100%;">
+                                                <option class="option-item" value="FIX_AMOUNT">Fix Amount</option>
+                                                <option class="option-item" value="PERCENTAGE">Percentage</option>
+                                            </select>
+
+                                        </div>
+                                        <input type="hidden" th:value="*{stringValue}" id="string-value">
+
+                                        <div class="d-flex align-items-center">
+                                            <span id="type-unit">$</span>
+                                            <input id="value" type="number" class="form-control" th:field="*{value}" required/>
+                                        </div>
+                                    </div>
+
+	                                <div id="type-feedback" class="mt-2 invalid-feedback">
+                                        <span> Please enter voucher's type! </span>
+	                                </div>
+
+                                    <div id="type-warning" class="mt-2 warning-text" style="display: none;">
+                                        <span>Please note that the discount percentage is > 69%.</span>
+	                                </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <label for="minOrderTotalPrice" class="col-sm-2 col-form-label">Minimum Order Total Price</label>
+                                <div class="col-sm-4">
+                                    <input type="number" class="form-control" th:field="*{minOrderTotalPrice}" id="minOrderTotalPrice" required
+                                        max="100000"
+                                    />
+	                                <div id="minOrderTotalPrice-feedback" class="invalid-feedback">
+                                        <span> Please enter voucher's Minimum Order Total Price! </span>
+	                                </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <label for="usageQuantity" class="col-sm-2 col-form-label">Usage Quantity</label>
+                                <div class="col-sm-4">
+                                    <input type="number" class="form-control" th:field="*{usageQuantity}" id="usageQuantity" required/>
+	                                <div id="usageQuantity-feedback" class="invalid-feedback">
+                                        <span> Please enter voucher's Usage Quantity! </span>
+	                                </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <label for="maxUsagePerUser" class="col-sm-2 col-form-label">Max Usage Per User</label>
+                                <div class="col-sm-4">
+                                    <input type="number" class="form-control" max="5" th:field="*{maxUsagePerUser}" id="maxUsagePerUser" required/>
+	                                <div id="maxUsagePerUser-feedback" class="invalid-feedback">
+                                        <span> Please enter voucher's max usage per user! </span>
+	                                </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <label class="col-sm-2 col-form-label">Applicable Products</label>
+                                <div class="col-sm-4" id="productScope">
+                                    <div class="form-check">
+                                        <input class="form-check-input product-scope-item" type="radio"
+                                            id="all-product-check-box" checked
+                                        >
+                                        <label class="form-check-label" for="all-product-check-box">
+                                            All products
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input product-scope-item" type="radio"
+                                            id="specific-product-check-box" disabled
+                                        >
+                                        <label class="form-check-label" for="specific-product-check-box">
+                                            Specific product(s)
+                                        </label>
+                                    </div>
+
+	                                <div class="invalid-feedback">
+                                        <span> Please enter voucher's product scope! </span>
+	                                </div>
+                                </div>
+                            </div>
+                            <br />
+
+                            <div class="row mb-4">
+                                <label class="col-sm-8"></label>
+                                <a th:href="@{/seller/voucher/list/all?page=1&size=2}" class="col-sm-2 btn btn-outline-secondary"
+                                    style="max-width: 90px; margin-right: 16px;"> Cancel
+                                </a>
+
+                                <button id="submit-btn" class="col-sm-2 btn btn-primary" style="max-width: 100px;">Confirm</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- LOADING SECTION -->
+            <div id="loading-overlay" style="display: none;">
+                <div class="d-flex justify-content-center align-items-center h-100">
+                    <div class="spinner-border" style="width: 5rem; height: 5rem;" role="status">
+                        <span class="sr-only"></span>
+                    </div>
+                </div>
+            </div>
+        
+
+    <!-- ANNOUNCE SECTION -->
+        <div class="modal fade modal-announce" id="modal-announce" tabindex="-1" role="dialog"
+            aria-labelledby="modal-announce" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content modal-announce-content modal-product justify-content-center align-items-center" style="padding: 15px 20px;">
+                <i class="bi bi-check-circle modal-icon" style="font-size: 45px;"></i>
+                <div class="modal-body">
+                    <h5  class="modal-accounce-title"></h5>
+                </div>
+
+                <button class="btn btn-outline-danger modal-accounce-close-btn" style="display: none;">Close</button>
+                
+            </div>
+        </div>
+        </div>
+    </div>
+</body>
+
+</html>

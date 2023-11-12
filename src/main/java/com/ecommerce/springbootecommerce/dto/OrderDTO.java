@@ -2,9 +2,10 @@ package com.ecommerce.springbootecommerce.dto;
 
 import java.util.List;
 
-import com.ecommerce.springbootecommerce.dto.product.ProductItemDTO;
+import com.ecommerce.springbootecommerce.constant.enums.order.OrderStatus;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,19 +14,18 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class OrderDTO extends BaseDTO<OrderDTO>{
-
+    
+    private OrderStatus status;
+    
+    private String totalPrice;
+    
+    private List<OrderItemDTO> orderItems;
+    
     private AccountDTO account;
 
-    private String status;
+    private CartDTO cart;
 
-    private String totalPrice;
-
-    private List<OrderItemDTO> orderItems;
-
-    private List<Long> cartItemIds;
-
-    private Long cartId;
-
-    private ProductItemDTO productItem;
+    private VoucherDTO shopVoucher;
 }

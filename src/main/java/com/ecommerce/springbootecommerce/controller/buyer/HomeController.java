@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ecommerce.springbootecommerce.constant.RedisConstant;
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.constant.StatusConstant;
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
-import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
+import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.IProductService;
 import com.ecommerce.springbootecommerce.util.RedisUtil;
@@ -37,7 +37,7 @@ public class HomeController {
     ) {
         List<CategoryDTO> categories = categoryService.findAll();
         Pageable pageable = PageRequest.of(0, 12);
-        List<ProductDTO> productItems = productService.findAllByStatus(SystemConstant.STRING_ACTIVE_STATUS, pageable);
+        List<ProductDTO> productItems = productService.findAllByStatus(StatusConstant.STRING_ACTIVE_STATUS, pageable);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (!username.contains("anonymousUser")) {

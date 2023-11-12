@@ -17,5 +17,6 @@ public class AlertConstant {
     public static final String ALERT_EMAIL_EXISTED = "The email has existed, please choose another.";
     public static final String ALERT_SUCCESS_REGISTATION = "Success! Your registration is now complete.";
 
+    public static final String ALERT_WRONG_REGEX = "Your username have to match 0-9 or a-z[A-Z].";
 
 }

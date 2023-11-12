@@ -1,12 +1,13 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
 import com.ecommerce.springbootecommerce.dto.RoleDTO;
+import com.ecommerce.springbootecommerce.entity.RoleEntity;
+import com.ecommerce.springbootecommerce.repository.RoleRepository;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.springbootecommerce.entity.RoleEntity;
-import com.ecommerce.springbootecommerce.repository.RoleRepository;
 import com.ecommerce.springbootecommerce.service.IRoleService;
 
 import java.util.Optional;

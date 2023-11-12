@@ -9,8 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.ecommerce.springbootecommerce.dto.CartDTO;
 import com.ecommerce.springbootecommerce.entity.CartEntity;
-import com.ecommerce.springbootecommerce.repository.CartItemRepository;
+import com.ecommerce.springbootecommerce.repository.AccountRepository;
 import com.ecommerce.springbootecommerce.repository.CartRepository;
+import com.ecommerce.springbootecommerce.repository.OrderRepository;
 import com.ecommerce.springbootecommerce.service.ICartService;
 import com.ecommerce.springbootecommerce.util.RedisUtil;
 import com.ecommerce.springbootecommerce.util.converter.CartConverter;
@@ -21,7 +22,10 @@ public class CartService implements ICartService{
     private CartRepository cartRepo;
 
     @Autowired
-    private CartItemRepository cartItemRepo;
+    private AccountRepository accountRepo;
+
+    @Autowired
+    private OrderRepository orderRepo;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -52,13 +56,19 @@ public class CartService implements ICartService{
     }
 
     @Override
-    public void delete(Long cartItemId, Long cartId, String username) {
+    public void delete(Long orderItemId, Long cartId) {
         CartEntity cartEntity = cartRepo.findById(cartId)
-                .orElseThrow(() -> new NoSuchElementException("Cart not found with ID: " + cartItemId));
+                .orElseThrow(() -> new NoSuchElementException("Cart not found with ID: " + cartId));
+
+        // AccountEntity accountEntity = accountRepo.findById(cartId)
+        //         .orElseThrow(() -> new NoSuchElementException("Account not found with ID: " + cartItemId));
+
+                
+        // OrderEntity orderEntity = orderRepo.findOneByCartIdAndAccountId(cartId, cartId)
+        //         .orElseThrow(() -> new NoSuchElementException("Order not found with ID: " + cartItemId));
 
         cartRepo.save(cartEntity);
-        cartItemRepo.deleteById(cartItemId);
 
-        redisUtil.adjustQuantityOrder(username, -1);
+        // redisUtil.adjustQuantityOrder(username, -1);
     }
 }

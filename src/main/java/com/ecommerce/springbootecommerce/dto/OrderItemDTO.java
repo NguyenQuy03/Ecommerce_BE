@@ -3,9 +3,10 @@ package com.ecommerce.springbootecommerce.dto;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import com.ecommerce.springbootecommerce.dto.product.ProductItemDTO;
+import com.ecommerce.springbootecommerce.constant.enums.order.OrderStatus;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,9 +15,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class OrderItemDTO extends BaseDTO<OrderItemDTO>{
 
-    private OrderDTO order;
+    private OrderDTO orders;
 
     private ProductItemDTO productItem;
 
@@ -26,14 +28,15 @@ public class OrderItemDTO extends BaseDTO<OrderItemDTO>{
 
     private String totalPrice;
 
-    private String status;
+    private OrderStatus status;
 
+    @SuppressWarnings("unused")
     private String formatedCurPrice;
 
     public String getFormatedCurPrice() {
         Locale moneyType = new Locale("en", "US");
-        NumberFormat Format = NumberFormat.getCurrencyInstance(moneyType);
-        Format.format(this.curPrice);
-        return Format.format(this.curPrice);
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(moneyType);
+        numberFormat.format(this.curPrice);
+        return numberFormat.format(this.curPrice);
     }
 }

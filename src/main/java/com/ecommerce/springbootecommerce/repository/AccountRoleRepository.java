@@ -1,6 +1,6 @@
 package com.ecommerce.springbootecommerce.repository;
 
-import java.util.Set;
+import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -12,9 +12,9 @@ import com.ecommerce.springbootecommerce.entity.AccountRoleEntity.AccountRoleEnt
 public interface AccountRoleRepository extends CrudRepository<AccountRoleEntity, AccountRoleEntityId>{
     AccountRoleEntity findByAccountId(Long accountId);
     
-    Set<AccountRoleEntity> findAllByRoleCode(String roleCode);
+    List<AccountRoleEntity> findAllByRoleCode(String roleCode);
 
-    Set<AccountRoleEntity> findByAccountIdAndRoleCode(Long id, String roleCode);
+    List<AccountRoleEntity> findByAccountIdAndRoleCode(Long id, String roleCode);
 
-    Set<AccountRoleEntity> findAllByAccountId(Long id);
+    List<AccountRoleEntity> findAllByAccountId(Long id);
 }

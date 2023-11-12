@@ -22,7 +22,7 @@ import lombok.Setter;
 public class AccountEntity extends BaseEntity {
 
     @NotNull
-    @Column(columnDefinition = "nvarchar(100)")
+    @Column(columnDefinition = "nvarchar(100)", unique = true)
     private String username;
     
     @NotNull
@@ -30,6 +30,7 @@ public class AccountEntity extends BaseEntity {
     private String fullName;
     
     @NotNull
+    @Column(unique = true)
     @Email
     private String email;
     

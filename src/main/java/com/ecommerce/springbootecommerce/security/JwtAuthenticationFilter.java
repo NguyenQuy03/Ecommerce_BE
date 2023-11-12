@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             @NotNull FilterChain filterChain
     ) throws ServletException, IOException {
         String path = request.getServletPath();
-        if (path.contains("/api/auth") || path.contains("/login") || path.contains("/register")) {
+        if (path.contains("/api/auth") || path.contains(SystemConstant.LOGIN_URL) || path.contains("/register")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -53,13 +53,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             String token = null;
             if(cookies == null || SecurityContextHolder.getContext().getAuthentication() == null) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("/login");
+                response.getWriter().write(SystemConstant.LOGIN_URL);
                 return;
             } else {
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals(SystemConstant.COOKIE_JWT_HEADER)) {
                         token = cookie.getValue();
-                        if (token == null || !token.startsWith("Bearer") ) {
+                        if (token == null || !token.startsWith(SystemConstant.TOKEN_JWT_TYPE.trim()) ) {
                             filterChain.doFilter(request, response);
                             return;
                         }
@@ -68,37 +68,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                         UserDetails account = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                         
                         /* Handle token expired */
-                        if(!jwtUtil.isTokenExpired(accessToken)) {
-                            String refreshToken = redisUtil.getKey(RedisConstant.REDIS_JWT_BRANCH + account.getUsername());
-                            if(refreshToken == null) {
-                                Cookie newCookie = cookieUtil.initCookie("loginFailure", AlertConstant.ALERT_MESSAGE_TOKEN_EXPIRED, AlertConstant.ALERT_MESSAGE_LOGIN_EXPIRATION);
-                                response.addCookie(newCookie);
-                                response.sendRedirect("/login");
-                            } else {
-                                String newJwt = jwtUtil.generateAccessToken(account);
-                                Cookie newCookie = cookieUtil.initCookie(SystemConstant.COOKIE_JWT_HEADER, SystemConstant.TOKEN_JWT_TYPE + newJwt, JWTConstant.JWT_COOKIE_ACCESS_TOKEN_EXPIRATION);
-                                response.addCookie(newCookie);
-                                filterChain.doFilter(request, response);
-                            }
-                        } else {
-                            filterChain.doFilter(request, response);
-                        }
-    
+                        handleExpiredToken(accessToken, request, response, filterChain, account);
                         return;
                     }
                 }
 
                 // Handle if cookie does not have JWT
-                if(token == null) {
-                    Cookie newCookie = cookieUtil.initCookie("loginFailure", AlertConstant.ALERT_MESSAGE_NOT_PERMISSION, AlertConstant.ALERT_MESSAGE_LOGIN_EXPIRATION);
-                    response.addCookie(newCookie);
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.sendRedirect("/login");
-                    return;
-                }
+                handleJWTIsEmpty(response);
             }
         } else {
             filterChain.doFilter(request, response);
         }
+    }
+
+    private void handleExpiredToken(String accessToken, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, UserDetails account) throws IOException, ServletException {
+        if(!jwtUtil.isTokenExpired(accessToken)) {
+            String refreshToken = redisUtil.getKey(RedisConstant.REDIS_JWT_BRANCH + account.getUsername());
+            if(refreshToken == null) {
+                Cookie newCookie = cookieUtil.initCookie(SystemConstant.LOGIN_FAILURE_DTO, AlertConstant.ALERT_MESSAGE_TOKEN_EXPIRED, AlertConstant.ALERT_MESSAGE_LOGIN_EXPIRATION);
+                response.addCookie(newCookie);
+                response.sendRedirect(SystemConstant.LOGIN_URL);
+            } else {
+                String newJwt = jwtUtil.generateAccessToken(account);
+                Cookie newCookie = cookieUtil.initCookie(SystemConstant.COOKIE_JWT_HEADER, SystemConstant.TOKEN_JWT_TYPE + newJwt, JWTConstant.JWT_COOKIE_ACCESS_TOKEN_EXPIRATION);
+                response.addCookie(newCookie);
+                filterChain.doFilter(request, response);
+            }
+        } else {
+            filterChain.doFilter(request, response);
+        }
+    }
+
+    private void handleJWTIsEmpty(HttpServletResponse response) throws IOException {
+        Cookie newCookie = cookieUtil.initCookie(SystemConstant.LOGIN_FAILURE_DTO, AlertConstant.ALERT_MESSAGE_NOT_PERMISSION, AlertConstant.ALERT_MESSAGE_LOGIN_EXPIRATION);
+        response.addCookie(newCookie);
+        response.sendRedirect(SystemConstant.LOGIN_URL);
+        return;
     }
 }

@@ -24,7 +24,7 @@ public class CustomLogoutHandle implements LogoutHandler{
 
 	@Autowired
 	private CookieUtil cookieUtil;
-
+	
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response,
 					   Authentication authentication) {
@@ -39,7 +39,7 @@ public class CustomLogoutHandle implements LogoutHandler{
 			new SecurityContextLogoutHandler().logout(request, response, authentication);
 			response.sendRedirect("/home");
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("Error logout");
 		}
 	}
 }

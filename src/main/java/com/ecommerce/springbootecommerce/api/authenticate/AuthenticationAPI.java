@@ -35,7 +35,11 @@ public class AuthenticationAPI {
     public void register(
             @RequestBody RegisterRequest request
     ){
-        accountService.register(request);
+        try {
+            accountService.register(request);
+        } catch (Exception e) {
+            throw new RuntimeException("Error register");
+        }
     }
     
     @PostMapping("/login")
@@ -46,7 +50,7 @@ public class AuthenticationAPI {
     ) throws IOException {
         String jwt = accountService.authenticate(request, httpServletRequest);
         if(jwt == null){
-            Cookie cookie = cookieUtil.initCookie("loginFailure", AlertConstant.ALERT_MESSAGE_LOGIN_FAILURE, AlertConstant.ALERT_MESSAGE_LOGIN_EXPIRATION);
+            Cookie cookie = cookieUtil.initCookie(SystemConstant.LOGIN_FAILURE_DTO, AlertConstant.ALERT_MESSAGE_LOGIN_FAILURE, AlertConstant.ALERT_MESSAGE_LOGIN_EXPIRATION);
             httpServletResponse.addCookie(cookie);
             httpServletResponse.sendRedirect("/login");
         }

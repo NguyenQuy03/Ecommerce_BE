@@ -19,9 +19,17 @@
 
 </head>
 <body>
-		<div  id="search-container" th:object="${dto}" class="container-fluid pt-5"
-			layout:fragment="content" >
-			<div class="row px-xl-5">
+		<div  id="search-container" th:object="${dto}" class="container-fluid pt-5" layout:fragment="content">
+			<div th:if="${dto.listResult == null}" style="text-align: center;">
+				<img alt="Not found image"
+					src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/assets/a60759ad1dabe909c46a817ecbf71878.png"
+				>
+				<div>No results found</div>
+				<div>
+					Try different or more general keywords
+				</div>
+			</div>
+			<div th:if="${dto.listResult != null}" class="row px-xl-5">
 				<!-- Shop Sidebar Start -->
 				<div class="col-lg-3 col-md-12">
 					<!-- Price Start -->

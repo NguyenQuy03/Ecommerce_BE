@@ -44,12 +44,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .antMatchers(
                     "/api/auth/**", "/register**",
-                    "/home/**", "/admin/vendor/**", "/admin/js/main.js",
+                    "/home/**", "/admin/vendor/**", "/admin/js/**",
                     "/common/**", "/buyer/**",
                     "/favicon.ico"
                     )
                 .permitAll()
-                .antMatchers("/seller/**").hasRole("SELLER")
+                .antMatchers("/seller/**").hasAnyRole("SELLER", "MANAGER")
                 .antMatchers("/manager/**").hasRole("MANAGER")
                 .antMatchers(HttpMethod.GET).permitAll()
                 .anyRequest().authenticated()

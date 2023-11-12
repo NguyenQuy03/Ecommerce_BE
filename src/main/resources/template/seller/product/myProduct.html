@@ -8,7 +8,10 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>All Product</title>
-	<script defer src="/seller/js/delete&restore.js"></script>
+	<link rel="stylesheet" href="/seller/css/myProduct.css">
+
+	<script defer src="/seller/js/product/delete&restore.js"></script>
+	<script defer src="/common/js/handleCheckBox.js"></script>
 </head>
 
 <body>
@@ -44,10 +47,9 @@
 					
 				</div>
 			</div>
+
 			<form id="formSubmit">
-
 				<div class="tab-content pt-2">
-
 					<!-- All Product -->
 					<div class="tab-pane fade pt-3 active show mt-0" id="all-product">
 						<div class="card">
@@ -63,15 +65,14 @@
 								</thead>
 
 								<tbody>
-									<tr th:each="product : *{listResult}" style="height: 150px;">
+									<tr th:if="${dto.listResult != null}" th:each="product : *{listResult}" style="height: 150px;">
 										<td>
 											<input type="checkbox" th:id="${product.id}" name="" style="height: 16px; width: 16px;">
 										</td>
 										<td style="max-width: 100px;">
 											<p th:text="${product.name}" class="fit-content"></p>
 											<img style="max-width: 100px;" id="imagePreview"
-												th:src="${product.image}"
-												alt="Background image" />
+												th:src="${product.image}" alt="Background image" />
 										</td>
 										<td>
 											<table class="table table-bordered" th:each="productItem : ${product.productItems}">
@@ -86,7 +87,7 @@
 	
 												<tbody>
 													<tr>
-														<td class="fit-content">
+														<td>
 															<p th:text="${productItem.variationValue}"></p>
 														</td>
 														<td>
@@ -114,6 +115,12 @@
 							</table>
 							<!-- End Table with stripped rows -->
 
+							<div class="d-flex justify-content-center align-items-center flex-column" th:if="${dto.listResult.size() == 0}"
+								style="height: 400px;"
+							>
+								<span class="not-found-image" alt="Not found image"></span>
+								<h4 class="my-4">No Product Found</h4>
+							</div>
 						</div>
 
 					</div>

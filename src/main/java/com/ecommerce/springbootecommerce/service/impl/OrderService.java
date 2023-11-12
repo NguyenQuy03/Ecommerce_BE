@@ -8,23 +8,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.constant.enums.order.OrderStatus;
 import com.ecommerce.springbootecommerce.dto.OrderDTO;
 import com.ecommerce.springbootecommerce.dto.OrderItemDTO;
 import com.ecommerce.springbootecommerce.entity.OrderEntity;
 import com.ecommerce.springbootecommerce.entity.OrderItemEntity;
 import com.ecommerce.springbootecommerce.entity.ProductItemEntity;
-import com.ecommerce.springbootecommerce.repository.CartItemRepository;
-import com.ecommerce.springbootecommerce.repository.CartRepository;
 import com.ecommerce.springbootecommerce.repository.OrderItemRepository;
 import com.ecommerce.springbootecommerce.repository.OrderRepository;
 import com.ecommerce.springbootecommerce.repository.ProductItemRepository;
 import com.ecommerce.springbootecommerce.service.IOrderService;
 import com.ecommerce.springbootecommerce.util.RedisUtil;
-import com.ecommerce.springbootecommerce.util.converter.AccountConverter;
-import com.ecommerce.springbootecommerce.util.converter.OrderConverter;
-import com.ecommerce.springbootecommerce.util.converter.OrderItemConverter;
 import com.ecommerce.springbootecommerce.util.converter.ProductItemConverter;
+import com.ecommerce.springbootecommerce.util.converter.account_role.AccountConverter;
+import com.ecommerce.springbootecommerce.util.converter.order.OrderConverter;
+import com.ecommerce.springbootecommerce.util.converter.order.OrderItemConverter;
 
 @Service
 public class OrderService implements IOrderService{
@@ -34,15 +32,9 @@ public class OrderService implements IOrderService{
 
     @Autowired
     private OrderItemRepository orderItemRepo;
-
-    @Autowired
-    private CartRepository cartRepo;
-
+    
     @Autowired
     private ProductItemRepository productItemRepo;
-
-    @Autowired
-    private CartItemRepository cartItemRepo;
 
     @Autowired
     private AccountConverter accountConverter;
@@ -60,17 +52,26 @@ public class OrderService implements IOrderService{
     private ProductItemConverter productItemConverter;
 
     @Override
-    public void save(OrderDTO dto) {
+    public OrderDTO save(OrderDTO dto) {
         OrderEntity entity = orderConverter.toEntity(dto);
         try {
-            try {
-                // Save Order
-                entity.setAccount(accountConverter.toEntity(dto.getAccount()));
-                entity.setStatus(SystemConstant.DELIVERED_STATUS);
-                orderRepo.save(entity);
-            } catch (Exception e) {
-                throw new RuntimeException("Error when save order");
-            }
+            entity.setAccount(accountConverter.toEntity(dto.getAccount()));
+            OrderEntity newEntity = orderRepo.save(entity);
+
+            return orderConverter.toDTO(newEntity);
+        } catch (Exception e) {
+            orderRepo.delete(entity);
+            throw new RuntimeException("Error occurred, order creation rolled back");
+        }
+    }
+
+    @Override
+    public OrderDTO purchase(OrderDTO dto) {
+        OrderEntity entity = orderConverter.toEntity(dto);
+        try {
+            // Save Order
+            entity.setAccount(accountConverter.toEntity(dto.getAccount()));
+            OrderEntity newEntity = orderRepo.save(entity);
 
             List<OrderItemDTO> orderItemDTOs = dto.getOrderItems();
     
@@ -79,13 +80,9 @@ public class OrderService implements IOrderService{
                 OrderItemEntity itemEntity = orderItemConverter.toEntity(orderItemDTO);
                 itemEntity.setOrders(entity);
                 itemEntity.setProductItem(productItemConverter.toEntity(orderItemDTO.getProductItem()));
-                itemEntity.setStatus(SystemConstant.DELIVERED_STATUS);
+                itemEntity.setStatus(OrderStatus.DELIVERED);
                 
-                try {
-                    orderItemRepo.save(itemEntity);
-                } catch (Exception e) {
-                    throw new RuntimeException("Error when save order item");
-                }
+                orderItemRepo.save(itemEntity);
             }
             
                 // Update Product item quantity && stock
@@ -98,13 +95,15 @@ public class OrderService implements IOrderService{
             
                 // Update Cart And Quantity Order
             redisUtil.adjustQuantityOrder(dto.getAccount().getUsername(), -dto.getOrderItems().size());
-            cartItemRepo.deleteAllById(dto.getCartItemIds());
+            // cartItemRepo.deleteAllById(dto.getCartItemIds());
+
+            return orderConverter.toDTO(newEntity);
         } catch (Exception e) {
             orderRepo.delete(entity);
             throw new RuntimeException("Error occurred, order creation rolled back");
         }
     }
-    
+
         // FIND ONE
     @Override
     public OrderDTO findOneById(Long id) {
@@ -113,30 +112,63 @@ public class OrderService implements IOrderService{
     }
     
     @Override
-    public OrderDTO findOneByAccountIdAndStatus(Long accountId, String status) {
+    public OrderDTO findOneByAccountIdAndStatus(Long accountId, OrderStatus status) {
         Optional<OrderEntity> entity = orderRepo.findOneByAccountIdAndStatus(accountId, status);
         return entity.map(item -> orderConverter.toDTO(item)).orElse(null);
+    }
+    
+    @Override
+    public OrderDTO findOneByCartIdAndAccountIdAndStatus(Long cartId, Long accountId, OrderStatus status) {
+        Optional<OrderEntity> orderOptional = orderRepo.findOneByCartIdAndAccountIdAndStatus(cartId, accountId, status);
+        return orderOptional.map(entity -> orderConverter.toDTO(entity)).orElse(null);
     }
 
         // FIND ALL
     @Override
-    public List<OrderDTO> findAllByStatus(String status) {
+    public List<OrderDTO> findAllByStatus(OrderStatus status) {
         return orderConverter.toListDTO(orderRepo.findAllByStatus(status));
     }
 
     @Override
-    public List<OrderDTO> findAllByAccountIdAndStatus(Long accountId, String status, int page, int size) {
+    public List<OrderDTO> findAllByAccountIdAndStatus(Long accountId, OrderStatus status, int page, int size) {
         Page<OrderEntity> orderPage = orderRepo.findAllByAccountIdAndStatus(accountId, status, PageRequest.of(page - 1, size));
         return orderConverter.toListDTO(orderPage.getContent());
     }
 
     @Override
-    public Long countByAccountIdAndStatus(Long accountId, String status) {
+    public List<OrderDTO> findAllByCartIdAndStatus(Long cartId, OrderStatus status) {
+        List<OrderEntity> orderEntities = orderRepo.findAllByCartIdAndStatus(cartId, status);
+        return orderConverter.toListDTO(orderEntities);
+    }
+
+    @Override
+    public List<OrderDTO> findAllByCartId(Long cartId) {
+        List<OrderEntity> orderEntities = orderRepo.findAllByCartId(cartId);
+        return orderConverter.toListDTO(orderEntities);
+    }
+
+    
+    @Override
+    public List<OrderDTO> findAllByCartIdAndAndStatus(Long cartId, OrderStatus status) {
+        List<OrderEntity> orderEntities = orderRepo.findAllByCartIdAndStatus(cartId, status);
+        return orderConverter.toListDTO(orderEntities);
+    }
+    
+        // COUNT AND CHECK
+    @Override
+    public boolean isExistedByCartIdAndAccountId(long cartId, long accountId) {
+        Optional<OrderEntity> orderOptional = orderRepo.findOneByCartIdAndAccountId(cartId, accountId);
+        return orderOptional.isPresent();
+    }
+    
+    @Override
+    public Long countByAccountIdAndStatus(Long accountId, OrderStatus status) {
         return orderRepo.countByAccountIdAndStatus(accountId, status);
     }
 
     @Override
-    public boolean isOrderExistByAccountIdAndStatus(Long accountId, String status) {
+    public boolean isOrderExistByAccountIdAndStatus(Long accountId, OrderStatus status) {
         return orderRepo.findOneByAccountIdAndStatus(accountId, status).isPresent();
     }
+
 }

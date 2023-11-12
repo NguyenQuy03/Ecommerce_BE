@@ -1,0 +1,31 @@
+
+#type {
+  min-width: 180px;
+}
+
+#value {
+  min-width: 200px;
+}
+
+#type-unit {
+  margin-right: 2px;
+}
+
+#type-warning {
+  color: var(--bs-warning);
+}
+
+.separator {
+  height: 36px;
+  position: relative;
+}
+
+.separator-line {
+  position: absolute;
+  height: 2px; width: 20px;
+  background-color: #000;
+}
+
+.warning-text {
+  font-size: 14px;
+}

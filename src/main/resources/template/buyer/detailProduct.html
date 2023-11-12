@@ -12,6 +12,7 @@
 <script defer src="/buyer/js/detailProductUI.js"></script>
 <script defer src="/buyer/js/detailProduct.js"></script>
 <link rel="stylesheet" href="/buyer/css/detailProductCustom.css">
+<link rel="stylesheet" href="/buyer/css/shop.css">
 </head>
 <body>
 	<!-- Shop Detail Start -->
@@ -127,7 +128,41 @@
 				</div>
 			</div>
 		</div>
-		<div class="row px-xl-5">
+
+		<div class="row px-xl-5 bg-secondary" style="margin: 0 -10px;">
+			<!-- Shop Information -->
+			<div class="col-lg-12 py-5">
+				<div class="shop-info-container d-flex align-items-center justify-content-between">
+					<div class="shop-info-thumbnail d-flex justify-content-center align-items-center flex-column rounded p-2">
+						<div class="d-flex justify-content-around align-items-center" style="width: 100%;">
+							<img style="max-width: 60px;" src="https://res.cloudinary.com/dald4jiyw/image/upload/v1697031664/Default_pfp.svg_xkjczv.png" alt="Avatar image">
+							<p class="shop-info-name" style="color: var(--white);">0l9ih6qg_t</p>
+						</div>
+						<div class="shop-info-interaction d-flex justify-content-around mt-2">
+							<button class="shop-info-interaction-follow btn btn-outline-secondary rounded"><i class="fas fa-plus mx-2"></i>FOLLOW</button>
+							<button class="shop-info-interaction-chat btn btn-outline-secondary rounded"><i class="far fa-comments mx-2"></i>CHAT</button>
+						</div>
+					</div>
+					<div class="shop-info-detail d-flex">
+						<div>
+							<p class="shop-info-quantity-product">Product: 0</p>
+							<p class="shop-info-quantity-following">Following: 0</p>
+						</div>
+						<div style="width: 200px;"></div>
+						<div>
+							<p class="shop-info-quantity-performance">Chat Performance: 57%</p>
+							<p class="shop-info-quantity-follower">Follower: 0</p>
+						</div>
+						<div style="width: 200px;"></div>
+						<div>
+							<p class="shop-info-quantity-rating">Rating: 0</p>
+							<p class="shop-info-quantity-joined">Joined: 0</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row px-xl-5" style="margin-top: 50px;">
 			<div class="col">
 				<div
 					class="nav nav-tabs justify-content-center border-secondary mb-4">
@@ -209,7 +244,43 @@
 				</div>
 			</div>
 		</div>
-	</div>
+
+		<!-- FROM THE SAME SHOP -->
+		<div class="row px-xl-5 d-flex justify-content-center align-items-center">
+			<div class="text-center mb-4 mt-5 d-flex align-items-center justify-content-center" style="min-height: 80px">
+				<h4 class="px-2">From The Same Shop</h5>
+			</div>
+			<div class="row pb-3">
+				<div th:each="product : ${suggestProducts.listResult}"
+					class="col-lg-2 col-md-6 col-sm-12 pb-1">
+					<a th:href="@{/product/detail/{id}(id=${product.id})}">
+						<div class="card product-item border-0 mb-4">
+							<div
+								class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+								<img class="img-fluid w-100" id="imageProduct"
+									th:src="${product.image}"
+									alt="Background image" />
+							</div>
+							<div
+								class="card-body border-left border-right p-0 pt-1 pr-2 pl-2 text-dark">
+								<p class="text-truncate mb-3" th:utext="${product.name}"
+									style="font-size: 14px;"></p>
+								<div class="d-flex justify-content-between">
+									<h6 class="text-primary" th:utext="${product.productItems[0].intPrice}"></h6>
+									<div>
+										<span th:text="${product.totalSold}" style="font-size: 14px;"></span>
+										<span>&nbsp;sold</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+			<div class="row px-xl-5 pb-3 d-flex align-items-center justify-content-center">
+				<a th:href="@{/search?keyword}" class="btn btn-primary">See more</a>
+			</div>
+		</div>
 	<!-- Shop Detail End -->
 
 </body>

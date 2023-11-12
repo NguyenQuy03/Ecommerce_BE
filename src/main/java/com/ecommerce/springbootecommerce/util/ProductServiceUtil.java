@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.cloudinary.Cloudinary;
-import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
-import com.ecommerce.springbootecommerce.dto.product.ProductItemDTO;
+import com.ecommerce.springbootecommerce.dto.ProductDTO;
+import com.ecommerce.springbootecommerce.dto.ProductItemDTO;
 
 @Component
 public class ProductServiceUtil {

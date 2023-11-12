@@ -10,13 +10,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import com.ecommerce.springbootecommerce.dto.product.ProductDTO;
+import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.entity.ProductEntity;
 import com.ecommerce.springbootecommerce.entity.ProductItemEntity;
 import com.ecommerce.springbootecommerce.repository.ProductItemRepository;
+import com.ecommerce.springbootecommerce.util.converter.account_role.AccountConverter;
 
 @Component
 public class ProductConverter {
@@ -52,6 +52,8 @@ public class ProductConverter {
         dto.setTotalSold((long) productDetails.get("totalSold"));
         dto.setTotalStock((long) productDetails.get("totalStock"));
         dto.setAvgPrice((String) productDetails.get("avgPrice"));
+        dto.setRevenue((double) productDetails.get("revenue"));
+        
         dto.setVariations((Map<String, List<String>>) productDetails.get("variations"));       
         
         dto.setCreatedDate(entity.getCreatedDate());
@@ -100,16 +102,6 @@ public class ProductConverter {
         return productDTOs;
     }
 
-    public ProductDTO mapDataFromPage(Page<ProductEntity> pageEntity) {
-        ProductDTO dto = new ProductDTO();
-        dto.setListResult(toListDTO(pageEntity.getContent()));
-        dto.setTotalItem(pageEntity.getTotalElements());
-        dto.setTotalPage(pageEntity.getTotalPages());
-        dto.setPage((int) pageEntity.getPageable().getPageNumber() + 1);
-        dto.setSize(pageEntity.getPageable().getPageSize());
-        return dto;
-    }
-
     // REUSE
     private Map<String, Object> getProductDetails(List<ProductItemEntity> productItemEntities) {
         Map<String, Object> details = new HashMap<>();
@@ -118,19 +110,21 @@ public class ProductConverter {
         AtomicReference<Double> minPrice = new AtomicReference<>(Double.MAX_VALUE);
         Map<String, List<String>> variations = new HashMap<>();
         AtomicLong totalStock = new AtomicLong(0);
+        AtomicReference<Double> revenue = new AtomicReference<>(0D);
 
         if(productItemEntities.size() == 1) {
             details.put("totalSold", productItemEntities.get(0).getSold());
             details.put("totalStock", productItemEntities.get(0).getStock());
             details.put("avgPrice", "$" + productItemEntities.get(0).getPrice());
             details.put("variations", variations);
-
+            
             return details;
         } else {
             productItemEntities.forEach(item -> {
                 totalSold.addAndGet(item.getSold());
                 totalStock.addAndGet(item.getStock());
-    
+                revenue.updateAndGet(v -> v + item.getSold() * item.getPrice());
+                
                 if (item.getPrice() > maxPrice.get()) {
                     maxPrice.set(item.getPrice());
                 }
@@ -148,7 +142,13 @@ public class ProductConverter {
 
         details.put("totalSold", totalSold.get());
         details.put("totalStock", totalStock.get());
-        details.put("avgPrice", "$" + minPrice + " - " + "$" + maxPrice);
+        details.put("revenue", revenue.get());
+
+        if(minPrice.get().equals(maxPrice.get())) {
+            details.put("avgPrice", "$" + minPrice);
+        } else {
+            details.put("avgPrice", "$" + minPrice + " - " + "$" + maxPrice);
+        }
         details.put("variations", variations);
 
         return details;

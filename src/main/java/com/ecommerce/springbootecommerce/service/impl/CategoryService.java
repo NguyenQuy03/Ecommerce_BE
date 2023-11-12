@@ -6,23 +6,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.cloudinary.Cloudinary;
+import com.ecommerce.springbootecommerce.dto.BaseDTO;
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import com.ecommerce.springbootecommerce.entity.CategoryEntity;
 import com.ecommerce.springbootecommerce.repository.CategoryRepository;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
+import com.ecommerce.springbootecommerce.util.ServiceUtil;
 
 @Service
 public class CategoryService implements ICategoryService {
     
     @Autowired
     private CategoryRepository categoryRepo;
+
+    @Autowired
+    private ServiceUtil serviceUtil;
     
     @Autowired
     private ModelMapper modelMapper;
@@ -61,19 +68,41 @@ public class CategoryService implements ICategoryService {
     }
 
     @Override
-    public long count() {
-        return categoryRepo.count();
+    public CategoryDTO findOneByCode(String code) {
+        return categoryRepo.findOneByCode(code).map(item -> modelMapper.map(item, CategoryDTO.class)).orElse(null);
+    }
+
+    @Override
+    public CategoryDTO findOneByIdAndAccountId(long id, long accountId) {
+        return categoryRepo.findOneByIdAndAccountId(id, accountId).map(item -> modelMapper.map(item, CategoryDTO.class)).orElse(null);
     }
 
     public List<CategoryDTO> findAll() {
         List<CategoryEntity> listCategoriesEntity = categoryRepo.findAll();
         return toListCategoryDTO(listCategoriesEntity);
     }
-    
+
     @Override
-    public List<CategoryDTO> findAll(Pageable pageable) {
-        List<CategoryEntity> listCategoryEntity = categoryRepo.findAll(pageable).getContent();
-        return toListCategoryDTO(listCategoryEntity);
+    public BaseDTO<CategoryDTO> findAllByAccountId(long accountId, Pageable pageable) {
+        Page<CategoryEntity> pageEntity = categoryRepo.findAllByAccountId(accountId, pageable);
+        BaseDTO<CategoryDTO> res = serviceUtil.mapDataFromPage(pageEntity);
+
+        List<CategoryEntity> listCategoryEntity = pageEntity.getContent();
+        List<CategoryDTO> listCategoryDTO = listCategoryEntity.stream()
+            .map(categoryEntity -> modelMapper.map(categoryEntity, CategoryDTO.class))
+            .collect(Collectors.toList());
+        res.setListResult(listCategoryDTO);
+        return res;
+    }
+
+    @Override
+    public List<CategoryDTO> findAllByAccountId(long accountId) {
+        List<CategoryEntity> listCategoryEntity = categoryRepo.findAllByAccountId(accountId);
+
+        List<CategoryDTO> listCategoryDTO = listCategoryEntity.stream()
+            .map(categoryEntity -> modelMapper.map(categoryEntity, CategoryDTO.class))
+            .collect(Collectors.toList());
+        return listCategoryDTO;
     }
 
     // REUSE
@@ -103,11 +132,5 @@ public class CategoryService implements ICategoryService {
         }
 
         return thumbnailUrl;
-    }
-
-    @Override
-    public CategoryDTO findOneByCode(String code) {
-        CategoryEntity entity = categoryRepo.findOneByCode(code).get();
-        return modelMapper.map(entity, CategoryDTO.class);
     }
 }
