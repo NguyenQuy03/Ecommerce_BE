@@ -3,9 +3,11 @@ package com.ecommerce.springbootecommerce.dto;
 import com.ecommerce.springbootecommerce.entity.AccountEntity;
 import com.ecommerce.springbootecommerce.entity.RoleEntity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class AccountRoleDTO extends BaseDTO<AccountRoleDTO>{
     private Long accountId;
     private String roleCode;

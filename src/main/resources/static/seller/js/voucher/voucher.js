@@ -6,7 +6,7 @@ const rewardSettingForm = $("#reward-setting-form")
 
 const data = {};
 
-let APIVoucherUrl = "/api/seller/voucher";
+let APIVoucherUrl = "/api/v1/seller/voucher";
 let redirectUrlDefault = "/seller/voucher/list/all?page=1&size=2";
 
 const idEl = $("#id")[0] || null

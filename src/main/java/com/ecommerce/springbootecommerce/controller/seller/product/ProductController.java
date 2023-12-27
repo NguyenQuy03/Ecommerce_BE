@@ -53,7 +53,7 @@ public class ProductController {
         List<CategoryDTO> categories = categoryService.findAll();
         model.addAttribute("categories", categories);
         model.addAttribute("dto", dto);
-        model.addAttribute("isVariation", dto.getProductItems().get(0).getVariationName() != null);
+        // model.addAttribute("isVariation", dto.getProductItems().get(0).getVariationName() != null);
 
         return "/seller/product/addOrEdit";
     }

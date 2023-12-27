@@ -1,4 +1,4 @@
-const APICartUrl = "/api/buyer/cart"
+const APICartUrl = "/api/v1/buyer/cart"
 const redirectUrlDefault = "/cart"
 
 const closeBtn = document.querySelector(".close-announce-btn");

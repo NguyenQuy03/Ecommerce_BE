@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.springbootecommerce.constant.StatusConstant;
+import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.dto.ProductItemDTO;
 import com.ecommerce.springbootecommerce.entity.ProductEntity;
@@ -57,7 +57,7 @@ public class ProductItemService implements IProductItemService {
     public void save(ProductItemDTO dto, ProductDTO productDTO, ProductEntity productEntity) {
         ProductItemEntity productItemEntity = productItemConverter.toEntity(dto);
             productItemEntity.setProduct(productEntity);
-            productItemEntity.setStatus(StatusConstant.STRING_ACTIVE_STATUS);
+            productItemEntity.setStatus(ProductStatus.ACTIVE);
             if(productItemEntity.getImage() == null) {
                 productItemEntity.setImage(productDTO.getImage());
             }
@@ -72,9 +72,9 @@ public class ProductItemService implements IProductItemService {
         itemEntity.setProduct(productEntity);
         
         if(itemEntity.getStock() > 0) {
-            itemEntity.setStatus(StatusConstant.STRING_ACTIVE_STATUS);
+            itemEntity.setStatus(ProductStatus.ACTIVE);
         } else {
-            itemEntity.setStatus(StatusConstant.SOLD_OUT_STATUS);
+            itemEntity.setStatus(ProductStatus.SOLD_OUT);
         }
 
         productItemRepo.save(itemEntity);

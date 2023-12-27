@@ -1,6 +1,8 @@
 
 const restoreBtn = $(".restore-btn");
 
+const APIProductUrl = "/api/v1/seller/product";
+
 const defaultPageSize = 2;
 
 $(".btnDelete.force").click(function() {
@@ -27,7 +29,7 @@ restoreBtn.click(function() {
 
 function deleteProduct(data) {
 	$.ajax({
-		url: "/api/seller/product",
+		url: APIProductUrl,
 		type: "DELETE",
 		data: JSON.stringify(data),
 		contentType: "application/json",
@@ -42,7 +44,7 @@ function deleteProduct(data) {
 
 function forceDeleteProduct(data) {
 	$.ajax({
-		url: "/api/seller/product/forceDelete",
+		url: "/api/v1/seller/product/forceDelete",
 		type: "DELETE",
 		data: JSON.stringify(data),
 		contentType: "application/json",
@@ -57,7 +59,7 @@ function forceDeleteProduct(data) {
 
 function restoreProduct(data) {
 	$.ajax({
-		url: "/api/seller/product/restore",
+		url: "/api/v1/seller/product/restore",
 		type: "POST",
 		data: JSON.stringify(data),
 		contentType: "application/json",

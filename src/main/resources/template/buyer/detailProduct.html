@@ -51,7 +51,7 @@
 				</div>
 				<h3 th:text=*{avgPrice} id="price" class="font-weight-semi-bold mb-4"></h3>
 
-				<div th:if="${product.variations != null}" class="d-flex mb-4 variation-content" th:each="instance : ${product.variations}">
+				<!-- <div th:if="${product.variations != null}" class="d-flex mb-4 variation-content" th:each="instance : ${product.variations}">
 					<p class="text-dark font-weight-medium mb-0 mr-3" th:utext="(${#strings.capitalize(instance.key)}) + ': '"></p>
 					<div class="custom-control custom-radio custom-control-inline"
 						th:classappend="'variation-'+${instanceStat.index}" th:each="item : ${instance.value}">
@@ -59,7 +59,7 @@
 							th:classappend="'variation-option-'+${instanceStat.index}" th:name="${instance.key}">
 						<label class="custom-control-label" th:text="${item}" th:for="${instance.key}+'-'+${item}"></label>
 					</div>
-				</div>
+				</div> -->
 
 				
 				<div th:each="productItem : ${product.productItems}">
@@ -180,12 +180,12 @@
 
 					<div class="tab-pane fade show" id="tab-pane-2">
 						<h4 class="mb-3">Product Information</h4>
-						<div th:if="${product.specification != null}">
+						<!-- <div th:if="${product.specification != null}">
 							<div class="d-flex" th:each="spec : ${product.specification.entrySet()}">
 								<label style="min-width: 140px;" th:utext="${spec.key}"></label>
 								<p class="text-dark" th:utext="${spec.value}"></p>
 							</div>
-						</div>
+						</div> -->
 					</div>
 
 					<div class="tab-pane fade" id="tab-pane-3">

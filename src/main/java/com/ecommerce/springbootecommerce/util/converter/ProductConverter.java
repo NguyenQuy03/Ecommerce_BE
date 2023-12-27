@@ -1,9 +1,7 @@
 package com.ecommerce.springbootecommerce.util.converter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -32,7 +30,7 @@ public class ProductConverter {
 
     @Autowired
     private ProductItemRepository productItemRepo;
-    
+
     public ProductDTO toDTO(ProductEntity entity) {
         ProductDTO dto = new ProductDTO();
 
@@ -41,7 +39,7 @@ public class ProductConverter {
         dto.setAccount(accountConverter.toDTO(entity.getAccount()));
         dto.setName(entity.getName());
         dto.setDescription(entity.getDescription());
-        dto.setSpecification(convertStringToMap(entity.getSpecification()));
+        dto.setSpecification(entity.getSpecification());
         dto.setImage(entity.getImage());
         dto.setStatus(entity.getStatus());
 
@@ -53,14 +51,12 @@ public class ProductConverter {
         dto.setTotalStock((long) productDetails.get("totalStock"));
         dto.setAvgPrice((String) productDetails.get("avgPrice"));
         dto.setRevenue((double) productDetails.get("revenue"));
-        
-        dto.setVariations((Map<String, List<String>>) productDetails.get("variations"));       
-        
+
         dto.setCreatedDate(entity.getCreatedDate());
         dto.setCreatedBy(entity.getCreatedBy());
         dto.setModifiedDate(entity.getModifiedDate());
         dto.setModifiedBy(entity.getModifiedBy());
-        
+
         return dto;
     }
 
@@ -71,9 +67,9 @@ public class ProductConverter {
         entity.setDescription(dto.getDescription());
         entity.setStatus(dto.getStatus());
         entity.setSpecification(dto.getSpecification().toString());
-        
+
         entity.setImage(dto.getImage());
-        
+
         if (dto.getId() != null) {
             entity.setId(dto.getId());
         }
@@ -90,10 +86,10 @@ public class ProductConverter {
 
         return preEntity;
     }
-    
+
     public List<ProductDTO> toListDTO(List<ProductEntity> listProductEntity) {
         List<ProductDTO> productDTOs = new ArrayList<>();
-        for(ProductEntity entity : listProductEntity) {
+        for (ProductEntity entity : listProductEntity) {
             List<ProductItemEntity> productItemEntities = productItemRepo.findAllByProductId(entity.getId());
             ProductDTO productDTO = toDTO(entity);
             productDTO.setProductItems(productItemConverter.toListDTO(productItemEntities));
@@ -108,34 +104,26 @@ public class ProductConverter {
         AtomicLong totalSold = new AtomicLong(0);
         AtomicReference<Double> maxPrice = new AtomicReference<>(Double.MIN_VALUE);
         AtomicReference<Double> minPrice = new AtomicReference<>(Double.MAX_VALUE);
-        Map<String, List<String>> variations = new HashMap<>();
         AtomicLong totalStock = new AtomicLong(0);
         AtomicReference<Double> revenue = new AtomicReference<>(0D);
 
-        if(productItemEntities.size() == 1) {
+        if (productItemEntities.size() == 1) {
             details.put("totalSold", productItemEntities.get(0).getSold());
             details.put("totalStock", productItemEntities.get(0).getStock());
             details.put("avgPrice", "$" + productItemEntities.get(0).getPrice());
-            details.put("variations", variations);
-            
+
             return details;
         } else {
             productItemEntities.forEach(item -> {
                 totalSold.addAndGet(item.getSold());
                 totalStock.addAndGet(item.getStock());
                 revenue.updateAndGet(v -> v + item.getSold() * item.getPrice());
-                
+
                 if (item.getPrice() > maxPrice.get()) {
                     maxPrice.set(item.getPrice());
                 }
                 if (item.getPrice() < minPrice.get()) {
                     minPrice.set(item.getPrice());
-                }
-    
-                if (variations.isEmpty() || !variations.containsKey(item.getVariationName())) {
-                    variations.put(item.getVariationName(), new LinkedList<>(Arrays.asList(item.getVariationValue())));
-                } else {
-                    variations.get(item.getVariationName()).add(item.getVariationValue());
                 }
             });
         }
@@ -144,28 +132,12 @@ public class ProductConverter {
         details.put("totalStock", totalStock.get());
         details.put("revenue", revenue.get());
 
-        if(minPrice.get().equals(maxPrice.get())) {
+        if (minPrice.get().equals(maxPrice.get())) {
             details.put("avgPrice", "$" + minPrice);
         } else {
             details.put("avgPrice", "$" + minPrice + " - " + "$" + maxPrice);
         }
-        details.put("variations", variations);
 
         return details;
     }
-
-    private Map<String, String> convertStringToMap(String mapString) {
-        Map<String, String> map = new HashMap<>();
-
-        String[] entries = mapString.substring(1, mapString.length() - 1).split(", ");
-        for(String entry : entries) {
-            String[] keyValue = entry.split("=");
-            if(keyValue.length == 2) {
-                map.put(keyValue[0], keyValue[1]);
-            }
-        }
-
-        return map;
-    }
-
 }

@@ -39,4 +39,8 @@ public class OrderItemDTO extends BaseDTO<OrderItemDTO>{
         numberFormat.format(this.curPrice);
         return numberFormat.format(this.curPrice);
     }
+
+    public void increaseQuantity(long quantity) {
+        this.quantity += quantity;
+    }
 }

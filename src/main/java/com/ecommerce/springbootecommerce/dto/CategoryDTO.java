@@ -8,6 +8,7 @@ import lombok.Setter;
 public class CategoryDTO extends BaseDTO<CategoryDTO> {  
     
     private String code;
+    private String name;
     private String thumbnail;
 
     private AccountDTO account;

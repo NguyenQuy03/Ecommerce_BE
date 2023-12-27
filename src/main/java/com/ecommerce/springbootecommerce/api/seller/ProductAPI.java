@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ecommerce.springbootecommerce.constant.StatusConstant;
+import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
@@ -19,7 +19,7 @@ import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.IProductService;
 
 @RestController(value = "ProductAPIOfSeller")
-@RequestMapping("/api/seller/product")
+@RequestMapping("/api/v1/seller/product")
 public class ProductAPI {
     
     @Autowired  
@@ -63,7 +63,7 @@ public class ProductAPI {
     @DeleteMapping()
     public ResponseEntity<String> softDelete(@RequestBody long[] ids) {
         try {
-            productService.softDelete(StatusConstant.STRING_INACTIVE_STATUS, ids);
+            productService.softDelete(ProductStatus.INACTIVE, ids);
             return ResponseEntity.ok("Success! Your product has been deleted.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting product");
@@ -73,7 +73,7 @@ public class ProductAPI {
     @DeleteMapping("/forceDelete")
     public ResponseEntity<String> forceDelete(@RequestBody long[] ids) {
         try {
-            productService.forceDelete(StatusConstant.REMOVED_STATUS, ids);
+            productService.forceDelete(ProductStatus.REMOVED, ids);
             return ResponseEntity.ok("Success! Your product has been deleted.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting product");

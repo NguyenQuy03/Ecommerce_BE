@@ -21,7 +21,7 @@ import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.IVoucherService;
 
 @RestController(value = "VoucherAPIOfManager")
-@RequestMapping("/api/manager/voucher")
+@RequestMapping("/api/v1/manager/voucher")
 public class VoucherAPI {
 
     @Autowired

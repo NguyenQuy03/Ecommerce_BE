@@ -21,6 +21,9 @@ public class CategoryEntity extends BaseEntity{
 
     @NotNull
     private String code;
+
+    @NotNull
+    private String name;
     
     @NotNull
     private String thumbnail;

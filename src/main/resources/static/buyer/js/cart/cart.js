@@ -1,6 +1,6 @@
 
-const APICartUrl = "/api/buyer/cart"
-const APIOrderUrl = "/api/buyer/order"
+const APICartUrl = "/api/v1/buyer/cart"
+const APIOrderUrl = "/api/v1/buyer/order"
 const redirectUrlDefault = "/home"
 
 const shopVoucherEls = $(".shop-voucher");

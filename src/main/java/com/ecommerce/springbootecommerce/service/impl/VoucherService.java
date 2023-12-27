@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.springbootecommerce.constant.StatusConstant;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
 import com.ecommerce.springbootecommerce.constant.enums.voucher.VoucherStatus;
 import com.ecommerce.springbootecommerce.dto.BaseDTO;
 import com.ecommerce.springbootecommerce.dto.VoucherDTO;
@@ -56,8 +55,6 @@ public class VoucherService implements IVoucherService{
     @Autowired
     private VoucherConverter voucherConverter;
 
-    @Autowired
-    private EntityManager entityManager;
 
     @Override
     @Transactional
@@ -79,7 +76,7 @@ public class VoucherService implements IVoucherService{
 
             voucherCategoryRepo.saveAll(listEntities);
         } else if(dto.getAccount().getMainRole().equals(SystemConstant.ROLE_SELLER)) {
-            List<ProductEntity> products = productRepo.findAllByAccountIdAndStatus(dto.getAccount().getId(), StatusConstant.STRING_ACTIVE_STATUS);
+            List<ProductEntity> products = productRepo.findAllByAccountIdAndStatus(dto.getAccount().getId(), ProductStatus.ACTIVE);
             List<VoucherProductEntity> listEntities = new ArrayList<>();
             for(ProductEntity productEntity : products) {
                 var entity = new VoucherProductEntity();

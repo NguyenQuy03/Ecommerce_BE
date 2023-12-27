@@ -15,17 +15,17 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderDTO extends BaseDTO<OrderDTO>{
-    
-    private OrderStatus status;
-    
-    private String totalPrice;
-    
-    private List<OrderItemDTO> orderItems;
-    
-    private AccountDTO account;
+public class OrderDTO extends BaseDTO<OrderDTO> {
 
-    private CartDTO cart;
+    private OrderStatus status;
+
+    private String totalPrice;
+
+    private List<OrderItemDTO> orderItems;
+
+    private AccountDTO seller;
+
+    private AccountDTO buyer;
 
     private VoucherDTO shopVoucher;
 }

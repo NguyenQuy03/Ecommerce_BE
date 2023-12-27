@@ -12,6 +12,7 @@ import com.ecommerce.springbootecommerce.entity.ProductItemEntity;
 @Repository
 public interface ProductItemRepository extends JpaRepository<ProductItemEntity, Long> {    
     
+    // @Query(value = "SELECT * FROM PRODUCT_ITEM WHERE product_id = ?", nativeQuery = true)
     List<ProductItemEntity> findAllByProductId(Long productId);
     Slice<ProductItemEntity> findAllByStatus(String status, Pageable pageable);
 

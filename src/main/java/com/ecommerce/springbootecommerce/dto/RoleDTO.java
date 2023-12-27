@@ -6,5 +6,5 @@ import lombok.Data;
 public class RoleDTO {
 
     private String code;
-
+    private String name;
 }

@@ -17,8 +17,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoleEntity {
-
     @Id 
-    @Column(columnDefinition = "varchar(50)")
+    @Column(columnDefinition = "varchar(5)")
     private String code;
+    
+    @Column(columnDefinition = "varchar(50)")
+    private String name;
 }

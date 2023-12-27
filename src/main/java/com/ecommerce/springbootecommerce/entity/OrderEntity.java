@@ -1,13 +1,10 @@
 package com.ecommerce.springbootecommerce.entity;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -34,13 +31,12 @@ public class OrderEntity extends BaseEntity {
 
     @NotNull
     private Double totalPrice = 0D;
-    
-    @OneToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "account_id", referencedColumnName = "id")
-    private AccountEntity account;
-    // SELLER
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "cart_id", nullable = true)
-    private CartEntity cart;
+    @OneToOne
+    @JoinColumn(name = "seller_id", referencedColumnName = "id")
+    private AccountEntity seller;
+
+    @OneToOne
+    @JoinColumn(name = "buyer_id", referencedColumnName = "id")
+    private AccountEntity buyer;
 }

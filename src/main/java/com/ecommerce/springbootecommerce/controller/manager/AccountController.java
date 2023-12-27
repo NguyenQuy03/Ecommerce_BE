@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.AccountRoleDTO;
 import com.ecommerce.springbootecommerce.service.IAccountRoleService;
 

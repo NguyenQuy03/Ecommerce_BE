@@ -6,15 +6,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import javax.persistence.EntityManager;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.springbootecommerce.constant.StatusConstant;
+import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
 import com.ecommerce.springbootecommerce.dto.BaseDTO;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.dto.ProductItemDTO;
@@ -51,30 +49,27 @@ public class ProductService implements IProductService {
     @Autowired
     private ServiceUtil serviceUtil;
 
-    @Autowired
-    private EntityManager entityManager;
-
     @Override
     public void save(ProductDTO dto) {           
         try {
-            dto.setStatus(StatusConstant.STRING_ACTIVE_STATUS);                      
+            dto.setStatus(ProductStatus.ACTIVE);                      
 
             ExecutorService executorService = Executors.newFixedThreadPool(5);
                 String imageUrl = productServiceUtil.updateProductImage(dto);
                 dto.setImage(imageUrl);
                 
-                if(dto.getProductItems().get(0).getVariationName() != null) {
-                    List<Future<String>> uploadProductItemImages = productServiceUtil.productItemImages(dto.getProductItems(), executorService);
+                // if(dto.getProductItems().get(0).getVariationName() != null) {
+                //     List<Future<String>> uploadProductItemImages = productServiceUtil.productItemImages(dto.getProductItems(), executorService);
 
-                    for (int i = 0; i < uploadProductItemImages.size(); i++) {
-                        try {
-                            String productItemImageUrl = uploadProductItemImages.get(i).get();
-                            dto.getProductItems().get(i).setImage(productItemImageUrl);
-                        } catch (Exception e) {
-                            throw new RuntimeException("Error store product image");
-                        }
-                    }
-                }
+                //     for (int i = 0; i < uploadProductItemImages.size(); i++) {
+                //         try {
+                //             String productItemImageUrl = uploadProductItemImages.get(i).get();
+                //             dto.getProductItems().get(i).setImage(productItemImageUrl);
+                //         } catch (Exception e) {
+                //             throw new RuntimeException("Error store product image");
+                //         }
+                //     }
+                // }
             executorService.shutdown();
 
             ProductEntity entity = productConverter.toEntity(dto);
@@ -101,7 +96,7 @@ public class ProductService implements IProductService {
         ProductEntity preProductEntity = productRepo.findById(dto.getId())
             .orElseThrow(() -> new IllegalArgumentException("Product is not exist"));
             
-        dto.setStatus(StatusConstant.STRING_ACTIVE_STATUS);      
+        dto.setStatus(ProductStatus.ACTIVE);      
         
             // Filter Product Items Do Not Valid
         productItemService.filterUnUsedProductItem(dto);
@@ -110,18 +105,18 @@ public class ProductService implements IProductService {
             String imageUrl = productServiceUtil.updateProductImage(dto);
             dto.setImage(imageUrl);
             
-            if(dto.getProductItems().get(0).getVariationName() != null) {
-                List<Future<String>> uploadProductItemImages = productServiceUtil.productItemImages(dto.getProductItems(), executorService);
+            // if(dto.getProductItems().get(0).getVariationName() != null) {
+            //     List<Future<String>> uploadProductItemImages = productServiceUtil.productItemImages(dto.getProductItems(), executorService);
 
-                for (int i = 0; i < uploadProductItemImages.size(); i++) {
-                    try {
-                        String productItemImageUrl = uploadProductItemImages.get(i).get();
-                        dto.getProductItems().get(i).setImage(productItemImageUrl);
-                    } catch (Exception e) {
-                        throw new RuntimeException("Error store image");
-                    }
-                }
-            }
+            //     for (int i = 0; i < uploadProductItemImages.size(); i++) {
+            //         try {
+            //             String productItemImageUrl = uploadProductItemImages.get(i).get();
+            //             dto.getProductItems().get(i).setImage(productItemImageUrl);
+            //         } catch (Exception e) {
+            //             throw new RuntimeException("Error store image");
+            //         }
+            //     }
+            // }
         executorService.shutdown();
 
         preProductEntity = productConverter.toEntity(dto, preProductEntity);
@@ -139,7 +134,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public void softDelete(String status, long[] ids) {
+    public void softDelete(ProductStatus status, long[] ids) {
         for (Long id : ids) {
             ProductEntity product = productRepo.findById(id).get();
             product.setStatus(status);
@@ -148,7 +143,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public void forceDelete(String status, long[] ids) {
+    public void forceDelete(ProductStatus status, long[] ids) {
         softDelete(status, ids);
     }
 
@@ -157,7 +152,7 @@ public class ProductService implements IProductService {
         Optional<ProductEntity> optionalProduct = productRepo.findById(id);
         if(optionalProduct.isPresent()) {
             ProductEntity product = optionalProduct.get();
-            product.setStatus(StatusConstant.STRING_ACTIVE_STATUS);
+            product.setStatus(ProductStatus.ACTIVE);
             productRepo.save(product);
         }
     }
@@ -169,7 +164,7 @@ public class ProductService implements IProductService {
     //FIND
     @Override
     public ProductDTO findById(long id) {
-        return productRepo.findById(id).map(item -> productConverter.toDTO(item)).orElse(null);
+        return productRepo.findOneById(id).map(item -> productConverter.toDTO(item)).orElse(null);
     }
 
     @Override
@@ -190,19 +185,19 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<ProductDTO> findAllByStatus(String status, Pageable pageable) {
+    public List<ProductDTO> findAllByStatus(ProductStatus status, Pageable pageable) {
         List<ProductEntity> productEntities = productRepo.findAllByStatus(status, pageable).getContent();
         return productConverter.toListDTO(productEntities);
     }
 
     @Override
-    public List<ProductDTO> findAllByAccountIdAndStatus(long accountId, String status) {
+    public List<ProductDTO> findAllByAccountIdAndStatus(long accountId, ProductStatus status) {
         List<ProductEntity> productEntities = productRepo.findAllByAccountIdAndStatus(accountId, status);
         return productConverter.toListDTO(productEntities);
     }
     
     @Override
-    public BaseDTO<ProductDTO> findAllByAccountIdAndStatus(long accountId, String status, int page, int size) {
+    public BaseDTO<ProductDTO> findAllByAccountIdAndStatus(long accountId, ProductStatus status, int page, int size) {
         Page<ProductEntity> pageEntity = productRepo.findAllByAccountIdAndStatus(accountId, status, PageRequest.of(page - 1, size));
         BaseDTO<ProductDTO> res = serviceUtil.mapDataFromPage(pageEntity);
         res.setListResult(productConverter.toListDTO(pageEntity.getContent()));
@@ -211,7 +206,7 @@ public class ProductService implements IProductService {
     
     @Override
     public BaseDTO<ProductDTO> findAllByAccountIdAndProductStatusAndProductItemStatus(
-        long accountId, String productStatus, String productItemStatus,
+        long accountId, ProductStatus productStatus, ProductStatus productItemStatus,
         int page, int size
     ) {
         Page<ProductEntity> pageEntity = productRepo.findAllByAccountIdAndProductStatusAndProductItemStatus(

@@ -20,7 +20,7 @@ public class OrderItemService implements IOrderItemService {
 
     @Autowired
     private OrderItemRepository orderItemRepo;
-    
+
     @Autowired
     private RedisUtil redisUtil;
 
@@ -30,18 +30,8 @@ public class OrderItemService implements IOrderItemService {
     @Override
     public void save(OrderItemDTO dto) {
         try {
-            Optional<OrderItemEntity> entity = orderItemRepo.findOneByOrdersIdAndProductItemIdAndStatus(
-                dto.getOrders().getId(), dto.getProductItem().getId(), OrderStatus.PENDING
-            );
-            if(entity.isPresent()) {
-                OrderItemEntity newEntity = entity.get();
-
-                newEntity.setQuantity(newEntity.getQuantity() + dto.getQuantity());
-                orderItemRepo.save(newEntity);
-            } else {
-                orderItemRepo.save(orderItemConverter.toEntity(dto));
-                redisUtil.adjustQuantityOrder(dto.getOrders().getCart().getAccount().getUsername(), +1);
-            }
+            orderItemRepo.save(orderItemConverter.toEntity(dto));
+            redisUtil.adjustQuantityOrder(dto.getOrders().getBuyer().getUsername(), +1);
         } catch (Exception e) {
             throw new RuntimeException("Error create order item");
         }
@@ -71,14 +61,16 @@ public class OrderItemService implements IOrderItemService {
 
     @Override
     public OrderItemDTO findOneByOrderIdAndProductItemId(Long orderId, Long productItemId) {
-        Optional<OrderItemEntity> optionalEntity = orderItemRepo.findOneByOrdersIdAndProductItemId(orderId, productItemId);
+        Optional<OrderItemEntity> optionalEntity = orderItemRepo.findOneByOrdersIdAndProductItemId(orderId,
+                productItemId);
         return optionalEntity.map(item -> orderItemConverter.toDTO(item)).orElse(null);
     }
 
     // FIND ALL
     @Override
     public OrderItemDTO findAllBySellerNameAndStatus(String sellerName, OrderStatus orderStatus, int page, int size) {
-        Page<OrderItemEntity> pageEntity = orderItemRepo.findAllBySellerNameAndStatus(sellerName, orderStatus, PageRequest.of(page, size));
+        Page<OrderItemEntity> pageEntity = orderItemRepo.findAllBySellerNameAndStatus(sellerName, orderStatus,
+                PageRequest.of(page, size));
         OrderItemDTO dto = new OrderItemDTO();
         dto.setListResult(orderItemConverter.toListDTO(pageEntity.getContent()));
 

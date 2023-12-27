@@ -1,15 +1,16 @@
 package com.ecommerce.springbootecommerce.dto;
 
 import java.util.List;
-import java.util.Map;
+
+import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ProductDTO extends BaseDTO<ProductDTO>{
-    
+public class ProductDTO extends BaseDTO<ProductDTO> {
+
     private AccountDTO account;
     private CategoryDTO category;
 
@@ -27,12 +28,13 @@ public class ProductDTO extends BaseDTO<ProductDTO>{
 
     private String avgPrice;
 
-    private Map<String, List<String>> variations;
+    private boolean isVariational;
 
-    private String status;
+    private String variations;
 
-    private Map<String, String> specification;
+    private ProductStatus status;
 
-    private List<ProductItemDTO> productItems;    
+    private String specification;
 
+    private List<ProductItemDTO> productItems;
 }

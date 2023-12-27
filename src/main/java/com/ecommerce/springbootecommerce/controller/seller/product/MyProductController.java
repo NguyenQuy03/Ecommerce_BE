@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.ecommerce.springbootecommerce.constant.StatusConstant;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
+import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
 import com.ecommerce.springbootecommerce.dto.BaseDTO;
 import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
@@ -30,7 +30,7 @@ public class MyProductController {
     ) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(userDetails.getId(), StatusConstant.STRING_ACTIVE_STATUS, page, size);
+        BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(userDetails.getId(), ProductStatus.ACTIVE, page, size);
 
         return generic(model, dto, "all");
     }
@@ -44,7 +44,7 @@ public class MyProductController {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndProductStatusAndProductItemStatus(
-            userDetails.getId(), StatusConstant.STRING_ACTIVE_STATUS, StatusConstant.STRING_ACTIVE_STATUS, page, size
+            userDetails.getId(), ProductStatus.ACTIVE, ProductStatus.ACTIVE, page, size
         );
         
         return generic(model, dto, "live");
@@ -59,7 +59,7 @@ public class MyProductController {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndProductStatusAndProductItemStatus(
-            userDetails.getId(), StatusConstant.STRING_ACTIVE_STATUS, StatusConstant.SOLD_OUT_STATUS, page, size
+            userDetails.getId(), ProductStatus.ACTIVE, ProductStatus.SOLD_OUT, page, size
         );
 
         return generic(model, dto, "soldout");
@@ -81,7 +81,7 @@ public class MyProductController {
     ) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(userDetails.getId(), StatusConstant.STRING_INACTIVE_STATUS, page, size);
+        BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(userDetails.getId(), ProductStatus.INACTIVE, page, size);
 
         model.addAttribute(SystemConstant.QUANTITY_PRODUCT_DTO, dto.getTotalItem());
         model.addAttribute("dto", dto);

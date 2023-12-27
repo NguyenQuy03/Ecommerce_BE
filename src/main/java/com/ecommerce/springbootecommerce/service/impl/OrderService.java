@@ -25,20 +25,20 @@ import com.ecommerce.springbootecommerce.util.converter.order.OrderConverter;
 import com.ecommerce.springbootecommerce.util.converter.order.OrderItemConverter;
 
 @Service
-public class OrderService implements IOrderService{
-    
+public class OrderService implements IOrderService {
+
     @Autowired
     private OrderRepository orderRepo;
 
     @Autowired
     private OrderItemRepository orderItemRepo;
-    
+
     @Autowired
     private ProductItemRepository productItemRepo;
 
     @Autowired
     private AccountConverter accountConverter;
-    
+
     @Autowired
     private RedisUtil redisUtil;
 
@@ -47,7 +47,7 @@ public class OrderService implements IOrderService{
 
     @Autowired
     private OrderItemConverter orderItemConverter;
-    
+
     @Autowired
     private ProductItemConverter productItemConverter;
 
@@ -55,7 +55,7 @@ public class OrderService implements IOrderService{
     public OrderDTO save(OrderDTO dto) {
         OrderEntity entity = orderConverter.toEntity(dto);
         try {
-            entity.setAccount(accountConverter.toEntity(dto.getAccount()));
+            entity.setBuyer(accountConverter.toEntity(dto.getBuyer()));
             OrderEntity newEntity = orderRepo.save(entity);
 
             return orderConverter.toDTO(newEntity);
@@ -70,31 +70,31 @@ public class OrderService implements IOrderService{
         OrderEntity entity = orderConverter.toEntity(dto);
         try {
             // Save Order
-            entity.setAccount(accountConverter.toEntity(dto.getAccount()));
+            entity.setBuyer(accountConverter.toEntity(dto.getBuyer()));
             OrderEntity newEntity = orderRepo.save(entity);
 
             List<OrderItemDTO> orderItemDTOs = dto.getOrderItems();
-    
-                // Save Order Item
-            for(OrderItemDTO orderItemDTO : orderItemDTOs) {
+
+            // Save Order Item
+            for (OrderItemDTO orderItemDTO : orderItemDTOs) {
                 OrderItemEntity itemEntity = orderItemConverter.toEntity(orderItemDTO);
                 itemEntity.setOrders(entity);
                 itemEntity.setProductItem(productItemConverter.toEntity(orderItemDTO.getProductItem()));
                 itemEntity.setStatus(OrderStatus.DELIVERED);
-                
+
                 orderItemRepo.save(itemEntity);
             }
-            
-                // Update Product item quantity && stock
-            for(OrderItemDTO orderItemDTO : dto.getOrderItems()) {
+
+            // Update Product item quantity && stock
+            for (OrderItemDTO orderItemDTO : dto.getOrderItems()) {
                 ProductItemEntity productItem = productItemRepo.findById(orderItemDTO.getProductItem().getId()).get();
                 productItem.decreaseStock(orderItemDTO.getQuantity());
                 productItem.increateSold(orderItemDTO.getQuantity());
                 productItemRepo.save(productItem);
             }
-            
-                // Update Cart And Quantity Order
-            redisUtil.adjustQuantityOrder(dto.getAccount().getUsername(), -dto.getOrderItems().size());
+
+            // Update Cart And Quantity Order
+            redisUtil.adjustQuantityOrder(dto.getBuyer().getUsername(), -dto.getOrderItems().size());
             // cartItemRepo.deleteAllById(dto.getCartItemIds());
 
             return orderConverter.toDTO(newEntity);
@@ -104,71 +104,42 @@ public class OrderService implements IOrderService{
         }
     }
 
-        // FIND ONE
+    // FIND ONE
     @Override
     public OrderDTO findOneById(Long id) {
         Optional<OrderEntity> entity = orderRepo.findById(id);
         return entity.map(item -> orderConverter.toDTO(item)).orElse(null);
     }
-    
+
     @Override
-    public OrderDTO findOneByAccountIdAndStatus(Long accountId, OrderStatus status) {
-        Optional<OrderEntity> entity = orderRepo.findOneByAccountIdAndStatus(accountId, status);
-        return entity.map(item -> orderConverter.toDTO(item)).orElse(null);
-    }
-    
-    @Override
-    public OrderDTO findOneByCartIdAndAccountIdAndStatus(Long cartId, Long accountId, OrderStatus status) {
-        Optional<OrderEntity> orderOptional = orderRepo.findOneByCartIdAndAccountIdAndStatus(cartId, accountId, status);
+    public OrderDTO findOneByBuyerIdAndSellerIdAndStatus(Long buyerId, Long sellerId, OrderStatus status) {
+        Optional<OrderEntity> orderOptional = orderRepo.findOneByBuyerIdAndSellerIdAndStatus(buyerId, sellerId, status);
         return orderOptional.map(entity -> orderConverter.toDTO(entity)).orElse(null);
     }
 
-        // FIND ALL
+    // FIND ALL
     @Override
     public List<OrderDTO> findAllByStatus(OrderStatus status) {
         return orderConverter.toListDTO(orderRepo.findAllByStatus(status));
     }
 
     @Override
-    public List<OrderDTO> findAllByAccountIdAndStatus(Long accountId, OrderStatus status, int page, int size) {
-        Page<OrderEntity> orderPage = orderRepo.findAllByAccountIdAndStatus(accountId, status, PageRequest.of(page - 1, size));
+    public List<OrderDTO> findAllByBuyerIdAndStatus(Long buyerId, OrderStatus status, int page, int size) {
+        Page<OrderEntity> orderPage = orderRepo.findAllByBuyerIdAndStatus(buyerId, status,
+                PageRequest.of(page - 1, size));
         return orderConverter.toListDTO(orderPage.getContent());
     }
 
     @Override
-    public List<OrderDTO> findAllByCartIdAndStatus(Long cartId, OrderStatus status) {
-        List<OrderEntity> orderEntities = orderRepo.findAllByCartIdAndStatus(cartId, status);
+    public List<OrderDTO> findAllByBuyerIdAndStatus(Long buyerId, OrderStatus status) {
+        List<OrderEntity> orderEntities = orderRepo.findAllByBuyerIdAndStatus(buyerId, status);
         return orderConverter.toListDTO(orderEntities);
     }
 
+    // COUNT AND CHECK
     @Override
-    public List<OrderDTO> findAllByCartId(Long cartId) {
-        List<OrderEntity> orderEntities = orderRepo.findAllByCartId(cartId);
-        return orderConverter.toListDTO(orderEntities);
-    }
-
-    
-    @Override
-    public List<OrderDTO> findAllByCartIdAndAndStatus(Long cartId, OrderStatus status) {
-        List<OrderEntity> orderEntities = orderRepo.findAllByCartIdAndStatus(cartId, status);
-        return orderConverter.toListDTO(orderEntities);
-    }
-    
-        // COUNT AND CHECK
-    @Override
-    public boolean isExistedByCartIdAndAccountId(long cartId, long accountId) {
-        Optional<OrderEntity> orderOptional = orderRepo.findOneByCartIdAndAccountId(cartId, accountId);
-        return orderOptional.isPresent();
-    }
-    
-    @Override
-    public Long countByAccountIdAndStatus(Long accountId, OrderStatus status) {
-        return orderRepo.countByAccountIdAndStatus(accountId, status);
-    }
-
-    @Override
-    public boolean isOrderExistByAccountIdAndStatus(Long accountId, OrderStatus status) {
-        return orderRepo.findOneByAccountIdAndStatus(accountId, status).isPresent();
+    public Long countByBuyerIdAndStatus(Long buyerId, OrderStatus status) {
+        return orderRepo.countByBuyerIdAndStatus(buyerId, status);
     }
 
 }

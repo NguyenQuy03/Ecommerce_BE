@@ -12,25 +12,23 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 public class AccountDTO extends BaseDTO<AccountDTO> {
-    
+
     private String address;
     private String phoneNumber;
-    
+
     private String username;
     private String fullName;
     private String email;
 
     private String mainRole;
 
-    private Long cartId;
-    
     private String password;
-    private String rePassword;
-    
+    private String confirmPassword;
+
     private String newPassword;
     private String reNewPassword;
-    
+
     private String typeEditProfile;
-    
+
     private boolean status;
 }

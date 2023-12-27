@@ -7,20 +7,18 @@ import com.ecommerce.springbootecommerce.dto.OrderDTO;
 
 public interface IOrderService {
     OrderDTO save(OrderDTO dto);
+
     OrderDTO purchase(OrderDTO dto);
 
-    OrderDTO findOneByAccountIdAndStatus(Long accountId, OrderStatus status);
     OrderDTO findOneById(Long id);
-    OrderDTO findOneByCartIdAndAccountIdAndStatus(Long cartId, Long accountId, OrderStatus status);
-    
-    List<OrderDTO> findAllByAccountIdAndStatus(Long accountId, OrderStatus status, int page, int size);
+
+    OrderDTO findOneByBuyerIdAndSellerIdAndStatus(Long buyerId, Long sellerId, OrderStatus status);
+
+    List<OrderDTO> findAllByBuyerIdAndStatus(Long buyerId, OrderStatus status, int page, int size);
+
+    List<OrderDTO> findAllByBuyerIdAndStatus(Long buyerId, OrderStatus status);
+
     List<OrderDTO> findAllByStatus(OrderStatus status);
-    List<OrderDTO> findAllByCartIdAndStatus(Long cartId, OrderStatus status);
-    List<OrderDTO> findAllByCartId(Long id);
-    List<OrderDTO> findAllByCartIdAndAndStatus(Long id, OrderStatus status);
-    
-    Long countByAccountIdAndStatus(Long accountId, OrderStatus status);
-    
-    boolean isOrderExistByAccountIdAndStatus(Long accountId, OrderStatus status);
-    boolean isExistedByCartIdAndAccountId(long cartId, long accountId);
+
+    Long countByBuyerIdAndStatus(Long buyerId, OrderStatus status);
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ecommerce.springbootecommerce.constant.RedisConstant;
 import com.ecommerce.springbootecommerce.constant.StatusConstant;
+import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IProductService;
 import com.ecommerce.springbootecommerce.util.RedisUtil;
@@ -68,7 +69,7 @@ public class SearchController {
         List<ProductDTO> products;
         if (keyword.equals("")) {
             quantityProduct = productService.countAllByStatus(StatusConstant.STRING_ACTIVE_STATUS);
-            products = productService.findAllByStatus(StatusConstant.STRING_ACTIVE_STATUS, pageable);
+            products = productService.findAllByStatus(ProductStatus.ACTIVE, pageable);
         }
 
         products = productService.findAllByNameContains(keyword, pageable);
@@ -78,7 +79,7 @@ public class SearchController {
 
         ProductDTO dto = new ProductDTO();
         dto.setTotalPage(totalPage);
-        // dto.setListResult(products);
+        dto.setListResult(products);
         dto.setPage(page);
         dto.setSize(size);
 

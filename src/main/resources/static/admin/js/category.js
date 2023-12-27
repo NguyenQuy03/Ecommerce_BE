@@ -1,5 +1,5 @@
 
-const APICategoryUrl = "/api/manager/category"
+const APICategoryUrl = "/api/v1/manager/category"
 const redirectUrlDefault = "/manager/category/list/all?page=1&size=2";
 
 const saveBtn = $("#saveBtn");

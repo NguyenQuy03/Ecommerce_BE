@@ -16,8 +16,8 @@ import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
 import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 
-@RestController
-@RequestMapping(value = "/api/manager")
+@RestController(value = "CategoryAPIOfManager")
+@RequestMapping(value = "/api/v1/manager/category")
 public class CategoryAPI {
     
     @Autowired
@@ -26,7 +26,7 @@ public class CategoryAPI {
     @Autowired
     private IAccountService accountService;
     
-    @PostMapping(value = "/category")
+    @PostMapping()
     public ResponseEntity<String> addCategory(
             @RequestBody CategoryDTO category 
     ) {
@@ -42,7 +42,7 @@ public class CategoryAPI {
         }
     }
 
-    @PutMapping(value = "/category")
+    @PutMapping()
     public ResponseEntity<String> editCategory(
             @RequestBody CategoryDTO category 
     ) {

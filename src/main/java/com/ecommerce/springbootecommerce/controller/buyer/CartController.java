@@ -14,13 +14,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ecommerce.springbootecommerce.constant.RedisConstant;
-import com.ecommerce.springbootecommerce.constant.StatusConstant;
 import com.ecommerce.springbootecommerce.constant.enums.order.OrderStatus;
-import com.ecommerce.springbootecommerce.dto.CartDTO;
+import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
 import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
 import com.ecommerce.springbootecommerce.dto.OrderDTO;
 import com.ecommerce.springbootecommerce.dto.OrderItemDTO;
-import com.ecommerce.springbootecommerce.service.ICartService;
 import com.ecommerce.springbootecommerce.service.IOrderService;
 import com.ecommerce.springbootecommerce.service.IVoucherService;
 import com.ecommerce.springbootecommerce.util.RedisUtil;
@@ -31,9 +29,6 @@ public class CartController {
     
     @Autowired
     private IOrderService orderService;
-    
-    @Autowired
-    private ICartService cartService;
 
     @Autowired
     private IVoucherService voucherService;
@@ -46,23 +41,22 @@ public class CartController {
             Model model
     ) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        CartDTO cart = cartService.findOneByAccountId(userDetails.getId());
 
-        List<OrderDTO> orders = orderService.findAllByCartIdAndStatus(cart.getId(), OrderStatus.PENDING);
+        List<OrderDTO> orders = orderService.findAllByBuyerIdAndStatus(userDetails.getId(), OrderStatus.PENDING);
 
         Map<String, String> map = new HashMap<>();
 
         for(OrderDTO order : orders) {
-            // List<VoucherDTO> vouchers = voucherService.findAllByAccountIdAndStatus(order.getAccount().getId(), StatusConstant.STRING_ACTIVE_STATUS);
+            // List<VoucherDTO> vouchers = voucherService.findAllByBuyerIdAndStatus(order.getAccount().getId(), StatusConstant.STRING_ACTIVE_STATUS);
         }
 
         // Handle Inactive Product
         if(orders != null) {
             List<Long> inActiveCartItem = new ArrayList<>();
-            List<String> inActiveStatus = Arrays.asList(StatusConstant.REMOVED_STATUS, StatusConstant.STRING_INACTIVE_STATUS, StatusConstant.SOLD_OUT_STATUS);
+            List<ProductStatus> inActiveStatus = Arrays.asList(ProductStatus.REMOVED, ProductStatus.INACTIVE, ProductStatus.SOLD_OUT);
             for(OrderDTO order : orders) {
                 for(OrderItemDTO orderItem : order.getOrderItems()) {
-                    String productStatus = orderItem.getProductItem().getStatus();
+                    ProductStatus productStatus = orderItem.getProductItem().getStatus();
 
                     if (inActiveStatus.contains(productStatus)) {
                         inActiveCartItem.add(orderItem.getProductItem().getId());
@@ -91,7 +85,7 @@ public class CartController {
     ) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        List<OrderDTO> orders = orderService.findAllByAccountIdAndStatus(userDetails.getId(), OrderStatus.DELIVERED, page, size);
+        List<OrderDTO> orders = orderService.findAllByBuyerIdAndStatus(userDetails.getId(), OrderStatus.DELIVERED, page, size);
         
         Integer totalPage = (int) Math.ceil((double) orders.size() / size);
 

@@ -1,5 +1,5 @@
 const data = {};
-const APIProductUrl = "/api/buyer/cart";
+const APIProductUrl = "/api/v1/buyer/cart";
 
 const modalAnnounce = document.querySelector(".modal-announce");
 const modalAccounceTitle = document.querySelector(".modal-accounce-title");

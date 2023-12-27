@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.ecommerce.springbootecommerce.constant.StatusConstant;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.constant.enums.voucher.VoucherStatus;
 import com.ecommerce.springbootecommerce.dto.BaseDTO;

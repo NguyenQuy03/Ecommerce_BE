@@ -8,7 +8,7 @@ const basicForm = $("#basic-form");
 const salesForm = $("#sales-form");
 const data = {};
 
-const APIProductUrl = "/api/seller/product";
+const APIProductUrl = "/api/v1/seller/product";
 const timeOutDefault = 1800;
 const redirectUrlDefault = "/seller/product/list/all?page=1&size=2";
 

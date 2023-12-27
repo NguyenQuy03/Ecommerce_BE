@@ -4,6 +4,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
+import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
 import com.ecommerce.springbootecommerce.entity.OrderItemEntity;
 
 import lombok.Getter;
@@ -22,13 +23,11 @@ public class ProductItemDTO extends BaseDTO<ProductItemDTO>{
     private long quantity;
 
     private Double price;
-    private String status;
+    private ProductStatus status;
 
-    private String variationName;
-    private String variationValue;
+    private String variation;
 
     private List<OrderItemEntity> orderItems;
-    // private List<CartItemEntity> cartItems;
 
     @SuppressWarnings("unused")
     private String intPrice;

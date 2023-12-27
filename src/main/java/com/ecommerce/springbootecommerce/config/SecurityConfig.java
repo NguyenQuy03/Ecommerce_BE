@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .antMatchers(
-                    "/api/auth/**", "/register**",
+                    "/api/v1/auth/**", "/register**",
                     "/home/**", "/admin/vendor/**", "/admin/js/**",
                     "/common/**", "/buyer/**",
                     "/favicon.ico"
