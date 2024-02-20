@@ -9,12 +9,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
-import com.ecommerce.springbootecommerce.security.CustomLogoutHandle;
 import com.ecommerce.springbootecommerce.security.JwtAuthenticationFilter;
 import com.ecommerce.springbootecommerce.service.impl.CustomUserDetailsService;
 
@@ -32,45 +30,33 @@ public class SecurityConfig {
     private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    private CustomLogoutHandle customLogoutHandle;
-
-    @Autowired
     private JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors().and()
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .antMatchers(
-                    "/api/v1/auth/**", "/register**",
-                    "/home/**", "/admin/vendor/**", "/admin/js/**",
-                    "/common/**", "/buyer/**",
-                    "/favicon.ico"
-                    )
+                        "/**/auth/**",
+                        "/home/**", "/admin/vendor/**", "/admin/js/**",
+                        "/common/**", "/buyer/**", "/favicon.ico")
                 .permitAll()
                 .antMatchers("/seller/**").hasAnyRole("SELLER", "MANAGER")
                 .antMatchers("/manager/**").hasRole("MANAGER")
                 .antMatchers(HttpMethod.GET).permitAll()
                 .anyRequest().authenticated()
-            .and()
+                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                //LOGIN
-                .formLogin().loginPage("/login").permitAll()
-            .and()
-                //LOGOUT
-                .logout()
-                .logoutUrl("/logout")
-                .addLogoutHandler(customLogoutHandle)
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
+                .and()
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         http
                 .securityContext()
                 .securityContextRepository(httpSessionSecurityContextRepository());
-        
+
         return http.build();
     }
 

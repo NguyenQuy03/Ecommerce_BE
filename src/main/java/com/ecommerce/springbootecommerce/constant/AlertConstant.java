@@ -8,7 +8,10 @@ public class AlertConstant {
     public static final String ALERT_DANGER = "danger";
     public static final String ALERT_INFO = "info";
     public static final String ALERT_WARN = "warn";
+
     public static final String ALERT_MESSAGE_LOGIN_FAILURE = "Your username or password is incorrect";
+    public static final String ALERT_MISSING_UNAME_OR_PASS = "Missing username or password";
+
     public static final int ALERT_MESSAGE_LOGIN_EXPIRATION = 5;
     public static final String ALERT_MESSAGE_TOKEN_EXPIRED = "Session expired. Please re-login";
     public static final String ALERT_MESSAGE_NOT_PERMISSION = "Access denied. Please re-login";

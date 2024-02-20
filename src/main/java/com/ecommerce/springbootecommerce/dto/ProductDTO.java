@@ -1,6 +1,7 @@
 package com.ecommerce.springbootecommerce.dto;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
 
@@ -20,13 +21,7 @@ public class ProductDTO extends BaseDTO<ProductDTO> {
 
     private String description;
 
-    private Long totalSold;
-
-    private Long totalStock;
-
-    private Double revenue;
-
-    private String avgPrice;
+    private Map<String, Object> additionalInfo;
 
     private boolean isVariational;
 
@@ -35,6 +30,8 @@ public class ProductDTO extends BaseDTO<ProductDTO> {
     private ProductStatus status;
 
     private String specification;
+
+    private List<String> images;
 
     private List<ProductItemDTO> productItems;
 }

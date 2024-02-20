@@ -29,7 +29,7 @@ public class OrderItemEntity extends BaseEntity {
 
     @NotNull
     private long quantity;
-    
+
     @NotNull
     private double curPrice;
 
@@ -39,7 +39,7 @@ public class OrderItemEntity extends BaseEntity {
     private OrderStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "orders_id", nullable = true)
+    @JoinColumn(name = "orders_id", nullable = false)
     private OrderEntity orders;
 
     @OneToOne(cascade = CascadeType.MERGE)

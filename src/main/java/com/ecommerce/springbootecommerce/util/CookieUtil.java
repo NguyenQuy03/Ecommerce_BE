@@ -1,16 +1,16 @@
 package com.ecommerce.springbootecommerce.util;
 
-import org.springframework.stereotype.Component;
+import java.io.IOException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+
+import org.springframework.stereotype.Component;
 
 @Component
 public class CookieUtil {
     public Cookie initCookie(String key, String value, int maxAge) {
-        Cookie cookie = new Cookie(key, URLEncoder.encode(value, StandardCharsets.UTF_8));
+        Cookie cookie = new Cookie(key, value);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
         cookie.setPath("/");
@@ -18,29 +18,27 @@ public class CookieUtil {
     }
 
     public String getCookie(Cookie[] cookies, String key) {
-        String res = "";
-        if(cookies != null) {
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if(cookie.getName().equals(key)){
-                    res = cookie.getValue();
-                    StringBuilder string = new StringBuilder(res);
-                    for (int i = 0; i < string.length(); i++) {
-                        if(string.charAt(i) == '+') {
-                            string.setCharAt(i, ' ');
-                        }
-                    }
-                    return string.toString();
+                if (cookie.getName().equals(key)) {
+                    return cookie.getValue();
                 }
             }
         }
-        return res;
+        return null;
+    }
+
+    public void removeCookie(String key, HttpServletResponse response) throws IOException {
+        Cookie cookie = initCookie(key, null, 0);
+        response.addCookie(cookie);
+        response.flushBuffer();
     }
 
     public void removeAll(Cookie[] cookies, HttpServletResponse response) {
-        if(cookies != null) {
-            for(Cookie cookie : cookies) {
-                cookie.setMaxAge(0);
-                response.addCookie(cookie);
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                Cookie newCookie = initCookie(cookie.getName(), null, 0);
+                response.addCookie(newCookie);
             }
         }
     }

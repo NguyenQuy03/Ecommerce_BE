@@ -19,19 +19,19 @@ import com.ecommerce.springbootecommerce.service.ICategoryService;
 @RestController(value = "CategoryAPIOfManager")
 @RequestMapping(value = "/api/v1/manager/category")
 public class CategoryAPI {
-    
+
     @Autowired
     private ICategoryService categoryService;
 
     @Autowired
     private IAccountService accountService;
-    
+
     @PostMapping()
     public ResponseEntity<String> addCategory(
-            @RequestBody CategoryDTO category 
-    ) {
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
+            @RequestBody CategoryDTO category) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
         try {
             AccountDTO accountDTO = accountService.findById(userDetails.getId());
             category.setAccount(accountDTO);
@@ -44,10 +44,10 @@ public class CategoryAPI {
 
     @PutMapping()
     public ResponseEntity<String> editCategory(
-            @RequestBody CategoryDTO category 
-    ) {
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
+            @RequestBody CategoryDTO category) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
         try {
             AccountDTO accountDTO = accountService.findById(userDetails.getId());
             category.setAccount(accountDTO);

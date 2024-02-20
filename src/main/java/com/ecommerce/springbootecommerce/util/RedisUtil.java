@@ -14,17 +14,12 @@ import com.ecommerce.springbootecommerce.constant.RedisConstant;
 public class RedisUtil {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
-    
+
     public void setHashField(String key, String field, String value) {
         HashOperations<String, String, String> hashOps = redisTemplate.opsForHash();
         hashOps.put(key, field, value);
     }
-    
-//    public void setHashFieldWithExpiration(String key, String field, Long value, long expirationTimeInSeconds) {
-//        HashOperations<String, String, Long> hashOps = redisTemplate.opsForHash();
-//        hashOps.put(key, field, value);
-//        redisTemplate.expire(key, expirationTimeInSeconds, TimeUnit.SECONDS);
-//    }
+
     public String getHashField(String key, String field) {
         HashOperations<String, String, String> hashOps = redisTemplate.opsForHash();
         return hashOps.get(key, field);
@@ -33,19 +28,23 @@ public class RedisUtil {
     public String getKey(String key) {
         return redisTemplate.opsForValue().get(key);
     }
-    
+
     public void setKey(String key, String value, long expireTime) {
         redisTemplate.opsForValue().set(key, value, expireTime, TimeUnit.SECONDS);
     }
 
     public void removeKey(String key) {
-        redisTemplate.delete(key);
+        if (key != null && redisTemplate.hasKey(key)) {
+            redisTemplate.delete(key);
+        }
     }
 
     public void setQuantityOrder(long value) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        long quantityOrder = Long.parseLong((String) getHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER));
-        setHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, String.valueOf(quantityOrder + value));
+        long quantityOrder = Long.parseLong((String) getHashField(RedisConstant.REDIS_USER_INFO + username,
+                RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER));
+        setHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER,
+                String.valueOf(quantityOrder + value));
     }
 
     public void adjustQuantityOrder(String username, int quantity) {

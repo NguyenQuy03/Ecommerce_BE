@@ -40,6 +40,7 @@ public class ProductConverter {
         dto.setName(entity.getName());
         dto.setDescription(entity.getDescription());
         dto.setSpecification(entity.getSpecification());
+        dto.setVariational(entity.isVariational());
         dto.setImage(entity.getImage());
         dto.setStatus(entity.getStatus());
 
@@ -47,10 +48,7 @@ public class ProductConverter {
         dto.setProductItems(productItemConverter.toListDTO(productItemEntities));
 
         Map<String, Object> productDetails = getProductDetails(productItemEntities);
-        dto.setTotalSold((long) productDetails.get("totalSold"));
-        dto.setTotalStock((long) productDetails.get("totalStock"));
-        dto.setAvgPrice((String) productDetails.get("avgPrice"));
-        dto.setRevenue((double) productDetails.get("revenue"));
+        dto.setAdditionalInfo(productDetails);
 
         dto.setCreatedDate(entity.getCreatedDate());
         dto.setCreatedBy(entity.getCreatedBy());

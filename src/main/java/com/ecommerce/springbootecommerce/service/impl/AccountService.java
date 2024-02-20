@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.ecommerce.springbootecommerce.api.authenticate.payload.request.LogInRequest;
 import com.ecommerce.springbootecommerce.api.authenticate.payload.request.RegisterRequest;
+import com.ecommerce.springbootecommerce.api.authenticate.payload.response.AuthResponse;
 import com.ecommerce.springbootecommerce.config.AuthenticationConfig;
 import com.ecommerce.springbootecommerce.constant.JWTConstant;
 import com.ecommerce.springbootecommerce.constant.RedisConstant;
@@ -49,7 +50,7 @@ public class AccountService implements IAccountService {
 
     @Autowired
     private AccountRepository accountRepo;
-    
+
     @Autowired
     private RoleRepository roleRepo;
 
@@ -153,7 +154,7 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public String authenticate(LogInRequest request, HttpServletRequest httpServletRequest) {
+    public AuthResponse authenticate(LogInRequest request, HttpServletRequest httpServletRequest) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -176,7 +177,9 @@ public class AccountService implements IAccountService {
         redisUtil.setKey(RedisConstant.REDIS_JWT_BRANCH + request.getUsername(), refreshToken,
                 JWTConstant.JWT_REFRESH_TOKEN_EXPIRATION);
 
-        return accessToken;
+        AuthResponse authResponse = AuthResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
+
+        return authResponse;
     }
 
     @Override

@@ -8,11 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
+import com.ecommerce.springbootecommerce.dto.BaseDTO;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.service.IProductService;
 
@@ -25,7 +26,30 @@ public class ProductAPI {
     private IProductService productService;
 
     @GetMapping
-    public List<ProductDTO> getProducts() {
+    public ResponseEntity<?> getProducts() {
+        try {
+            Pageable pageable = PageRequest.of(0, 12);
+            List<ProductDTO> dto = productService.findAllByStatus(ProductStatus.ACTIVE, pageable);
+            return ResponseEntity.ok().body(dto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error get products");
+        }
+    }
+
+    @GetMapping("/recommend/seller")
+    public ResponseEntity<?> getProductsBySeller(
+        @RequestParam("sellerId") long sellerId
+    ) {
+        try {
+            BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(sellerId, ProductStatus.ACTIVE, 1, 12);
+            return ResponseEntity.ok().body(dto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error get products by seller_id");
+        }
+    }
+
+    @GetMapping("/recommend/category")
+    public List<ProductDTO> getProductsByCategory() {
 
         Pageable pageable = PageRequest.of(0, 12);
         List<ProductDTO> productItems = productService.findAllByStatus(ProductStatus.ACTIVE, pageable);
@@ -33,9 +57,9 @@ public class ProductAPI {
         return productItems;
     }
 
-    @GetMapping("/detail/{id}")
+    @GetMapping("/detail")
     public ResponseEntity<ProductDTO> displayProduct(
-            @PathVariable("id") long id
+            @RequestParam("id") long id
     ) {
         ProductDTO dto = productService.findById(id);
 

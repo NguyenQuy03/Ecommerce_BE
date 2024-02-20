@@ -1,5 +1,6 @@
 package com.ecommerce.springbootecommerce.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -14,17 +15,20 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "Category")
-@Getter @Setter
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryEntity extends BaseEntity{
+public class CategoryEntity extends BaseEntity {
 
     @NotNull
+    @Column(columnDefinition = "NVARCHAR(10)")
     private String code;
 
     @NotNull
+    @Column(columnDefinition = "NVARCHAR(20)")
     private String name;
-    
+
     @NotNull
     private String thumbnail;
 

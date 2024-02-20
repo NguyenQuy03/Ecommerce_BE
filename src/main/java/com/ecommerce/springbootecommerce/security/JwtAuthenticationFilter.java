@@ -4,24 +4,19 @@ import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.ecommerce.springbootecommerce.constant.AlertConstant;
-import com.ecommerce.springbootecommerce.constant.JWTConstant;
-import com.ecommerce.springbootecommerce.constant.RedisConstant;
-import com.ecommerce.springbootecommerce.constant.SystemConstant;
-import com.ecommerce.springbootecommerce.util.CookieUtil;
+import com.ecommerce.springbootecommerce.service.impl.CustomUserDetailsService;
 import com.ecommerce.springbootecommerce.util.JwtUtil;
-import com.ecommerce.springbootecommerce.util.RedisUtil;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -30,93 +25,56 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private RedisUtil redisUtil;
+    private CustomUserDetailsService customUserDetailsService;
 
-    @Autowired
-    private CookieUtil cookieUtil;
-
+    @SuppressWarnings("null")
     @Override
     protected void doFilterInternal(
-            @NotNull HttpServletRequest request,
-            @NotNull HttpServletResponse response,
-            @NotNull FilterChain filterChain) throws ServletException, IOException {
-        String path = request.getServletPath();
-
-        if (request.getMethod().equals("GET")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        // if (request.getMethod().equals("GET") && !path.contains("/manager") && !path.contains("/seller")) {
-        //     filterChain.doFilter(request, response);
-        //     return;
-        // }
-
-        if (path.contains("/auth")) {
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
+        if (request.getServletPath().contains("/api/v1/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        if (!request.getMethod().equals("GET")) {
+        String authHeader = request.getHeader("Authorization");
 
-            Cookie[] cookies = request.getCookies();
-            String token = null;
-            if (cookies == null || SecurityContextHolder.getContext().getAuthentication() == null) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write(SystemConstant.LOGIN_URL);
-                return;
-            } else {
-                for (Cookie cookie : cookies) {
-                    if (cookie.getName().equals(SystemConstant.COOKIE_JWT_HEADER)) {
-                        token = cookie.getValue();
-                        if (token == null || !token.startsWith(SystemConstant.TOKEN_JWT_TYPE.trim())) {
-                            filterChain.doFilter(request, response);
-                            return;
-                        }
-
-                        String accessToken = token.substring(7);
-                        UserDetails account = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
-                                .getPrincipal();
-
-                        /* Handle token expired */
-                        handleExpiredToken(accessToken, request, response, filterChain, account);
-                        return;
-                    }
-                }
-
-                // Handle if cookie does not have JWT
-                handleJWTIsEmpty(response);
-            }
-        } else {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
+            return;
         }
-    }
 
-    private void handleExpiredToken(String accessToken, HttpServletRequest request, HttpServletResponse response,
-            FilterChain filterChain, UserDetails account) throws IOException, ServletException {
-        if (!jwtUtil.isTokenExpired(accessToken)) {
-            String refreshToken = redisUtil.getKey(RedisConstant.REDIS_JWT_BRANCH + account.getUsername());
-            if (refreshToken == null) {
-                Cookie newCookie = cookieUtil.initCookie(SystemConstant.LOGIN_FAILURE_DTO,
-                        AlertConstant.ALERT_MESSAGE_TOKEN_EXPIRED, AlertConstant.ALERT_MESSAGE_LOGIN_EXPIRATION);
-                response.addCookie(newCookie);
-                response.sendRedirect(SystemConstant.LOGIN_URL);
-            } else {
-                String newJwt = jwtUtil.generateAccessToken(account);
-                Cookie newCookie = cookieUtil.initCookie(SystemConstant.COOKIE_JWT_HEADER,
-                        SystemConstant.TOKEN_JWT_TYPE + newJwt, JWTConstant.JWT_COOKIE_ACCESS_TOKEN_EXPIRATION);
-                response.addCookie(newCookie);
-                filterChain.doFilter(request, response);
-            }
+        String jwt = authHeader.substring(7);
+
+        // Handle Token expired
+        if (jwtUtil.isTokenExpired(jwt)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token was expired");
+            return;
+        }
+
+        String username = jwtUtil.extractUsername(jwt);
+
+        // Check invalid jwt
+        if (username == null) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("Token is not valid");
+            return;
         } else {
-            filterChain.doFilter(request, response);
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities());
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
         }
+
+        filterChain.doFilter(request, response);
     }
 
-    private void handleJWTIsEmpty(HttpServletResponse response) throws IOException {
-        Cookie newCookie = cookieUtil.initCookie(SystemConstant.LOGIN_FAILURE_DTO,
-                AlertConstant.ALERT_MESSAGE_NOT_PERMISSION, AlertConstant.ALERT_MESSAGE_LOGIN_EXPIRATION);
-        response.addCookie(newCookie);
-        response.sendRedirect(SystemConstant.LOGIN_URL);
-        return;
-    }
 }
