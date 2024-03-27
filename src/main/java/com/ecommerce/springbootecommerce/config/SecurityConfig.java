@@ -16,11 +16,8 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import com.ecommerce.springbootecommerce.security.JwtAuthenticationFilter;
 import com.ecommerce.springbootecommerce.service.impl.CustomUserDetailsService;
 
-import lombok.RequiredArgsConstructor;
-
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     @Autowired

@@ -16,6 +16,7 @@ import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
 import com.ecommerce.springbootecommerce.dto.VoucherDTO;
+import com.ecommerce.springbootecommerce.exception.CustomException;
 import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.IVoucherService;
@@ -32,12 +33,12 @@ public class VoucherAPI {
 
     @Autowired
     private ICategoryService categoryService;
-    
+
     @PostMapping
     public ResponseEntity<String> save(
-        @RequestBody VoucherDTO dto
-    ) {
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            @RequestBody VoucherDTO dto) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
 
         boolean isVoucherExist = voucherService.isExistByCodeAndAccountId(dto.getCode(), userDetails.getId());
 
@@ -53,28 +54,28 @@ public class VoucherAPI {
             dto.setCategories(categories);
 
             voucherService.save(dto);
-            
+
             return ResponseEntity.ok("Success! Your voucher has been published.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error publishing voucher");
+            return ResponseEntity.status(((CustomException) e.fillInStackTrace()).getErrorCode()).body(e.getMessage());
         }
     }
 
     @PutMapping
     public ResponseEntity<String> update(
-        @RequestBody VoucherDTO dto
-    ) {
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
+            @RequestBody VoucherDTO dto) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
         try {
             AccountDTO account = accountService.findById(userDetails.getId());
             dto.setAccount(account);
 
             voucherService.update(dto);
-            
+
             return ResponseEntity.ok("Success! Your voucher has been updated.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating voucher");
+            return ResponseEntity.status(((CustomException) e.fillInStackTrace()).getErrorCode()).body(e.getMessage());
         }
     }
 }

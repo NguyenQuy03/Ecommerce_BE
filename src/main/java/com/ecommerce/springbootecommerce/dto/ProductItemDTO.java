@@ -12,9 +12,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProductItemDTO extends BaseDTO<ProductItemDTO>{
+public class ProductItemDTO extends BaseDTO<ProductItemDTO> {
     private ProductDTO product;
-    
+
     private Long stock;
     private Long sold;
 
@@ -30,9 +30,9 @@ public class ProductItemDTO extends BaseDTO<ProductItemDTO>{
     private List<OrderItemEntity> orderItems;
 
     @SuppressWarnings("unused")
-    private String intPrice;
+    private String StringPrice;
 
-    public String getIntPrice() {
+    public String getStringPrice() {
         Locale moneyType = new Locale("en", "US");
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(moneyType);
         numberFormat.format(this.price);

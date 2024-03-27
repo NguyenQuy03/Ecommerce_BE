@@ -99,7 +99,7 @@ public class OrderItemAPI {
 
             /* HANDLE IF PRODUCT_ITEM IS NOT AVAILABLE */
             ProductStatus productItemStatus = orderItemDTO.getProductItem().getStatus();
-            if (ProductStatus.getInActiveStatus().contains(productItemStatus)) {
+            if (ProductStatus.INACTIVE.equals(productItemStatus)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product is not avaialable now");
             }
 

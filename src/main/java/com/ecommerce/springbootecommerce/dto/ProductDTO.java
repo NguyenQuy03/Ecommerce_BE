@@ -17,13 +17,9 @@ public class ProductDTO extends BaseDTO<ProductDTO> {
 
     private String name;
 
-    private String image;
+    private List<String> productImages;
 
     private String description;
-
-    private Map<String, Object> additionalInfo;
-
-    private boolean isVariational;
 
     private String variations;
 
@@ -31,7 +27,8 @@ public class ProductDTO extends BaseDTO<ProductDTO> {
 
     private String specification;
 
-    private List<String> images;
-
     private List<ProductItemDTO> productItems;
+
+    // Group All stock, sold, avg price from product item
+    private Map<String, Object> additionalInfo;
 }

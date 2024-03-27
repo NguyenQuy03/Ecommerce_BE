@@ -9,12 +9,18 @@ import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 
 public interface ICategoryService {
     void save(CategoryDTO categoryDTO);
+
     void delete(Long[] ids);
 
+    void delete(Long id);
+
     CategoryDTO findOneByCode(String code);
+
     CategoryDTO findOneByIdAndAccountId(long id, long id2);
 
     List<CategoryDTO> findAll();
+
     List<CategoryDTO> findAllByAccountId(long id);
+
     BaseDTO<CategoryDTO> findAllByAccountId(long accounId, Pageable pageable);
 }

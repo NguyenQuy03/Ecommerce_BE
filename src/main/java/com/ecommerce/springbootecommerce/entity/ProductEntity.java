@@ -8,7 +8,6 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
@@ -33,9 +32,6 @@ public class ProductEntity extends BaseEntity {
     @Column(columnDefinition = "NVARCHAR(100)")
     private String name;
 
-    @NotNull
-    private String image;
-
     @Column(columnDefinition = "NVARCHAR(max)")
     private String description;
 
@@ -48,9 +44,6 @@ public class ProductEntity extends BaseEntity {
     @Column(columnDefinition = "NVARCHAR(MAX)")
     private String specification;
 
-    @NotNull
-    private boolean isVariational;
-
     @OneToOne
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     private AccountEntity account;
@@ -58,7 +51,4 @@ public class ProductEntity extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private CategoryEntity category;
-
-    @Transient
-    private Long totalSold;
 }

@@ -2,9 +2,9 @@ package com.ecommerce.springbootecommerce.service;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.ecommerce.springbootecommerce.api.authenticate.payload.request.LogInRequest;
-import com.ecommerce.springbootecommerce.api.authenticate.payload.request.RegisterRequest;
-import com.ecommerce.springbootecommerce.api.authenticate.payload.response.AuthResponse;
+import com.ecommerce.springbootecommerce.api.common.authenticate.payload.request.LogInRequest;
+import com.ecommerce.springbootecommerce.api.common.authenticate.payload.request.RegisterRequest;
+import com.ecommerce.springbootecommerce.api.common.authenticate.payload.response.AuthResponse;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
 
 public interface IAccountService {
@@ -24,4 +24,5 @@ public interface IAccountService {
 
     AuthResponse authenticate(LogInRequest request, HttpServletRequest httpServletRequest);
 
+    void changeAccountStatus(long[] ids, String action);
 }

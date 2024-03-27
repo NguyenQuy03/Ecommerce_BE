@@ -66,6 +66,11 @@ public class JwtUtil {
     }
   }
 
+  public List<String> extractRolesFromToken(String token) {
+    Claims claims = extractAllClaims(token);
+    return (List<String>) claims.get("roles");
+  }
+
   private String buildToken(
       Map<String, Object> extraClaims,
       UserDetails account,

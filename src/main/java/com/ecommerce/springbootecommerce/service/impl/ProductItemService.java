@@ -21,7 +21,7 @@ import com.ecommerce.springbootecommerce.util.converter.ProductItemConverter;
 public class ProductItemService implements IProductItemService {
     @Autowired
     private ProductItemRepository productItemRepo;
-    
+
     @Autowired
     private ProductItemConverter productItemConverter;
 
@@ -44,8 +44,8 @@ public class ProductItemService implements IProductItemService {
 
     @Override
     public void saveAll(ProductDTO productDTO, ProductEntity productEntity) {
-        for(ProductItemDTO dto : productDTO.getProductItems()) {
-            if(dto.getId() == null) {
+        for (ProductItemDTO dto : productDTO.getProductItems()) {
+            if (dto.getId() == null) {
                 save(dto, productDTO, productEntity);
             } else {
                 update(dto, productEntity);
@@ -56,13 +56,14 @@ public class ProductItemService implements IProductItemService {
     @Override
     public void save(ProductItemDTO dto, ProductDTO productDTO, ProductEntity productEntity) {
         ProductItemEntity productItemEntity = productItemConverter.toEntity(dto);
-            productItemEntity.setProduct(productEntity);
-            productItemEntity.setStatus(ProductStatus.ACTIVE);
-            if(productItemEntity.getImage() == null) {
-                productItemEntity.setImage(productDTO.getImage());
-            }
+        productItemEntity.setProduct(productEntity);
+        productItemEntity.setStatus(ProductStatus.ACTIVE);
 
-            productItemRepo.save(productItemEntity);
+        // if (productItemEntity.getImage() == null) {
+        // productItemEntity.setImage(productDTO.getProductImages());
+        // }
+
+        productItemRepo.save(productItemEntity);
     }
 
     @Override
@@ -70,8 +71,8 @@ public class ProductItemService implements IProductItemService {
         ProductItemEntity preProductItemEntity = productItemRepo.findById(dto.getId()).get();
         ProductItemEntity itemEntity = productItemConverter.toEntity(preProductItemEntity, dto);
         itemEntity.setProduct(productEntity);
-        
-        if(itemEntity.getStock() > 0) {
+
+        if (itemEntity.getStock() > 0) {
             itemEntity.setStatus(ProductStatus.ACTIVE);
         } else {
             itemEntity.setStatus(ProductStatus.SOLD_OUT);
@@ -88,15 +89,16 @@ public class ProductItemService implements IProductItemService {
             preProductItemIds.add(item.getId());
         });
 
-        for(ProductItemDTO itemDTO : productDTO.getProductItems()) {
-            if(itemDTO.getId() == null) continue;
-            
-            for(int i = 0; i < preProductItemIds.size(); i++) {
-                if(itemDTO.getId().equals(preProductItemIds.get(i))) {
+        for (ProductItemDTO itemDTO : productDTO.getProductItems()) {
+            if (itemDTO.getId() == null)
+                continue;
+
+            for (int i = 0; i < preProductItemIds.size(); i++) {
+                if (itemDTO.getId().equals(preProductItemIds.get(i))) {
                     preProductItemIds.remove(i);
                     break;
                 }
-                if(!itemDTO.getId().equals(preProductItemIds.get(i)) && i == preProductItemIds.size() - 1) {
+                if (!itemDTO.getId().equals(preProductItemIds.get(i)) && i == preProductItemIds.size() - 1) {
                     productItemRepo.deleteById(itemDTO.getId());
                     productDTO.getProductItems().remove(itemDTO);
                 }
@@ -104,4 +106,3 @@ public class ProductItemService implements IProductItemService {
         }
     }
 }
-    

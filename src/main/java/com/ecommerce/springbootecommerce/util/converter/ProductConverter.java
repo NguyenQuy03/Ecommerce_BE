@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.entity.ProductEntity;
+import com.ecommerce.springbootecommerce.entity.ProductImageEntity;
 import com.ecommerce.springbootecommerce.entity.ProductItemEntity;
+import com.ecommerce.springbootecommerce.repository.ProductImageRepository;
 import com.ecommerce.springbootecommerce.repository.ProductItemRepository;
 import com.ecommerce.springbootecommerce.util.converter.account_role.AccountConverter;
 
@@ -31,6 +34,9 @@ public class ProductConverter {
     @Autowired
     private ProductItemRepository productItemRepo;
 
+    @Autowired
+    private ProductImageRepository productImageRepo;
+
     public ProductDTO toDTO(ProductEntity entity) {
         ProductDTO dto = new ProductDTO();
 
@@ -40,9 +46,10 @@ public class ProductConverter {
         dto.setName(entity.getName());
         dto.setDescription(entity.getDescription());
         dto.setSpecification(entity.getSpecification());
-        dto.setVariational(entity.isVariational());
-        dto.setImage(entity.getImage());
         dto.setStatus(entity.getStatus());
+
+        List<ProductImageEntity> images = productImageRepo.findAllByProductId(entity.getId());
+        dto.setProductImages(images.stream().map(ProductImageEntity::getImageUrl).collect(Collectors.toList()));
 
         List<ProductItemEntity> productItemEntities = productItemRepo.findAllByProductId(entity.getId());
         dto.setProductItems(productItemConverter.toListDTO(productItemEntities));
@@ -66,8 +73,6 @@ public class ProductConverter {
         entity.setStatus(dto.getStatus());
         entity.setSpecification(dto.getSpecification().toString());
 
-        entity.setImage(dto.getImage());
-
         if (dto.getId() != null) {
             entity.setId(dto.getId());
         }
@@ -80,7 +85,6 @@ public class ProductConverter {
         preEntity.setDescription(dto.getDescription());
         preEntity.setStatus(dto.getStatus());
         preEntity.setSpecification(dto.getSpecification().toString());
-        preEntity.setImage(dto.getImage());
 
         return preEntity;
     }

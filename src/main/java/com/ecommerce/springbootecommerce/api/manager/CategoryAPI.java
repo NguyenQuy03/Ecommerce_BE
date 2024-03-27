@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
+import com.ecommerce.springbootecommerce.exception.CustomException;
 import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 
@@ -38,23 +40,50 @@ public class CategoryAPI {
             categoryService.save(category);
             return ResponseEntity.ok("Success! Your category has been created.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error create category");
+            CustomException customException = (CustomException) e.fillInStackTrace();
+            return ResponseEntity.status(customException.getErrorCode()).body(e.getMessage());
         }
     }
 
     @PutMapping()
-    public ResponseEntity<String> editCategory(
-            @RequestBody CategoryDTO category) {
+    public ResponseEntity<String> updateCategory(
+            @RequestBody CategoryDTO dto) {
         CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
         try {
+            CategoryDTO prevCategory = categoryService.findOneByIdAndAccountId(dto.getId(), userDetails.getId());
+            if (prevCategory == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category does not exist");
+            }
+
             AccountDTO accountDTO = accountService.findById(userDetails.getId());
-            category.setAccount(accountDTO);
-            categoryService.save(category);
+            dto.setAccount(accountDTO);
+            categoryService.save(dto);
             return ResponseEntity.ok("Success! Your category has been updated.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error update category");
+            CustomException customException = (CustomException) e.fillInStackTrace();
+            return ResponseEntity.status(customException.getErrorCode()).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<String> deleteCategory(
+            @RequestBody CategoryDTO dto) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        try {
+            CategoryDTO prevCategory = categoryService.findOneByIdAndAccountId(dto.getId(), userDetails.getId());
+            if (prevCategory == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Category does not exist");
+            }
+
+            categoryService.delete(dto.getId());
+            return ResponseEntity.ok("Success! Your category has been deleted.");
+        } catch (Exception e) {
+            CustomException customException = (CustomException) e.fillInStackTrace();
+            return ResponseEntity.status(customException.getErrorCode()).body(e.getMessage());
         }
     }
 

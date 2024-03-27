@@ -12,25 +12,27 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.cloudinary.Cloudinary;
 import com.ecommerce.springbootecommerce.dto.BaseDTO;
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import com.ecommerce.springbootecommerce.entity.CategoryEntity;
+import com.ecommerce.springbootecommerce.exception.CustomException;
 import com.ecommerce.springbootecommerce.repository.CategoryRepository;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.util.ServiceUtil;
 
 @Service
 public class CategoryService implements ICategoryService {
-    
+
     @Autowired
     private CategoryRepository categoryRepo;
 
     @Autowired
     private ServiceUtil serviceUtil;
-    
+
     @Autowired
     private ModelMapper modelMapper;
 
@@ -40,17 +42,22 @@ public class CategoryService implements ICategoryService {
     @Override
     public void save(CategoryDTO categoryDTO) {
         CategoryEntity categoryEntity;
+        Optional<CategoryEntity> existedEntity = categoryRepo.findOneByCode(categoryDTO.getCode());
 
         if (categoryDTO.getId() != null) {
             CategoryEntity preCategoryEntity = categoryRepo.findById(categoryDTO.getId()).get();
-            if(categoryDTO.getThumbnail() != preCategoryEntity.getThumbnail()) {
+
+            if (!categoryDTO.getCode().equals(preCategoryEntity.getCode()) && existedEntity.isPresent()) {
+                throw new CustomException("Category has already exist", HttpStatus.CONFLICT);
+            }
+
+            if (!categoryDTO.getThumbnail().equals(preCategoryEntity.getThumbnail())) {
                 categoryDTO.setThumbnail(updateThumnail(categoryDTO));
             }
             modelMapper.map(categoryDTO, preCategoryEntity);
             categoryEntity = modelMapper.map(preCategoryEntity, CategoryEntity.class);
         } else {
-            Optional<CategoryEntity> entity = categoryRepo.findOneByCode(categoryDTO.getCode());
-            if(entity.isPresent()) {
+            if (existedEntity.isPresent()) {
                 throw new RuntimeException("Category has already exist");
             }
             categoryEntity = modelMapper.map(categoryDTO, CategoryEntity.class);
@@ -64,7 +71,12 @@ public class CategoryService implements ICategoryService {
     public void delete(Long[] ids) {
         for (Long id : ids) {
             categoryRepo.deleteById(id);
-        }   
+        }
+    }
+
+    @Override
+    public void delete(Long id) {
+        categoryRepo.deleteById(id);
     }
 
     @Override
@@ -74,7 +86,8 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public CategoryDTO findOneByIdAndAccountId(long id, long accountId) {
-        return categoryRepo.findOneByIdAndAccountId(id, accountId).map(item -> modelMapper.map(item, CategoryDTO.class)).orElse(null);
+        return categoryRepo.findOneByIdAndAccountId(id, accountId).map(item -> modelMapper.map(item, CategoryDTO.class))
+                .orElse(null);
     }
 
     public List<CategoryDTO> findAll() {
@@ -89,8 +102,8 @@ public class CategoryService implements ICategoryService {
 
         List<CategoryEntity> listCategoryEntity = pageEntity.getContent();
         List<CategoryDTO> listCategoryDTO = listCategoryEntity.stream()
-            .map(categoryEntity -> modelMapper.map(categoryEntity, CategoryDTO.class))
-            .collect(Collectors.toList());
+                .map(categoryEntity -> modelMapper.map(categoryEntity, CategoryDTO.class))
+                .collect(Collectors.toList());
         res.setListResult(listCategoryDTO);
         return res;
     }
@@ -100,15 +113,15 @@ public class CategoryService implements ICategoryService {
         List<CategoryEntity> listCategoryEntity = categoryRepo.findAllByAccountId(accountId);
 
         List<CategoryDTO> listCategoryDTO = listCategoryEntity.stream()
-            .map(categoryEntity -> modelMapper.map(categoryEntity, CategoryDTO.class))
-            .collect(Collectors.toList());
+                .map(categoryEntity -> modelMapper.map(categoryEntity, CategoryDTO.class))
+                .collect(Collectors.toList());
         return listCategoryDTO;
     }
 
     // REUSE
     private List<CategoryDTO> toListCategoryDTO(List<CategoryEntity> listCategoryEntity) {
         List<CategoryDTO> categoryDTOS = new ArrayList<>();
-        for(CategoryEntity entity : listCategoryEntity) {
+        for (CategoryEntity entity : listCategoryEntity) {
             categoryDTOS.add(modelMapper.map(entity, CategoryDTO.class));
         }
         return categoryDTOS;
@@ -119,12 +132,10 @@ public class CategoryService implements ICategoryService {
         try {
             thumbnailUrl = cloudinary.uploader()
                     .upload(
-                        categoryDTO.getThumbnail(), 
-                        Map.of(
-                            "public_id", UUID.randomUUID().toString(),
-                            "folder", "Category_thumbnail"
-                        )
-                    )
+                            categoryDTO.getThumbnail(),
+                            Map.of(
+                                    "public_id", UUID.randomUUID().toString(),
+                                    "folder", "Category_thumbnail"))
                     .get("url")
                     .toString();
         } catch (IOException e) {

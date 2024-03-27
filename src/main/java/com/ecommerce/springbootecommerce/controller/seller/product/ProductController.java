@@ -26,25 +26,16 @@ public class ProductController {
 
     @Autowired
     private IProductService productService;
-    
-    @GetMapping()
-    public String newProduct(Model model) {
-        model.addAttribute("dto", new ProductDTO());
-        List<CategoryDTO> categories = categoryService.findAll();
-        model.addAttribute("categories", categories);
-
-        return "seller/product/addOrEdit";
-    }
 
     @GetMapping("/{id}")
     public String editProduct(
             @PathVariable("id") long id,
-            Model model
-    ) {
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            Model model) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
 
         ProductDTO dto = productService.findOneByIdAndAccountId(id, userDetails.getId());
-        
+
         if (dto == null) {
             model.addAttribute("message", SystemConstant.ACCESS_EXCEPTION);
             return "error/error";
@@ -53,7 +44,6 @@ public class ProductController {
         List<CategoryDTO> categories = categoryService.findAll();
         model.addAttribute("categories", categories);
         model.addAttribute("dto", dto);
-        // model.addAttribute("isVariation", dto.getProductItems().get(0).getVariationName() != null);
 
         return "/seller/product/addOrEdit";
     }

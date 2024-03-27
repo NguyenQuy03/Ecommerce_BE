@@ -1,4 +1,4 @@
-package com.ecommerce.springbootecommerce.api.authenticate.payload.request;
+package com.ecommerce.springbootecommerce.api.common.authenticate.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

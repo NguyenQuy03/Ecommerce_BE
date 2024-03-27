@@ -1,6 +1,7 @@
 package com.ecommerce.springbootecommerce.security;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.service.impl.CustomUserDetailsService;
 import com.ecommerce.springbootecommerce.util.JwtUtil;
 
@@ -33,7 +35,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().contains("/api/v1/auth")) {
+        String path = request.getServletPath();
+        if (path.contains("/api/v1/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -72,6 +75,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
+        }
+
+        if (path.contains("/manager")) {
+            List<String> roles = jwtUtil.extractRolesFromToken(jwt);
+            if (roles.contains("ROLE_20001")) {
+                filterChain.doFilter(request, response);
+                return;
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write(SystemConstant.ACCESS_EXCEPTION);
+                return;
+            }
+
         }
 
         filterChain.doFilter(request, response);

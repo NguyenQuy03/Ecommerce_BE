@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,9 +19,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
-import com.ecommerce.springbootecommerce.api.authenticate.payload.request.LogInRequest;
-import com.ecommerce.springbootecommerce.api.authenticate.payload.request.RegisterRequest;
-import com.ecommerce.springbootecommerce.api.authenticate.payload.response.AuthResponse;
+import com.ecommerce.springbootecommerce.api.common.authenticate.payload.request.LogInRequest;
+import com.ecommerce.springbootecommerce.api.common.authenticate.payload.request.RegisterRequest;
+import com.ecommerce.springbootecommerce.api.common.authenticate.payload.response.AuthResponse;
 import com.ecommerce.springbootecommerce.config.AuthenticationConfig;
 import com.ecommerce.springbootecommerce.constant.JWTConstant;
 import com.ecommerce.springbootecommerce.constant.RedisConstant;
@@ -31,6 +32,7 @@ import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
 import com.ecommerce.springbootecommerce.entity.AccountEntity;
 import com.ecommerce.springbootecommerce.entity.AccountRoleEntity;
 import com.ecommerce.springbootecommerce.entity.RoleEntity;
+import com.ecommerce.springbootecommerce.exception.CustomException;
 import com.ecommerce.springbootecommerce.repository.AccountRepository;
 import com.ecommerce.springbootecommerce.repository.AccountRoleRepository;
 import com.ecommerce.springbootecommerce.repository.RoleRepository;
@@ -96,20 +98,24 @@ public class AccountService implements IAccountService {
                 .username(request.getUsername())
                 .fullName(request.getFullName())
                 .email(request.getEmail())
-                .status(StatusConstant.BOOLEAN_ACTIVE_STATUS)
+                .isActive(request.isActive() || true)
                 .password(authenticationConfig.passwordEncoder().encode(request.getPassword()))
                 .build();
 
         try {
             AccountEntity newAcc = accountRepo.save(account);
 
-            /* Save Account_Role */
-            RoleEntity roleEntity = roleRepo.findOneByCode(SystemConstant.ROLE_BUYER).get();
+            RoleEntity roleEntity;
+            if (request.getRole() != null) {
+                roleEntity = roleRepo.findOneByCode(request.getRole()).get();
+            } else {
+                roleEntity = roleRepo.findOneByCode(SystemConstant.ROLE_BUYER).get();
+            }
+
             AccountRoleEntity accountRoleEntity = new AccountRoleEntity();
             accountRoleEntity.setAccount(newAcc);
             accountRoleEntity.setRole(roleEntity);
             accountRoleRepo.save(accountRoleEntity);
-
             redisUtil.setHashField(RedisConstant.REDIS_USER_INFO + request.getUsername(),
                     RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, String.valueOf(0));
         } catch (Exception e) {
@@ -143,7 +149,7 @@ public class AccountService implements IAccountService {
 
     @Override
     public void update(AccountDTO accountDTO) {
-        accountDTO.setStatus(StatusConstant.BOOLEAN_ACTIVE_STATUS);
+        accountDTO.setActive(StatusConstant.BOOLEAN_ACTIVE_STATUS);
         AccountEntity preAccountEntity = accountRepo.findById(accountDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Account is not exist"));
 
@@ -186,6 +192,19 @@ public class AccountService implements IAccountService {
     public AccountDTO findById(Long id) {
         Optional<AccountEntity> accountEntity = accountRepo.findById(id);
         return accountEntity.map(entity -> modelMapper.map(entity, AccountDTO.class)).orElse(null);
+    }
+
+    @Override
+    public void changeAccountStatus(long[] ids, String action) {
+        for (long id : ids) {
+            Optional<AccountEntity> entity = accountRepo.findById(id);
+            if (entity.isPresent()) {
+                entity.get().setActive("active".equals(action));
+                accountRepo.save(entity.get());
+            } else {
+                throw new CustomException("Account does not Exist", HttpStatus.BAD_REQUEST);
+            }
+        }
     }
 
     // REUSE

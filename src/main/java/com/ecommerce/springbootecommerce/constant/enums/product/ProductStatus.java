@@ -1,15 +1,30 @@
 package com.ecommerce.springbootecommerce.constant.enums.product;
 
-import java.util.Arrays;
-import java.util.List;
-
 public enum ProductStatus {
-    ACTIVE,
-    INACTIVE,
-    SOLD_OUT,
-    REMOVED;
+    ACTIVE("all"),
+    INACTIVE("inactive"),
+    SOLD_OUT("soldout"),
+    LIVE("live"),
+    REMOVED("removed");
 
-    public static List<ProductStatus> getInActiveStatus() {
-        return Arrays.asList(INACTIVE, SOLD_OUT, REMOVED);
+    private String status;
+
+    ProductStatus(String status) {
+        this.status = status;
     }
+
+    private String getStatus() {
+        return this.status;
+    }
+
+    public static ProductStatus get(String status) {
+        for (ProductStatus item : ProductStatus.values()) {
+            if (status.equals(item.getStatus())) {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
 }

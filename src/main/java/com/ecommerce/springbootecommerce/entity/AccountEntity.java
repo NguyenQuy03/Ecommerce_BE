@@ -24,24 +24,24 @@ public class AccountEntity extends BaseEntity {
     @NotNull
     @Column(columnDefinition = "nvarchar(100)", unique = true)
     private String username;
-    
+
     @NotNull
     @Column(columnDefinition = "nvarchar(255)")
     private String fullName;
-    
+
     @NotNull
     @Column(unique = true)
     @Email
     private String email;
-    
+
     @NotNull
     private String password;
-    
+
     @Column(columnDefinition = "nvarchar(255)")
     private String address;
-    
+
     private String phoneNumber;
-    
+
     @NotNull
-    private boolean status;
+    private boolean isActive;
 }

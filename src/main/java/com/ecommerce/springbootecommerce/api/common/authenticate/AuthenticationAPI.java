@@ -1,4 +1,4 @@
-package com.ecommerce.springbootecommerce.api.authenticate;
+package com.ecommerce.springbootecommerce.api.common.authenticate;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -13,16 +13,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ecommerce.springbootecommerce.api.authenticate.payload.request.LogInRequest;
-import com.ecommerce.springbootecommerce.api.authenticate.payload.request.RegisterRequest;
-import com.ecommerce.springbootecommerce.api.authenticate.payload.response.AuthResponse;
+import com.ecommerce.springbootecommerce.api.common.authenticate.payload.request.LogInRequest;
+import com.ecommerce.springbootecommerce.api.common.authenticate.payload.request.RegisterRequest;
+import com.ecommerce.springbootecommerce.api.common.authenticate.payload.response.AuthResponse;
 import com.ecommerce.springbootecommerce.constant.AlertConstant;
 import com.ecommerce.springbootecommerce.constant.JWTConstant;
 import com.ecommerce.springbootecommerce.constant.RedisConstant;
@@ -34,7 +33,7 @@ import com.ecommerce.springbootecommerce.util.JwtUtil;
 import com.ecommerce.springbootecommerce.util.RedisUtil;
 import com.ecommerce.springbootecommerce.util.SecurityUtil;
 
-@RestController
+@RestController(value = "AuthAPIOfUser")
 @RequestMapping("/api/v1/auth")
 public class AuthenticationAPI {
 

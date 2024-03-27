@@ -1,14 +1,10 @@
 package com.ecommerce.springbootecommerce.controller;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +12,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.ecommerce.springbootecommerce.api.authenticate.AuthenticationAPI;
-import com.ecommerce.springbootecommerce.api.authenticate.payload.request.LogInRequest;
-import com.ecommerce.springbootecommerce.api.authenticate.payload.request.RegisterRequest;
+import com.ecommerce.springbootecommerce.api.common.authenticate.AuthenticationAPI;
+import com.ecommerce.springbootecommerce.api.common.authenticate.payload.request.RegisterRequest;
 import com.ecommerce.springbootecommerce.constant.AlertConstant;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
@@ -37,29 +32,6 @@ public class AuthenticateController {
     @Autowired
     CookieUtil cookieUtil;
 
-    @GetMapping("/login")
-    public String login(
-            Model model, HttpServletRequest request, HttpServletResponse response) {
-        LogInRequest logInRequest = new LogInRequest();
-        Cookie[] cookies = request.getCookies();
-        String loginResponse = cookieUtil.getCookie(cookies, SystemConstant.LOGIN_FAILURE_DTO);
-        cookieUtil.removeAll(cookies, response);
-
-        if (!loginResponse.isEmpty()) {
-            model.addAttribute("alertType", AlertConstant.ALERT_DANGER);
-            model.addAttribute("message", loginResponse);
-        }
-        model.addAttribute(SystemConstant.ACCOUNT_DTO, logInRequest);
-        return "authenticate/login";
-    }
-
-    @GetMapping("/register")
-    public String register(Model model) {
-        RegisterRequest registerRequest = new RegisterRequest();
-        model.addAttribute(SystemConstant.ACCOUNT_DTO, registerRequest);
-        return "authenticate/register";
-    }
-
     @PostMapping("/register")
     public String save(
             @Valid @ModelAttribute(SystemConstant.ACCOUNT_DTO) RegisterRequest request,
@@ -68,7 +40,8 @@ public class AuthenticateController {
         if (request.getPassword() != null && request.getConfirmPassword() != null
                 && !request.getPassword().equals(request.getConfirmPassword())) {
             bindingResult.addError(
-                    new FieldError(SystemConstant.ACCOUNT_DTO, "rePassword", AlertConstant.ALERT_WRONG_CONFIRM_PASSWORD));
+                    new FieldError(SystemConstant.ACCOUNT_DTO, "rePassword",
+                            AlertConstant.ALERT_WRONG_CONFIRM_PASSWORD));
         }
 
         for (Character c : request.getUsername().toCharArray()) {

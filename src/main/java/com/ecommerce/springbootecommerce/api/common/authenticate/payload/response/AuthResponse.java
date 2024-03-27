@@ -1,4 +1,4 @@
-package com.ecommerce.springbootecommerce.api.authenticate.payload.response;
+package com.ecommerce.springbootecommerce.api.common.authenticate.payload.response;
 
 import java.util.List;
 import java.util.Map;

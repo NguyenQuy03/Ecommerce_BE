@@ -1,6 +1,7 @@
 package com.ecommerce.springbootecommerce.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,8 @@ public class AccountRoleService implements IAccountRoleService {
     private AccountRoleConverter accountRoleConverter;
 
     @Override
-    public List<AccountRoleDTO> findAllByRole(String roleCode) {
-        List<AccountRoleEntity> accountRoleEntities = accountRoleRepo.findAllByRoleCode(roleCode);
+    public List<AccountRoleDTO> findAllByRoleCodeIn(Set<String> roleCodes) {
+        List<AccountRoleEntity> accountRoleEntities = accountRoleRepo.findAllByRoleCodeIn(roleCodes);
         return accountRoleConverter.toDTO(accountRoleEntities);
     }
 
@@ -30,7 +31,6 @@ public class AccountRoleService implements IAccountRoleService {
     public void save(AccountRoleDTO accountRoleDTO) {
         AccountRoleEntity accountRoleEntity = accountRoleConverter.toEntity(accountRoleDTO);
         accountRoleRepo.save(accountRoleEntity);
-        
     }
-    
+
 }

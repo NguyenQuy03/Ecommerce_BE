@@ -30,5 +30,5 @@ public class AccountDTO extends BaseDTO<AccountDTO> {
 
     private String typeEditProfile;
 
-    private boolean status;
+    private boolean isActive;
 }

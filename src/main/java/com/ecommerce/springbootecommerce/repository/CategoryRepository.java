@@ -6,15 +6,19 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 
 import com.ecommerce.springbootecommerce.entity.CategoryEntity;
 
 public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> {
     Optional<CategoryEntity> findOneByCode(String code);
 
-    Optional<CategoryEntity> findOneByIdAndAccountId(long id, long accountId);
+    Optional<CategoryEntity> findOneByIdAndAccountId(Long id, Long accountId);
 
-    List<CategoryEntity> findAllByAccountId(long accountId);
-    
-    Page<CategoryEntity> findAllByAccountId(long accounId, Pageable pageable);
+    @Modifying
+    Long deleteById(long id);
+
+    List<CategoryEntity> findAllByAccountId(Long accountId);
+
+    Page<CategoryEntity> findAllByAccountId(Long accountId, Pageable pageable);
 }

@@ -17,7 +17,7 @@ import com.ecommerce.springbootecommerce.repository.AccountRepository;
 import com.ecommerce.springbootecommerce.repository.AccountRoleRepository;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService{
+public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private AccountRepository accountRepository;
@@ -27,24 +27,24 @@ public class CustomUserDetailsService implements UserDetailsService{
 
     @Override
     public CustomUserDetails loadUserByUsername(String username) {
-        if(accountRepository.findByUsernameAndStatus(username, StatusConstant.BOOLEAN_ACTIVE_STATUS).isPresent()){
-            AccountEntity account = accountRepository.findByUsernameAndStatus(username, StatusConstant.BOOLEAN_ACTIVE_STATUS).get();
+        if (accountRepository.findByUsernameAndIsActive(username, StatusConstant.BOOLEAN_ACTIVE_STATUS).isPresent()) {
+            AccountEntity account = accountRepository
+                    .findByUsernameAndIsActive(username, StatusConstant.BOOLEAN_ACTIVE_STATUS).get();
             List<AccountRoleEntity> accountRoles = accountRoleRepo.findAllByAccountId(account.getId());
             List<SimpleGrantedAuthority> authorities = new ArrayList<>();
             for (AccountRoleEntity entity : accountRoles) {
                 authorities.add(new SimpleGrantedAuthority("ROLE_" + entity.getRole().getCode()));
             }
-            
+
             return new CustomUserDetails(
                     account.getId(),
                     account.getUsername(),
                     account.getFullName(),
                     account.getPassword(),
-                    authorities
-            );
+                    authorities);
         } else {
             throw new UsernameNotFoundException("User not found");
         }
 
-    }  
+    }
 }

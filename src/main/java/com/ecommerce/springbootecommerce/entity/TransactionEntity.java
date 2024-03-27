@@ -28,5 +28,6 @@ public class TransactionEntity extends BaseEntity {
     private TransactionStatus status;
 
     @NotNull
-    private Double totalPayment = 0D;
+    @Column(columnDefinition = "double default 0.0")
+    private Double totalPayment;
 }
