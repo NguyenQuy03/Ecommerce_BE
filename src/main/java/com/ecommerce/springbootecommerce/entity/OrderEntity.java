@@ -30,9 +30,6 @@ public class OrderEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @NotNull
-    private Double totalPrice = 0D;
-
     @OneToOne
     @JoinColumn(name = "seller_id", referencedColumnName = "id")
     private AccountEntity seller;

@@ -1,3 +1,0 @@
-
-username = "ZE"
-innerTextVoucherInform();

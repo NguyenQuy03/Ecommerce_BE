@@ -43,8 +43,37 @@ public class ProductAPI {
                 return ResponseEntity.badRequest().body("Bad Request");
             }
 
-            List<ProductDTO> dto = productService.findAllByStatus(ProductStatus.get(type),
-                    PageRequest.of(page - 1, size));
+            List<ProductDTO> dto = null;
+
+            if (ProductStatus.get(type).equals(ProductStatus.ALL)) {
+                dto = productService.findAllWithoutStatus(ProductStatus.REMOVED,
+                        PageRequest.of(page - 1, size));
+            } else {
+                dto = productService.findAllByStatus(ProductStatus.get(type),
+                        PageRequest.of(page - 1, size));
+            }
+
+            return ResponseEntity.ok().body(dto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "edit")
+    public ResponseEntity<?> editProduct(
+            @RequestParam(value = "id", required = true) Long productId) {
+        try {
+            CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                    .getPrincipal();
+            ProductDTO dto = productService.findOneByIdAndAccountId(productId, userDetails.getId());
+
+            if (dto.equals(null)) {
+                ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE);
+            }
+
+            if (dto.getStatus().equals(ProductStatus.REMOVED)) {
+                ResponseEntity.status(HttpStatus.NO_CONTENT);
+            }
 
             return ResponseEntity.ok().body(dto);
         } catch (Exception e) {

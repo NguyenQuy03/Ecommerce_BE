@@ -29,6 +29,5 @@ public class ProductDTO extends BaseDTO<ProductDTO> {
 
     private List<ProductItemDTO> productItems;
 
-    // Group All stock, sold, avg price from product item
     private Map<String, Object> additionalInfo;
 }

@@ -1,6 +1,5 @@
 package com.ecommerce.springbootecommerce.api.buyer;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,17 +11,21 @@ import com.ecommerce.springbootecommerce.constant.enums.order.OrderStatus;
 import com.ecommerce.springbootecommerce.dto.AccountDTO;
 import com.ecommerce.springbootecommerce.dto.OrderDTO;
 import com.ecommerce.springbootecommerce.service.IOrderService;
+import com.ecommerce.springbootecommerce.service.impl.OrderService;
 import com.ecommerce.springbootecommerce.util.AccountUtil;
 
 @RestController
 @RequestMapping("/api/v1/buyer/order")
 public class OrderAPI {
 
-    @Autowired
-    private IOrderService orderService;
+    private final IOrderService orderService;
 
-    @Autowired
-    private AccountUtil accountUtil;
+    private final AccountUtil accountUtil;
+
+    public OrderAPI(OrderService orderService, AccountUtil accountUtil) {
+        this.orderService = orderService;
+        this.accountUtil = accountUtil;
+    }
 
     @PostMapping()
     public ResponseEntity<String> purchase(

@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.ecommerce.springbootecommerce.constant.enums.order.OrderStatus;
+import com.ecommerce.springbootecommerce.constant.enums.product.CurrencyType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,7 +32,10 @@ public class OrderItemEntity extends BaseEntity {
     private long quantity;
 
     @NotNull
-    private double curPrice;
+    private String curPrice;
+
+    @NotNull
+    private CurrencyType currencyType;
 
     @NotNull
     @Column(columnDefinition = "varchar(20)", name = "status")

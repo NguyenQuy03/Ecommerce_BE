@@ -33,22 +33,22 @@ public class HomeController {
 
     @GetMapping("/home")
     public String homePage(
-            Model model
-    ) {
+            Model model) {
         List<CategoryDTO> categories = categoryService.findAll();
         Pageable pageable = PageRequest.of(0, 12);
-        List<ProductDTO> productItems = productService.findAllByStatus(ProductStatus.ACTIVE, pageable);
+        List<ProductDTO> productItems = productService.findAllByStatus(ProductStatus.LIVE, pageable);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (!username.contains("anonymousUser")) {
-            model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER));
+            model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, redisUtil.getHashField(
+                    RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER));
         }
         model.addAttribute("categories", categories);
         model.addAttribute("productItems", productItems);
 
         return "buyer/home";
     }
-    
+
     @GetMapping
     public String redirectHomePage() {
         return "redirect:/home";

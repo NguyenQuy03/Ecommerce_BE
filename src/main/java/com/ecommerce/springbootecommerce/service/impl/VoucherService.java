@@ -32,7 +32,7 @@ import com.ecommerce.springbootecommerce.util.ServiceUtil;
 import com.ecommerce.springbootecommerce.util.converter.VoucherConverter;
 
 @Service
-public class VoucherService implements IVoucherService{
+public class VoucherService implements IVoucherService {
 
     @Autowired
     private VoucherRepository voucherRepo;
@@ -55,7 +55,6 @@ public class VoucherService implements IVoucherService{
     @Autowired
     private VoucherConverter voucherConverter;
 
-
     @Override
     @Transactional
     public void save(VoucherDTO dto) {
@@ -63,10 +62,10 @@ public class VoucherService implements IVoucherService{
 
         VoucherEntity newVoucher = voucherRepo.save(voucherConverter.toEntity(dto));
 
-        if(dto.getAccount().getMainRole().equals(SystemConstant.ROLE_MANAGER)) {
+        if (dto.getAccount().getMainRole().equals(SystemConstant.ROLE_MANAGER)) {
             List<CategoryEntity> categories = categoryRepo.findAllByAccountId(dto.getAccount().getId());
             List<VoucherCategoryEntity> listEntities = new ArrayList<>();
-            for(CategoryEntity catEntity : categories) {
+            for (CategoryEntity catEntity : categories) {
                 var entity = new VoucherCategoryEntity();
 
                 entity.setCategory(catEntity);
@@ -75,26 +74,28 @@ public class VoucherService implements IVoucherService{
             }
 
             voucherCategoryRepo.saveAll(listEntities);
-        } else if(dto.getAccount().getMainRole().equals(SystemConstant.ROLE_SELLER)) {
-            List<ProductEntity> products = productRepo.findAllByAccountIdAndStatus(dto.getAccount().getId(), ProductStatus.ACTIVE);
+        } else if (dto.getAccount().getMainRole().equals(SystemConstant.ROLE_SELLER)) {
+            List<ProductEntity> products = productRepo.findAllByAccountIdAndStatus(dto.getAccount().getId(),
+                    ProductStatus.LIVE);
             List<VoucherProductEntity> listEntities = new ArrayList<>();
-            for(ProductEntity productEntity : products) {
+            for (ProductEntity productEntity : products) {
                 var entity = new VoucherProductEntity();
                 entity.setProduct(productEntity);
                 entity.setVoucher(newVoucher);
-                
+
                 listEntities.add(entity);
             }
 
             voucherProductRepo.saveAll(listEntities);
         }
     }
-    
+
     @Override
     @Transactional
     public void update(VoucherDTO dto) {
-        Optional<VoucherEntity> optionalEntity = voucherRepo.findOneByIdAndAccountId(dto.getId(), dto.getAccount().getId());
-        if(optionalEntity.isPresent()) {
+        Optional<VoucherEntity> optionalEntity = voucherRepo.findOneByIdAndAccountId(dto.getId(),
+                dto.getAccount().getId());
+        if (optionalEntity.isPresent()) {
             dto.setStatusByDate(new Date());
 
             VoucherEntity newEntity = voucherConverter.toEntity(dto, optionalEntity.get());
@@ -111,22 +112,23 @@ public class VoucherService implements IVoucherService{
         Page<VoucherEntity> pageEntities = voucherRepo.findAllByAccountId(accountId, PageRequest.of(page, size));
         BaseDTO<VoucherDTO> dto = serviceUtil.mapDataFromPage(pageEntities);
         dto.setListResult(voucherConverter.toListDTO(pageEntities.getContent()));
-        
+
         return dto;
     }
 
     @Override
     public BaseDTO<VoucherDTO> findAllByAccountIdAndStatus(long accountId, VoucherStatus status, int page, int size) {
-        Page<VoucherEntity> pageEntities = voucherRepo.findAllByAccountIdAndStatus(accountId, status, PageRequest.of(page, size));
+        Page<VoucherEntity> pageEntities = voucherRepo.findAllByAccountIdAndStatus(accountId, status,
+                PageRequest.of(page, size));
         BaseDTO<VoucherDTO> dto = serviceUtil.mapDataFromPage(pageEntities);
         dto.setListResult(voucherConverter.toListDTO(pageEntities.getContent()));
-        
+
         return dto;
     }
 
     // FIND ONE
     @Override
-    public VoucherDTO findOneByIdAndAccountId(long id, long accountId) {        
+    public VoucherDTO findOneByIdAndAccountId(long id, long accountId) {
         return voucherRepo.findOneByIdAndAccountId(id, accountId)
                 .map(item -> voucherConverter.toDTO(item)).orElse(null);
     }
@@ -139,9 +141,9 @@ public class VoucherService implements IVoucherService{
     // FIND LIST
     @Override
     public List<VoucherDTO> findAllByAccountIdAndStatus(long accountId, VoucherStatus status) {
-        
+
         List<VoucherEntity> entities = voucherRepo.findAllByAccountIdAndStatus(accountId, status);
         return voucherConverter.toListDTO(entities);
     }
-    
+
 }

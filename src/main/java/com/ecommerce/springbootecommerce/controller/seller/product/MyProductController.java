@@ -21,16 +21,17 @@ public class MyProductController {
 
     @Autowired
     private IProductService productService;
-    
+
     @GetMapping("list/all")
     public String allProduct(
             Model model,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = SystemConstant.DEFAULT_PAGE_SIZE) int size
-    ) {
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            @RequestParam(value = "size", required = false, defaultValue = SystemConstant.DEFAULT_PAGE_SIZE) int size) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
 
-        BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(userDetails.getId(), ProductStatus.ACTIVE, page, size);
+        BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(userDetails.getId(), ProductStatus.LIVE,
+                page, size);
 
         return generic(model, dto, "all");
     }
@@ -39,34 +40,32 @@ public class MyProductController {
     public String liveProduct(
             Model model,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = SystemConstant.DEFAULT_PAGE_SIZE) int size
-    ) {
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            @RequestParam(value = "size", required = false, defaultValue = SystemConstant.DEFAULT_PAGE_SIZE) int size) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
 
         BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndProductStatusAndProductItemStatus(
-            userDetails.getId(), ProductStatus.ACTIVE, ProductStatus.ACTIVE, page, size
-        );
-        
+                userDetails.getId(), ProductStatus.LIVE, ProductStatus.LIVE, page, size);
+
         return generic(model, dto, "live");
     }
-    
+
     @GetMapping("list/soldout")
     public String soldOutProduct(
-        Model model,
-        @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-        @RequestParam(value = "size", required = false, defaultValue = SystemConstant.DEFAULT_PAGE_SIZE) int size
-    ){
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
+            Model model,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = SystemConstant.DEFAULT_PAGE_SIZE) int size) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
         BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndProductStatusAndProductItemStatus(
-            userDetails.getId(), ProductStatus.ACTIVE, ProductStatus.SOLD_OUT, page, size
-        );
+                userDetails.getId(), ProductStatus.LIVE, ProductStatus.SOLD_OUT, page, size);
 
         return generic(model, dto, "soldout");
     }
-    
+
     private String generic(Model model, BaseDTO<ProductDTO> dto, String tab) {
-        
+
         model.addAttribute("tab", tab);
         model.addAttribute(SystemConstant.QUANTITY_PRODUCT_DTO, dto == null ? 0 : dto.getTotalItem());
         model.addAttribute("dto", dto);
@@ -77,11 +76,12 @@ public class MyProductController {
     public String trashBin(
             Model model,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = SystemConstant.DEFAULT_PAGE_SIZE) int size
-    ) {
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            @RequestParam(value = "size", required = false, defaultValue = SystemConstant.DEFAULT_PAGE_SIZE) int size) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
 
-        BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(userDetails.getId(), ProductStatus.INACTIVE, page, size);
+        BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(userDetails.getId(),
+                ProductStatus.INACTIVE, page, size);
 
         model.addAttribute(SystemConstant.QUANTITY_PRODUCT_DTO, dto.getTotalItem());
         model.addAttribute("dto", dto);

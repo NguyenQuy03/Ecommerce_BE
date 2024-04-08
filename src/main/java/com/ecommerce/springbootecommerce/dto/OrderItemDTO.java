@@ -4,6 +4,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import com.ecommerce.springbootecommerce.constant.enums.order.OrderStatus;
+import com.ecommerce.springbootecommerce.constant.enums.product.CurrencyType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderItemDTO extends BaseDTO<OrderItemDTO>{
+public class OrderItemDTO extends BaseDTO<OrderItemDTO> {
 
     private OrderDTO orders;
 
@@ -24,7 +25,9 @@ public class OrderItemDTO extends BaseDTO<OrderItemDTO>{
 
     private long quantity;
 
-    private double curPrice;
+    private String curPrice;
+
+    private CurrencyType currencyType;
 
     private String totalPrice;
 

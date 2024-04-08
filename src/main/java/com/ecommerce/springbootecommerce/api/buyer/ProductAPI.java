@@ -2,7 +2,6 @@ package com.ecommerce.springbootecommerce.api.buyer;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -16,19 +15,23 @@ import com.ecommerce.springbootecommerce.dto.BaseDTO;
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
 import com.ecommerce.springbootecommerce.exception.CustomException;
 import com.ecommerce.springbootecommerce.service.IProductService;
+import com.ecommerce.springbootecommerce.service.impl.ProductService;
 
 @RestController
 @RequestMapping("/api/v1/buyer/product")
 public class ProductAPI {
 
-    @Autowired
-    private IProductService productService;
+    private final IProductService productService;
+
+    public ProductAPI(ProductService productService) {
+        this.productService = productService;
+    }
 
     @GetMapping
     public ResponseEntity<?> getProducts() {
         try {
             Pageable pageable = PageRequest.of(0, 12);
-            List<ProductDTO> dto = productService.findAllByStatus(ProductStatus.ACTIVE, pageable);
+            List<ProductDTO> dto = productService.findAllWithoutStatus(ProductStatus.REMOVED, pageable);
             return ResponseEntity.ok().body(dto);
         } catch (Exception e) {
             return ResponseEntity.status(((CustomException) e.fillInStackTrace()).getErrorCode()).body(e.getMessage());
@@ -39,7 +42,7 @@ public class ProductAPI {
     public ResponseEntity<?> getProductsBySeller(
             @RequestParam("sellerId") long sellerId) {
         try {
-            BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(sellerId, ProductStatus.ACTIVE, 1, 12);
+            BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(sellerId, ProductStatus.LIVE, 1, 12);
             return ResponseEntity.ok().body(dto);
         } catch (Exception e) {
             return ResponseEntity.status(((CustomException) e.fillInStackTrace()).getErrorCode()).body(e.getMessage());
@@ -50,7 +53,7 @@ public class ProductAPI {
     public List<ProductDTO> getProductsByCategory() {
 
         Pageable pageable = PageRequest.of(0, 12);
-        List<ProductDTO> productItems = productService.findAllByStatus(ProductStatus.ACTIVE, pageable);
+        List<ProductDTO> productItems = productService.findAllByStatus(ProductStatus.LIVE, pageable);
 
         return productItems;
     }

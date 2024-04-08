@@ -35,12 +35,11 @@ public class SearchController {
             Model model,
             @PathVariable("id") long id,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "2") int size
-    ) {
+            @RequestParam(value = "size", required = false, defaultValue = "2") int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         long quantityProduct = productService.countAllByCategoryId(id);
-        
+
         Integer totalPage = (int) Math.ceil((double) quantityProduct / size);
         List<ProductDTO> products = productService.findAllByCategoryId(id, pageable);
 
@@ -51,7 +50,8 @@ public class SearchController {
         dto.setSize(size);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER));
+        model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, redisUtil
+                .getHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER));
         model.addAttribute("dto", dto);
 
         return "buyer/search";
@@ -62,14 +62,13 @@ public class SearchController {
             Model model,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
-            @RequestParam(value = "size", required = false, defaultValue = "9") int size
-    ) {
+            @RequestParam(value = "size", required = false, defaultValue = "9") int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         long quantityProduct = 0L;
         List<ProductDTO> products;
         if (keyword.equals("")) {
             quantityProduct = productService.countAllByStatus(StatusConstant.STRING_ACTIVE_STATUS);
-            products = productService.findAllByStatus(ProductStatus.ACTIVE, pageable);
+            products = productService.findAllByStatus(ProductStatus.LIVE, pageable);
         }
 
         products = productService.findAllByNameContains(keyword, pageable);
@@ -83,10 +82,11 @@ public class SearchController {
         dto.setPage(page);
         dto.setSize(size);
 
-        model.addAttribute("keyword",  keyword);
-        model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, redisUtil.getHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute(RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER, redisUtil
+                .getHashField(RedisConstant.REDIS_USER_INFO + username, RedisConstant.REDIS_USER_INFO_QUANTITY_ORDER));
         model.addAttribute("dto", dto);
-        
+
         return "buyer/search";
     }
 }

@@ -24,6 +24,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
         // FIND ALL
         Slice<ProductEntity> findAllByStatus(ProductStatus status, Pageable pageable);
 
+        @Query(value = "select id, description, name, specification, status from product where status != :status", nativeQuery = true)
+        Slice<ProductEntity> findAllWithoutStatus(@Param(value = "status") ProductStatus status, Pageable pageable);
+
         Slice<ProductEntity> findAllByCategoryId(long categoryId, Pageable pageable);
 
         Slice<ProductEntity> findAllByNameContains(String keyword, Pageable pageable);
@@ -57,4 +60,5 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
         long countAllByCategoryId(long categoryId);
 
         long countByNameContains(String keyword);
+
 }

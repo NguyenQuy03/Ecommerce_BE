@@ -2,7 +2,6 @@ package com.ecommerce.springbootecommerce.api.buyer;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,13 +9,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
+import com.ecommerce.springbootecommerce.service.impl.CategoryService;
 
 @RestController(value = "CategoryAPIOBuyer")
 @RequestMapping("/api/v1/buyer/category")
 public class CategoryAPI {
 
-    @Autowired
-    private ICategoryService categoryService;
+    private final ICategoryService categoryService;
+
+    public CategoryAPI(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @GetMapping
     public ResponseEntity<?> getCategories() {

@@ -14,16 +14,16 @@ import com.ecommerce.springbootecommerce.entity.ProductItemEntity;
 public class ProductItemConverter {
     @Autowired
     private ModelMapper mapper;
-    
-    public List<ProductItemDTO> toListDTO(List<ProductItemEntity> entities){
+
+    public List<ProductItemDTO> toListDTO(List<ProductItemEntity> entities) {
         List<ProductItemDTO> dtos = new ArrayList<>();
-        for(ProductItemEntity entity : entities) {
+        for (ProductItemEntity entity : entities) {
             dtos.add(toDTO(entity));
         }
-        
+
         return dtos;
     }
-    
+
     public ProductItemDTO toDTO(ProductItemEntity entity) {
         return mapper.map(entity, ProductItemDTO.class);
     }
@@ -44,13 +44,14 @@ public class ProductItemConverter {
         preEntity.setImage(dto.getImage());
         preEntity.setStatus(dto.getStatus());
         preEntity.setStock(dto.getStock());
+        preEntity.setCurrencyType(dto.getCurrencyType());
         preEntity.setPrice(dto.getPrice());
         return preEntity;
     }
 
-    public List<ProductItemEntity> toListEntity(List<ProductItemDTO> dtos){
+    public List<ProductItemEntity> toListEntity(List<ProductItemDTO> dtos) {
         List<ProductItemEntity> entities = new ArrayList<>();
-        for(ProductItemDTO dto : dtos) {
+        for (ProductItemDTO dto : dtos) {
             entities.add(toEntity(dto));
         }
         return entities;

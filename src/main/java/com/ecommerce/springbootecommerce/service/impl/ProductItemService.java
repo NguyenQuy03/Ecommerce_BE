@@ -25,6 +25,11 @@ public class ProductItemService implements IProductItemService {
     @Autowired
     private ProductItemConverter productItemConverter;
 
+    public ProductItemService(ProductItemRepository productItemRepo, ProductItemConverter productItemConverter) {
+        this.productItemRepo = productItemRepo;
+        this.productItemConverter = productItemConverter;
+    }
+
     @Override
     public List<ProductItemDTO> findAllByStatus(String status, Pageable pageable) {
         List<ProductItemEntity> entities = productItemRepo.findAllByStatus(status, pageable).getContent();
@@ -57,7 +62,7 @@ public class ProductItemService implements IProductItemService {
     public void save(ProductItemDTO dto, ProductDTO productDTO, ProductEntity productEntity) {
         ProductItemEntity productItemEntity = productItemConverter.toEntity(dto);
         productItemEntity.setProduct(productEntity);
-        productItemEntity.setStatus(ProductStatus.ACTIVE);
+        productItemEntity.setStatus(ProductStatus.LIVE);
 
         // if (productItemEntity.getImage() == null) {
         // productItemEntity.setImage(productDTO.getProductImages());
@@ -73,7 +78,7 @@ public class ProductItemService implements IProductItemService {
         itemEntity.setProduct(productEntity);
 
         if (itemEntity.getStock() > 0) {
-            itemEntity.setStatus(ProductStatus.ACTIVE);
+            itemEntity.setStatus(ProductStatus.LIVE);
         } else {
             itemEntity.setStatus(ProductStatus.SOLD_OUT);
         }

@@ -7,10 +7,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
+import com.ecommerce.springbootecommerce.constant.enums.product.CurrencyType;
 import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
 
-import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,7 +37,11 @@ public class ProductItemEntity extends BaseEntity {
     private String image;
 
     @NotNull
-    private double price;
+    private String price;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private CurrencyType currencyType;
 
     @NotNull
     @Column(columnDefinition = "varchar(20) default 'ACTIVE'")

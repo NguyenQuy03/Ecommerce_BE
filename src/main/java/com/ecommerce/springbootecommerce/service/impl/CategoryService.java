@@ -139,7 +139,7 @@ public class CategoryService implements ICategoryService {
                     .get("url")
                     .toString();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("Error Upload category thumbnail");
         }
 
         return thumbnailUrl;

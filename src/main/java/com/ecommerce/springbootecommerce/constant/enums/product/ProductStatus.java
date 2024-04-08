@@ -1,11 +1,11 @@
 package com.ecommerce.springbootecommerce.constant.enums.product;
 
 public enum ProductStatus {
-    ACTIVE("all"),
+    ALL("all"),
     INACTIVE("inactive"),
     SOLD_OUT("soldout"),
     LIVE("live"),
-    REMOVED("removed");
+    REMOVED("REMOVED");
 
     private String status;
 

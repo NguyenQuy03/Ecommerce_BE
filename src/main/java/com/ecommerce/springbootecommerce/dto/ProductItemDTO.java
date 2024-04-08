@@ -1,9 +1,8 @@
 package com.ecommerce.springbootecommerce.dto;
 
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 
+import com.ecommerce.springbootecommerce.constant.enums.product.CurrencyType;
 import com.ecommerce.springbootecommerce.constant.enums.product.ProductStatus;
 import com.ecommerce.springbootecommerce.entity.OrderItemEntity;
 
@@ -22,20 +21,12 @@ public class ProductItemDTO extends BaseDTO<ProductItemDTO> {
 
     private long quantity;
 
-    private Double price;
+    private String price;
+    private CurrencyType currencyType;
+
     private ProductStatus status;
 
     private String variation;
 
     private List<OrderItemEntity> orderItems;
-
-    @SuppressWarnings("unused")
-    private String StringPrice;
-
-    public String getStringPrice() {
-        Locale moneyType = new Locale("en", "US");
-        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(moneyType);
-        numberFormat.format(this.price);
-        return numberFormat.format(this.price);
-    }
 }

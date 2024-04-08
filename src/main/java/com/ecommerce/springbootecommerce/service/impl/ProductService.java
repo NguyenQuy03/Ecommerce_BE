@@ -6,7 +6,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,34 +31,41 @@ import com.ecommerce.springbootecommerce.util.converter.ProductConverter;
 
 @Service
 public class ProductService implements IProductService {
-    @Autowired
-    private ProductRepository productRepo;
+    private final ProductRepository productRepo;
 
-    @Autowired
-    private ProductItemRepository productItemRepo;
+    private final ProductItemRepository productItemRepo;
 
-    @Autowired
-    private ProductImageRepository productImageRepo;
+    private final ProductImageRepository productImageRepo;
 
-    @Autowired
-    private CategoryRepository categoryRepo;
+    private final CategoryRepository categoryRepo;
 
-    @Autowired
-    private ProductItemService productItemService;
+    private final ProductItemService productItemService;
 
-    @Autowired
-    private ProductConverter productConverter;
+    private final ProductConverter productConverter;
 
-    @Autowired
-    private ProductServiceUtil productServiceUtil;
+    private final ProductServiceUtil productServiceUtil;
 
-    @Autowired
-    private ServiceUtil serviceUtil;
+    private final ServiceUtil serviceUtil;
+
+    public ProductService(
+            ProductRepository productRepo, ProductItemRepository productItemRepo,
+            ProductImageRepository productImageRepo, CategoryRepository categoryRepo,
+            ProductItemService productItemService, ProductConverter productConverter,
+            ProductServiceUtil productServiceUtil, ServiceUtil serviceUtil) {
+        this.productRepo = productRepo;
+        this.productItemRepo = productItemRepo;
+        this.productImageRepo = productImageRepo;
+        this.productItemService = productItemService;
+        this.categoryRepo = categoryRepo;
+        this.productConverter = productConverter;
+        this.productServiceUtil = productServiceUtil;
+        this.serviceUtil = serviceUtil;
+    }
 
     @Override
     public void save(ProductDTO dto) {
         try {
-            dto.setStatus(ProductStatus.ACTIVE);
+            dto.setStatus(ProductStatus.LIVE);
 
             ExecutorService executorService = Executors.newFixedThreadPool(3);
             List<String> productImageUrl = productServiceUtil.updateProductImages(dto);
@@ -109,7 +115,7 @@ public class ProductService implements IProductService {
         ProductEntity preProductEntity = productRepo.findById(dto.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Product is not exist"));
 
-        dto.setStatus(ProductStatus.ACTIVE);
+        dto.setStatus(ProductStatus.LIVE);
 
         // Filter Product Items Do Not Valid
         productItemService.filterUnUsedProductItem(dto);
@@ -165,7 +171,7 @@ public class ProductService implements IProductService {
         Optional<ProductEntity> optionalProduct = productRepo.findById(id);
         if (optionalProduct.isPresent()) {
             ProductEntity product = optionalProduct.get();
-            product.setStatus(ProductStatus.ACTIVE);
+            product.setStatus(ProductStatus.LIVE);
             productRepo.save(product);
         }
     }
@@ -175,7 +181,7 @@ public class ProductService implements IProductService {
         try {
             productRepo.save(entity);
         } catch (Exception e) {
-            throw new CustomException("Error save product item", HttpStatus.BAD_REQUEST);
+            throw new CustomException("Error save product item to DB", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -207,6 +213,12 @@ public class ProductService implements IProductService {
     public List<ProductDTO> findAllByStatus(ProductStatus status, Pageable pageable) {
         List<ProductEntity> productEntities = productRepo.findAllByStatus(status, pageable).getContent();
         return productConverter.toListDTO(productEntities);
+    }
+
+    @Override
+    public List<ProductDTO> findAllWithoutStatus(ProductStatus status, Pageable pageable) {
+        List<ProductEntity> entities = productRepo.findAllWithoutStatus(status, pageable).getContent();
+        return productConverter.toListDTO(entities);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.ecommerce.springbootecommerce.util.converter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ecommerce.springbootecommerce.dto.ProductDTO;
+import com.ecommerce.springbootecommerce.entity.OrderItemEntity;
 import com.ecommerce.springbootecommerce.entity.ProductEntity;
 import com.ecommerce.springbootecommerce.entity.ProductImageEntity;
 import com.ecommerce.springbootecommerce.entity.ProductItemEntity;
+import com.ecommerce.springbootecommerce.repository.OrderItemRepository;
 import com.ecommerce.springbootecommerce.repository.ProductImageRepository;
 import com.ecommerce.springbootecommerce.repository.ProductItemRepository;
 import com.ecommerce.springbootecommerce.util.converter.account_role.AccountConverter;
@@ -36,6 +39,9 @@ public class ProductConverter {
 
     @Autowired
     private ProductImageRepository productImageRepo;
+
+    @Autowired
+    private OrderItemRepository orderItemRepo;
 
     public ProductDTO toDTO(ProductEntity entity) {
         ProductDTO dto = new ProductDTO();
@@ -104,8 +110,10 @@ public class ProductConverter {
     private Map<String, Object> getProductDetails(List<ProductItemEntity> productItemEntities) {
         Map<String, Object> details = new HashMap<>();
         AtomicLong totalSold = new AtomicLong(0);
+
         AtomicReference<Double> maxPrice = new AtomicReference<>(Double.MIN_VALUE);
         AtomicReference<Double> minPrice = new AtomicReference<>(Double.MAX_VALUE);
+
         AtomicLong totalStock = new AtomicLong(0);
         AtomicReference<Double> revenue = new AtomicReference<>(0D);
 
@@ -119,13 +127,21 @@ public class ProductConverter {
             productItemEntities.forEach(item -> {
                 totalSold.addAndGet(item.getSold());
                 totalStock.addAndGet(item.getStock());
-                revenue.updateAndGet(v -> v + item.getSold() * item.getPrice());
 
-                if (item.getPrice() > maxPrice.get()) {
-                    maxPrice.set(item.getPrice());
+                List<OrderItemEntity> orderItems = orderItemRepo.findAllByProductItemId(item.getId());
+                orderItems.forEach(orderItem -> {
+                    revenue.updateAndGet(
+                            v -> v + orderItem.getQuantity() * new BigDecimal(orderItem.getCurPrice()).doubleValue());
+                });
+
+                BigDecimal itemPrice = new BigDecimal(item.getPrice());
+                if (itemPrice.compareTo(new BigDecimal(maxPrice.get())) > 0) {
+
+                    maxPrice.set(itemPrice.doubleValue());
                 }
-                if (item.getPrice() < minPrice.get()) {
-                    minPrice.set(item.getPrice());
+
+                if (itemPrice.compareTo(new BigDecimal(minPrice.get())) < 0) {
+                    minPrice.set(itemPrice.doubleValue());
                 }
             });
         }
