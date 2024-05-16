@@ -2,7 +2,6 @@ package com.ecommerce.springbootecommerce.api.manager;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,18 +20,22 @@ import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.IVoucherService;
 
-@RestController(value = "VoucherAPIOfManager")
+@RestController(value = "voucherAPIOfManager")
 @RequestMapping("/api/v1/manager/voucher")
 public class VoucherAPI {
 
-    @Autowired
-    private IAccountService accountService;
+    private final IAccountService accountService;
 
-    @Autowired
-    private IVoucherService voucherService;
+    private final IVoucherService voucherService;
 
-    @Autowired
-    private ICategoryService categoryService;
+    private final ICategoryService categoryService;
+
+    public VoucherAPI(IAccountService accountService, IVoucherService voucherService,
+            ICategoryService categoryService) {
+        this.accountService = accountService;
+        this.voucherService = voucherService;
+        this.categoryService = categoryService;
+    }
 
     @PostMapping
     public ResponseEntity<String> save(

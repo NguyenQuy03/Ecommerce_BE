@@ -13,10 +13,17 @@ import org.springframework.web.multipart.MultipartFile;
 public class UploadFileAPI {
 
     @PostMapping
-    public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file) {
-        if (!file.getContentType().equals("image/jpeg") && !file.getContentType().equals("image/png")) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> handleFileUpload(@RequestParam("file") MultipartFile file) {
+        try {
+            if (file != null
+                    && (!file.getContentType().equals("image/jpeg")
+                            && !file.getContentType().equals("image/png"))) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        } catch (NullPointerException e) {
+            return ResponseEntity.badRequest().body("File content is empty");
         }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

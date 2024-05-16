@@ -24,6 +24,7 @@ import com.ecommerce.springbootecommerce.repository.CategoryRepository;
 import com.ecommerce.springbootecommerce.repository.ProductImageRepository;
 import com.ecommerce.springbootecommerce.repository.ProductItemRepository;
 import com.ecommerce.springbootecommerce.repository.ProductRepository;
+import com.ecommerce.springbootecommerce.service.IProductItemService;
 import com.ecommerce.springbootecommerce.service.IProductService;
 import com.ecommerce.springbootecommerce.util.ProductServiceUtil;
 import com.ecommerce.springbootecommerce.util.ServiceUtil;
@@ -39,7 +40,7 @@ public class ProductService implements IProductService {
 
     private final CategoryRepository categoryRepo;
 
-    private final ProductItemService productItemService;
+    private final IProductItemService productItemService;
 
     private final ProductConverter productConverter;
 
@@ -50,7 +51,7 @@ public class ProductService implements IProductService {
     public ProductService(
             ProductRepository productRepo, ProductItemRepository productItemRepo,
             ProductImageRepository productImageRepo, CategoryRepository categoryRepo,
-            ProductItemService productItemService, ProductConverter productConverter,
+            IProductItemService productItemService, ProductConverter productConverter,
             ProductServiceUtil productServiceUtil, ServiceUtil serviceUtil) {
         this.productRepo = productRepo;
         this.productItemRepo = productItemRepo;

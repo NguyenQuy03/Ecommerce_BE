@@ -2,7 +2,6 @@ package com.ecommerce.springbootecommerce.api.buyer;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,20 +27,25 @@ import com.ecommerce.springbootecommerce.util.AccountUtil;
 @RequestMapping("/api/v1/buyer/order-item")
 public class OrderItemAPI {
 
-    @Autowired
-    private IOrderService orderService;
+    private final IOrderService orderService;
 
-    @Autowired
-    private IAccountService accountService;
+    private final IAccountService accountService;
 
-    @Autowired
-    private IProductItemService productItemService;
+    private final IProductItemService productItemService;
 
-    @Autowired
-    private IOrderItemService orderItemService;
+    private final IOrderItemService orderItemService;
 
-    @Autowired
-    private AccountUtil accountUtil;
+    private final AccountUtil accountUtil;
+
+    public OrderItemAPI(IOrderService orderService, IAccountService accountService,
+            IProductItemService productItemService, IOrderItemService orderItemService,
+            AccountUtil accountUtil) {
+        this.orderService = orderService;
+        this.accountService = accountService;
+        this.productItemService = productItemService;
+        this.orderItemService = orderItemService;
+        this.accountUtil = accountUtil;
+    }
 
     @PostMapping()
     public ResponseEntity<String> add(
@@ -82,7 +86,7 @@ public class OrderItemAPI {
     }
 
     @PostMapping(value = "/buy-again")
-    public ResponseEntity<?> buyAgain(
+    public ResponseEntity<Object> buyAgain(
             @RequestBody long orderItemId) {
         try {
             OrderItemDTO orderItemDTO = orderItemService.findOneById(orderItemId);
@@ -114,7 +118,7 @@ public class OrderItemAPI {
     }
 
     @PatchMapping(value = "update-quantity")
-    public ResponseEntity<?> update(
+    public ResponseEntity<Object> update(
             @RequestBody OrderItemDTO dto) {
 
         try {

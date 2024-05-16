@@ -28,7 +28,7 @@ public class ProductAPI {
     }
 
     @GetMapping
-    public ResponseEntity<?> getProducts() {
+    public ResponseEntity<Object> getProducts() {
         try {
             Pageable pageable = PageRequest.of(0, 12);
             List<ProductDTO> dto = productService.findAllWithoutStatus(ProductStatus.REMOVED, pageable);
@@ -39,7 +39,7 @@ public class ProductAPI {
     }
 
     @GetMapping("/recommend/seller")
-    public ResponseEntity<?> getProductsBySeller(
+    public ResponseEntity<Object> getProductsBySeller(
             @RequestParam("sellerId") long sellerId) {
         try {
             BaseDTO<ProductDTO> dto = productService.findAllByAccountIdAndStatus(sellerId, ProductStatus.LIVE, 1, 12);
@@ -53,9 +53,8 @@ public class ProductAPI {
     public List<ProductDTO> getProductsByCategory() {
 
         Pageable pageable = PageRequest.of(0, 12);
-        List<ProductDTO> productItems = productService.findAllByStatus(ProductStatus.LIVE, pageable);
 
-        return productItems;
+        return productService.findAllByStatus(ProductStatus.LIVE, pageable);
     }
 
     @GetMapping("/detail")

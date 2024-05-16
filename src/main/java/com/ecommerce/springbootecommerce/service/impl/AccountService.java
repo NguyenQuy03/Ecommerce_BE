@@ -16,14 +16,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
+import com.ecommerce.springbootecommerce.api.buyer.OrderAPI;
 import com.ecommerce.springbootecommerce.api.common.authenticate.payload.request.LogInRequest;
 import com.ecommerce.springbootecommerce.api.common.authenticate.payload.request.RegisterRequest;
 import com.ecommerce.springbootecommerce.api.common.authenticate.payload.response.AuthResponse;
 import com.ecommerce.springbootecommerce.config.AuthenticationConfig;
-import com.ecommerce.springbootecommerce.constant.JWTConstant;
+import com.ecommerce.springbootecommerce.constant.TokenConstant;
 import com.ecommerce.springbootecommerce.constant.RedisConstant;
 import com.ecommerce.springbootecommerce.constant.StatusConstant;
 import com.ecommerce.springbootecommerce.constant.SystemConstant;
@@ -51,28 +53,33 @@ public class AccountService implements IAccountService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private AccountRepository accountRepo;
-
-    @Autowired
-    private RoleRepository roleRepo;
-
-    @Autowired
-    private AccountRoleRepository accountRoleRepo;
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private RedisUtil redisUtil;
-
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
     private AccountConverter accountConverter;
+
+    private final AccountRepository accountRepo;
+
+    private final RoleRepository roleRepo;
+
+    private final AccountRoleRepository accountRoleRepo;
+
+    private final JwtUtil jwtUtil;
+
+    private final RedisUtil redisUtil;
+
+    private final UserDetailsService userDetailService;
+
+    public AccountService(AccountRepository accountRepo, RoleRepository roleRepo,
+            AccountRoleRepository accountRoleRepo, JwtUtil jwtUtil, RedisUtil redisUtil,
+            UserDetailsService userDetailService) {
+        this.accountRepo = accountRepo;
+        this.roleRepo = roleRepo;
+        this.accountRoleRepo = accountRoleRepo;
+        this.jwtUtil = jwtUtil;
+        this.redisUtil = redisUtil;
+        this.userDetailService = userDetailService;
+    }
 
     @Override
     public AccountDTO findByUsername(String username) {
@@ -170,7 +177,7 @@ public class AccountService implements IAccountService {
             return null;
         }
 
-        CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(request.getUsername());
+        CustomUserDetails userDetails = (CustomUserDetails) userDetailService.loadUserByUsername(request.getUsername());
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 userDetails, userDetails.getPassword(),
                 userDetails.getAuthorities());
@@ -181,7 +188,7 @@ public class AccountService implements IAccountService {
         String refreshToken = jwtUtil.generateRefreshToken(userDetails);
         revokeAllUserTokens(userDetails);
         redisUtil.setKey(RedisConstant.REDIS_JWT_BRANCH + request.getUsername(), refreshToken,
-                JWTConstant.JWT_REFRESH_TOKEN_EXPIRATION);
+                TokenConstant.JWT_REFRESH_TOKEN_EXPIRATION);
 
         AuthResponse authResponse = AuthResponse.builder().accessToken(accessToken).refreshToken(refreshToken).build();
 

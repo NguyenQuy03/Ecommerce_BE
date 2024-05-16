@@ -1,6 +1,5 @@
 package com.ecommerce.springbootecommerce.api.seller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,18 +20,21 @@ import com.ecommerce.springbootecommerce.service.IProductService;
 @RestController(value = "ProductAPIOfSeller")
 @RequestMapping("/api/v1/seller/product")
 public class ProductAPI {
-    
-    @Autowired  
-    private IProductService productService;
 
-    @Autowired
-    private IAccountService accountService;
+    private final IProductService productService;
+
+    private final IAccountService accountService;
+
+    public ProductAPI(IProductService productService, IAccountService accountService) {
+        this.productService = productService;
+        this.accountService = accountService;
+    }
 
     @PostMapping
     public ResponseEntity<String> save(
-            @RequestBody ProductDTO dto
-    ) {    
-        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            @RequestBody ProductDTO dto) {
+        CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
 
         AccountDTO account = accountService.findById(userDetails.getId());
         dto.setAccount(account);
@@ -43,13 +45,13 @@ public class ProductAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error publishing product");
         }
     }
-    
+
     @PutMapping()
     public ResponseEntity<String> update(
-            @RequestBody ProductDTO dto  
-    ) {
+            @RequestBody ProductDTO dto) {
         try {
-            CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+                    .getPrincipal();
 
             AccountDTO account = accountService.findById(userDetails.getId());
             dto.setAccount(account);
@@ -59,7 +61,7 @@ public class ProductAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating product");
         }
     }
-    
+
     @DeleteMapping()
     public ResponseEntity<String> softDelete(@RequestBody long[] ids) {
         try {
@@ -69,7 +71,7 @@ public class ProductAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting product");
         }
     }
-    
+
     @DeleteMapping("/forceDelete")
     public ResponseEntity<String> forceDelete(@RequestBody long[] ids) {
         try {
@@ -79,7 +81,7 @@ public class ProductAPI {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting product");
         }
     }
-    
+
     @PostMapping("/restore")
     public ResponseEntity<String> restore(@RequestBody Long id) {
         try {

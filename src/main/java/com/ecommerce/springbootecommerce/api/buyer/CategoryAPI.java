@@ -11,7 +11,7 @@ import com.ecommerce.springbootecommerce.dto.CategoryDTO;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 import com.ecommerce.springbootecommerce.service.impl.CategoryService;
 
-@RestController(value = "CategoryAPIOBuyer")
+@RestController(value = "categoryAPIOBuyer")
 @RequestMapping("/api/v1/buyer/category")
 public class CategoryAPI {
 
@@ -22,7 +22,7 @@ public class CategoryAPI {
     }
 
     @GetMapping
-    public ResponseEntity<?> getCategories() {
+    public ResponseEntity<Object> getCategories() {
         try {
             List<CategoryDTO> categories = categoryService.findAll();
             return ResponseEntity.ok().body(categories);

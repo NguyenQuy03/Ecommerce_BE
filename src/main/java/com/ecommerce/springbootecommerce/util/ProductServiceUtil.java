@@ -40,7 +40,7 @@ public class ProductServiceUtil {
                         .toString();
                 imageUrls.add(imageUrl);
             } catch (IOException e) {
-                e.getStackTrace();
+                throw new RuntimeException("Error Upload product image");
             }
         }
 
@@ -64,7 +64,7 @@ public class ProductServiceUtil {
                             .get("url")
                             .toString();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException("Error Upload product item image");
                 }
                 return ProductItemimageUrl;
             });

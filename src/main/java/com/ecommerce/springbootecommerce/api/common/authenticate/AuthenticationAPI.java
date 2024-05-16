@@ -8,11 +8,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,37 +23,40 @@ import com.ecommerce.springbootecommerce.api.common.authenticate.payload.request
 import com.ecommerce.springbootecommerce.api.common.authenticate.payload.request.RegisterRequest;
 import com.ecommerce.springbootecommerce.api.common.authenticate.payload.response.AuthResponse;
 import com.ecommerce.springbootecommerce.constant.AlertConstant;
-import com.ecommerce.springbootecommerce.constant.JWTConstant;
 import com.ecommerce.springbootecommerce.constant.RedisConstant;
+import com.ecommerce.springbootecommerce.constant.TokenConstant;
 import com.ecommerce.springbootecommerce.dto.CustomUserDetails;
-import com.ecommerce.springbootecommerce.service.impl.AccountService;
-import com.ecommerce.springbootecommerce.service.impl.CustomUserDetailsService;
+import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.util.CookieUtil;
 import com.ecommerce.springbootecommerce.util.JwtUtil;
 import com.ecommerce.springbootecommerce.util.RedisUtil;
 import com.ecommerce.springbootecommerce.util.SecurityUtil;
 
-@RestController(value = "AuthAPIOfUser")
+@RestController(value = "authAPIOfUser")
 @RequestMapping("/api/v1/auth")
 public class AuthenticationAPI {
 
-    @Autowired
-    private AccountService accountService;
+    private final IAccountService accountService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
-    @Autowired
-    private CookieUtil cookieUtil;
+    private final CookieUtil cookieUtil;
 
-    @Autowired
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private final UserDetailsService userDetailsService;
+
+    public AuthenticationAPI(IAccountService accountService, JwtUtil jwtUtil, CookieUtil cookieUtil,
+            RedisUtil redisUtil, UserDetailsService userDetailsService) {
+        this.accountService = accountService;
+        this.jwtUtil = jwtUtil;
+        this.cookieUtil = cookieUtil;
+        this.redisUtil = redisUtil;
+        this.userDetailsService = userDetailsService;
+    }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(
+    public ResponseEntity<Object> register(
             @RequestBody RegisterRequest request) {
         try {
             Map<String, String> errorFeedBack = new HashMap<>();
@@ -89,9 +92,9 @@ public class AuthenticationAPI {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
+    public ResponseEntity<Object> login(
             @RequestBody LogInRequest request,
-            HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws IOException {
+            HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
 
         if (request.getUsername().isEmpty() || request.getPassword().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(AlertConstant.ALERT_MISSING_UNAME_OR_PASS);
@@ -103,8 +106,9 @@ public class AuthenticationAPI {
                 List<String> roles = SecurityUtil.getAuthorities();
                 String fullName = SecurityUtil.getPrincipal().getFullName();
 
-                httpResponse.addCookie(cookieUtil.initCookie("refresh_token", authResponse.getRefreshToken(),
-                        (int) JWTConstant.JWT_REFRESH_TOKEN_EXPIRATION));
+                httpResponse.addCookie(
+                        cookieUtil.initCookie(TokenConstant.JWT_REFRESH_TOKEN, authResponse.getRefreshToken(),
+                                (int) TokenConstant.JWT_REFRESH_TOKEN_EXPIRATION));
 
                 return ResponseEntity.ok().body(
                         AuthResponse.builder()
@@ -123,11 +127,11 @@ public class AuthenticationAPI {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(
+    public ResponseEntity<Object> logout(
             HttpServletRequest httpRequest, HttpServletResponse httpResponse, Authentication authentication)
             throws IOException {
         try {
-            String refreshToken = cookieUtil.getCookie(httpRequest.getCookies(), "refresh_token");
+            String refreshToken = cookieUtil.getCookie(httpRequest.getCookies(), TokenConstant.JWT_REFRESH_TOKEN);
             if (refreshToken != null) {
                 String username = jwtUtil.extractUsername(refreshToken);
 
@@ -145,11 +149,11 @@ public class AuthenticationAPI {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(
+    public ResponseEntity<Object> refreshToken(
             HttpServletRequest request) {
 
         try {
-            String refreshToken = cookieUtil.getCookie(request.getCookies(), "refresh_token");
+            String refreshToken = cookieUtil.getCookie(request.getCookies(), TokenConstant.JWT_REFRESH_TOKEN);
             // Handle empty refresh token
             if (refreshToken == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -164,7 +168,7 @@ public class AuthenticationAPI {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Refresh token is not valid");
             }
 
-            CustomUserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+            CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
             String accessToken = jwtUtil.generateAccessToken(userDetails);
 
             return ResponseEntity.ok().body(

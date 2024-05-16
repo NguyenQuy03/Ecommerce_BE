@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.ecommerce.springbootecommerce.constant.JWTConstant;
+import com.ecommerce.springbootecommerce.constant.TokenConstant;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -49,12 +49,12 @@ public class JwtUtil {
   private String generateAccessToken(
       Map<String, Object> extraClaims,
       UserDetails account) {
-    return buildToken(extraClaims, account, JWTConstant.JWT_ACCESS_TOKEN_EXPIRATION);
+    return buildToken(extraClaims, account, TokenConstant.JWT_ACCESS_TOKEN_EXPIRATION);
   }
 
   public String generateRefreshToken(
       UserDetails account) {
-    return buildToken(new HashMap<>(), account, JWTConstant.JWT_REFRESH_TOKEN_EXPIRATION * 1000);
+    return buildToken(new HashMap<>(), account, TokenConstant.JWT_REFRESH_TOKEN_EXPIRATION * 1000);
   }
 
   public boolean isTokenValid(String token, UserDetails account) {

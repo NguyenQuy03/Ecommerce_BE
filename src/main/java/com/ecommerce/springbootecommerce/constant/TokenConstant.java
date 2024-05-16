@@ -1,7 +1,7 @@
 package com.ecommerce.springbootecommerce.constant;
 
-public class JWTConstant {
-    private JWTConstant() throws IllegalAccessException {
+public class TokenConstant {
+    private TokenConstant() throws IllegalAccessException {
         throw new IllegalAccessException();
     }
 
@@ -9,4 +9,5 @@ public class JWTConstant {
     public static final int JWT_COOKIE_ACCESS_TOKEN_EXPIRATION = 3600; // 1h
     public static final long JWT_REFRESH_TOKEN_EXPIRATION = 259200; // 3days
 
+    public static final String JWT_REFRESH_TOKEN = "refresh_token";
 }

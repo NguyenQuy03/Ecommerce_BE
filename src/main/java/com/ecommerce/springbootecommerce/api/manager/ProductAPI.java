@@ -2,7 +2,6 @@ package com.ecommerce.springbootecommerce.api.manager;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,18 +22,21 @@ import com.ecommerce.springbootecommerce.exception.CustomException;
 import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.IProductService;
 
-@RestController(value = "ProductAPIOfManager")
+@RestController(value = "productAPIOfManager")
 @RequestMapping(value = "/api/v1/manager/product")
 public class ProductAPI {
 
-    @Autowired
-    private IProductService productService;
+    private final IProductService productService;
 
-    @Autowired
-    private IAccountService accountService;
+    private final IAccountService accountService;
+
+    public ProductAPI(IProductService productService, IAccountService accountService) {
+        this.productService = productService;
+        this.accountService = accountService;
+    }
 
     @GetMapping()
-    public ResponseEntity<?> getProducts(
+    public ResponseEntity<Object> getProducts(
             @RequestParam(value = "type", required = false, defaultValue = "all") String type,
             @RequestParam(value = "page", required = false, defaultValue = "1") int page,
             @RequestParam(value = "size", required = false, defaultValue = SystemConstant.DEFAULT_PAGE_SIZE) int size) {
@@ -60,7 +62,7 @@ public class ProductAPI {
     }
 
     @GetMapping(value = "edit")
-    public ResponseEntity<?> editProduct(
+    public ResponseEntity<Object> editProduct(
             @RequestParam(value = "id", required = true) Long productId) {
         try {
             CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()

@@ -24,7 +24,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
         // FIND ALL
         Slice<ProductEntity> findAllByStatus(ProductStatus status, Pageable pageable);
 
-        @Query(value = "select id, description, name, specification, status from product where status != :status", nativeQuery = true)
+        @Query(value = "select id, created_by, created_date, modified_by, modified_date, account_id, category_id, description, name, specification, status from product where status != :status", nativeQuery = true)
         Slice<ProductEntity> findAllWithoutStatus(@Param(value = "status") ProductStatus status, Pageable pageable);
 
         Slice<ProductEntity> findAllByCategoryId(long categoryId, Pageable pageable);

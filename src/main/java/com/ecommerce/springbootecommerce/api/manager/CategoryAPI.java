@@ -1,6 +1,5 @@
 package com.ecommerce.springbootecommerce.api.manager;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,15 +17,18 @@ import com.ecommerce.springbootecommerce.exception.CustomException;
 import com.ecommerce.springbootecommerce.service.IAccountService;
 import com.ecommerce.springbootecommerce.service.ICategoryService;
 
-@RestController(value = "CategoryAPIOfManager")
+@RestController(value = "categoryAPIOfManager")
 @RequestMapping(value = "/api/v1/manager/category")
 public class CategoryAPI {
 
-    @Autowired
-    private ICategoryService categoryService;
+    private final ICategoryService categoryService;
 
-    @Autowired
-    private IAccountService accountService;
+    private final IAccountService accountService;
+
+    public CategoryAPI(ICategoryService categoryService, IAccountService accountService) {
+        this.categoryService = categoryService;
+        this.accountService = accountService;
+    }
 
     @PostMapping()
     public ResponseEntity<String> addCategory(

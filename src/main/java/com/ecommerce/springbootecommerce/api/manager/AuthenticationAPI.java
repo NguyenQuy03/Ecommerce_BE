@@ -3,7 +3,6 @@ package com.ecommerce.springbootecommerce.api.manager;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,17 +14,20 @@ import com.ecommerce.springbootecommerce.api.common.authenticate.payload.request
 import com.ecommerce.springbootecommerce.api.common.authenticate.payload.response.AuthResponse;
 import com.ecommerce.springbootecommerce.constant.AlertConstant;
 import com.ecommerce.springbootecommerce.exception.CustomException;
-import com.ecommerce.springbootecommerce.service.impl.AccountService;
+import com.ecommerce.springbootecommerce.service.IAccountService;
 
-@RestController(value = "AuthAPIOfManager")
+@RestController(value = "authAPIOfManager")
 @RequestMapping("/api/v1/auth/manager")
 public class AuthenticationAPI {
 
-    @Autowired
-    private AccountService accountService;
+    private final IAccountService accountService;
+
+    public AuthenticationAPI(IAccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(
+    public ResponseEntity<Object> register(
             @RequestBody RegisterRequest request) {
         try {
             Map<String, String> errorFeedBack = new HashMap<>();
